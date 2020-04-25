@@ -13,24 +13,70 @@ import GoogleMaps from './GoogleMaps';
 function Form(props) {
 
   const [statusValue, setStatusValue] = React.useState("");
+  const [riskValue, setRiskValue] = React.useState("");
   const [sympValue, setSympValue] = React.useState({});
-  const formResponses = [];
+  const [postalCodeValue, setpostalCodeValue] = React.useState("");
+  
+  const submitResponses = () => {
+    const formResponses = [{
+    status: statusValue,
+    Symptoms: Object.entries(sympValue).filter(([,v]) => v === true).reduce((prev, [k, v]) => ({...prev, [k]: v}), {}),
+    Risk: riskValue,
+    Location: postalCodeValue
+  }];
 
+  return(formResponses);
+  };
+
+  
   console.log(sympValue);
-
   const handleStatusChange = (event) => {
     setStatusValue(event.target.value);
+    props.response(event.target.value);
+  };
+
+  const handleRiskChange = (event) => {
+    setRiskValue(event.target.value);
+    props.response(event.target.value);
   };
 
   const handleSympChange = (event) => {
     setSympValue({...sympValue, [event.target.name]: event.target.checked });
+    
+    if(statusValue==="="){
+      props.response(true);
+    }else{
+      props.response(event.target.value);
+    }
+    
+  };
+
+
+  const handleLocationChange = (event) => {
+    let regEx = /[a-zA-Z][0-9][a-zA-Z](-| |)[0-9][a-zA-Z][0-9]/;
+    if(regEx.test(event.target.value) ){
+      setpostalCodeValue(event.target.value);
+      const formResponses = [{
+        status: statusValue,
+        Symptoms: Object.entries(sympValue).filter(([,v]) => v === true).reduce((prev, [k, v]) => ({...prev, [k]: v}), {}),
+        Risk: riskValue,
+        Location: event.target.value
+      }]
+      props.response(formResponses);
+    }else{
+      console.log("error");
+      //props.response(false);
+    }
   };
 
   function conditionalRender() {
-      if(statusValue=== "+" && props.step === 1 || statusValue === "s" && props.step === 1){
+      if(statusValue=== "+" && props.step === 1 || statusValue === "s" && props.step === 1 || statusValue === "=" && props.step === 1){
         return(
             <>
-                <Typography variant="h5" align="center">Please choose at least one of the following symptoms from the below list:</Typography>
+                { (statusValue === "=")
+                  ? <Typography variant="h6" align="center">What symptoms did you encounter during your duration with COVID-19? (Please choose from below)</Typography>
+                  : <Typography variant="h6" align="center">Please choose at least one of the following symptoms from the below list:</Typography>
+                }
                 <FormControlLabel control={ <Checkbox name="Cough" onChange={handleSympChange}/>}  label="Cough"></FormControlLabel>
                 <FormControlLabel control={ <Checkbox name="Fever" onChange={handleSympChange}onChange={handleSympChange}/>} label="Fever"></FormControlLabel>
                 <FormControlLabel control={ <Checkbox name="Shortness of breath" onChange={handleSympChange}/>} label="Shortness of breath"></FormControlLabel>
@@ -44,38 +90,57 @@ function Form(props) {
                 <FormControlLabel control={ <Checkbox name="Vomiting" onChange={handleSympChange}/>} label="Vomiting"></FormControlLabel>
                 <FormControlLabel control={ <Checkbox name="Sweating and shaking chills" onChange={handleSympChange}/>} label="Sweating and shaking chills"></FormControlLabel>
                 <FormControlLabel control={ <Checkbox name="Lower than normal temperatures" onChange={handleSympChange}/>} label="Lower than normal temperatures"></FormControlLabel>
+                <br></br>
+
+                { (statusValue !== "=")
+                  ?<div>
+                  <Typography variant="h6" align="center">Please indicate if you have left the house today and/or are planning to expose yourself to a public area:</Typography>
+                  <RadioGroup name="risk" value={riskValue} onChange={handleRiskChange}>
+                    <FormControlLabel value="Yes" control={<Radio color="primary" />} label="Yes, I am planning to leave the house today" />
+                    <FormControlLabel value="No" control={<Radio color="primary" />} label="No, I am planning to stay home" />
+                  </RadioGroup>
+                  </div>
+                  : <div></div>
+                }
+
             </>
         )
       }else if(statusValue === "-" && props.step === 1){
         return(
         <>
-            <Typography variant="h5" align="center">You are negative</Typography>
-            <Checkbox name="checkedB"color="primary"/>
+            <Typography variant="h6" align="center">Please indicate if you have left the house today and/or are planning to expose yourself to a public area</Typography>
+            <RadioGroup name="risk" value={riskValue} onChange={handleRiskChange}>
+              <FormControlLabel value="Yes" control={<Radio color="primary" />} label="Yes, I am planning to leave the house today" />
+              <FormControlLabel value="No" control={<Radio color="primary" />} label="No, I am planning to stay home" />
+            </RadioGroup>
         </>
         )
       }
       else if (props.step === 0) {
         return(
             <>
-                <Typography variant="h5" align="center">Please select a status that best suites you</Typography>
-                <RadioGroup name="gender1" value={statusValue} onChange={handleStatusChange}>
+                <Typography variant="h6" align="center">Please select a status that best suites you</Typography>
+                <RadioGroup name="status" value={statusValue} onChange={handleStatusChange}>
                 <FormControlLabel value="+" control={<Radio color="primary" />} label="Positive" />
                 <FormControlLabel value="s" control={<Radio color="primary"/>} label="Symptomatic" />
                 <FormControlLabel value="-" control={<Radio color="primary"/>} label="Negative" />
+                <FormControlLabel value="=" control={<Radio color="primary"/>} label="Recovered" />
                 </RadioGroup>
             </>
         )
       }else{
         return(
           <>
-              <GoogleMaps></GoogleMaps>
+              <Typography variant="h6" align="center">Please type the first 3 digits of your postal code (where you reside)</Typography>
+              {/* <GoogleMaps response={props.response}></GoogleMaps> */}
+              <TextField onChange={handleLocationChange}></TextField>
           </>
         ) 
       }
   }
 
   return (
-    <FormControl component="fieldset">
+    <FormControl style={{padding: '24px'}} component="fieldset">
         {conditionalRender()}
     </FormControl>
   );

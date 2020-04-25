@@ -7,6 +7,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import parse from 'autosuggest-highlight/parse';
 import throttle from 'lodash/throttle';
+import Popover from '@material-ui/core/Popover';
 
 function loadScript(src, position, id) {
   if (!position) {
@@ -18,6 +19,7 @@ function loadScript(src, position, id) {
   script.setAttribute('id', id);
   script.src = src;
   position.appendChild(script);
+  console.log("API KEY LOADED.");
 }
 
 const autocompleteService = { current: null };
@@ -37,11 +39,13 @@ export default function GoogleMaps() {
 
   if (typeof window !== 'undefined' && !loaded.current) {
     if (!document.querySelector('#google-maps')) {
+      
       loadScript(
-        'https://maps.googleapis.com/maps/api/js?key=AIzaSyDu1scIrQ9jsFLIL-4I7Np_MP0LghSAUNs=places',
+        'https://maps.googleapis.com/maps/api/js?key=AIzaSyAe460SFpdk_O_6JHjeUJ13dCu9bYglbnw&libraries=places',
         document.querySelector('head'),
         'google-maps',
       );
+
     }
 
     loaded.current = true;

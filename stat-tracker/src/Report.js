@@ -6,7 +6,9 @@ import StepLabel from "@material-ui/core/StepLabel";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Form from "./components/Status/Form";
+import Paper from '@material-ui/core/Paper';
 import { BrowserRouter, Route, RouteComponentProps } from "react-router-dom";
+import ReportSound from './static/sounds/Drip_Echo.wav';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -28,36 +30,50 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-
 function getSteps() {
-  return ["Status", "Symptoms", "Location"];
+  return ["Status", "Risk", "Location"];
 }
 
-function getStepContent(stepIndex) {
+function getStepContent(stepIndex, getResponse, value) {
   console.log("is this called twice?")
   switch (stepIndex) {
     case 0:
-      return <Form step={stepIndex}></Form>;
+      return <Form step={stepIndex}  response={(value)=> getResponse(value, stepIndex)}></Form>;
     case 1:
-      return <Form step={stepIndex}></Form>;
+      return <Form step={stepIndex} response={(value)=> getResponse(value, stepIndex)}></Form>;
     case 2:
-      return <Form step={stepIndex}></Form>;
-    default:
+      return <Form step={stepIndex} response={(value)=> getResponse(value, stepIndex)} ></Form>;
+    default: 
       return "Unknown stepIndex";
   }
 }
 
 export default function Report(props) {
-    
+  var audio = new Audio(ReportSound);
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
+  const [Response, setResponse] = React.useState(false);
+  const [FormReponsesObj, setFormResponseObj] = React.useState({});
   const steps = getSteps();
+
+  function getResponse(value, stepIndex){
+      console.log("got response", value)
+      setResponse(value);
+      setFormResponseObj(value);
+      
+      // if(stepIndex>1){
+      //   FormReponsesObj = value;
+      // }
+  }
 
   const handleNext = () => {
     if(activeStep === steps.length - 1){
-      props.history.push('/Dashboard');
-    }else{
+      props.submit(FormReponsesObj);
+      audio.play();
+    }else {
+      console.log("getting here??")
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      setResponse(false);
     }
   };
 
@@ -70,7 +86,7 @@ export default function Report(props) {
   };
 
   return (
-    <div className={classes.root}>
+    <div className={classes.root+" animated zoomIn"}>
       <Stepper activeStep={activeStep} alternativeLabel>
         {steps.map((label) => (
           <Step key={label}>
@@ -87,23 +103,25 @@ export default function Report(props) {
             <Button onClick={handleReset}>Reset</Button>
           </div>
         ) : (
-          <div className={classes.flex}>
-            <div className={classes.instructions}>
-                {getStepContent(activeStep)}
+          <Paper elevation={0}>
+            <div className={classes.flex}>
+              <div className={classes.instructions}>
+                  {getStepContent(activeStep, getResponse)}
+              </div>
+              <div>
+                <Button
+                  disabled={activeStep === 0}
+                  onClick={handleBack}
+                  className={classes.backButton}
+                >
+                  Back
+                </Button>
+                <Button disabled={!Response} variant="contained" color="primary" onClick={handleNext}>
+                  {activeStep === steps.length - 1 ? "Finish" : "Next"}
+                </Button>
+              </div>
             </div>
-            <div>
-              <Button
-                disabled={activeStep === 0}
-                onClick={handleBack}
-                className={classes.backButton}
-              >
-                Back
-              </Button>
-              <Button variant="contained" color="primary" onClick={handleNext}>
-                {activeStep === steps.length - 1 ? "Finish" : "Next"}
-              </Button>
-            </div>
-          </div>
+          </Paper>
         )}
       </div>
     </div>

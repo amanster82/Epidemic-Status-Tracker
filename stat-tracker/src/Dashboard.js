@@ -16,8 +16,15 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
+import AccountCircle from '@material-ui/icons/AccountCircle';
 import Button from "@material-ui/core/Button";
+import Grid from '@material-ui/core/Grid';
+import Report from './Report';
+import Badge from '@material-ui/core/Badge';
+import Popover from '@material-ui/core/Popover';
+import Skeleton from '@material-ui/lab/Skeleton';
+
+
 
 const drawerWidth = 240;
 
@@ -76,12 +83,47 @@ const useStyles = makeStyles((theme) => ({
     }),
     marginLeft: 0,
   },
+  
+  canvas:{
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  }
+  
 }));
+
 
 export default function Dashboard() {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const [status, setStatus] = React.useState(false);
+  const [reportCompleted, setReport] = React.useState(false);
+  const [usersReport, setUserReport] = React.useState({});
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [buttonEnterance, setButtonEnterance] = React.useState("animated fadeIn delay-3s");
+
+
+  console.log("after state refresh", usersReport);
+
+  function submittedAnswers(value) {
+    console.log("and the submitttteeeeddd answers are....")
+    setUserReport(value);
+    setReport(true);
+  }
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const OOpen = Boolean(anchorEl);
+  const id = OOpen ? 'simple-popover' : undefined;
+
+
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -90,6 +132,79 @@ export default function Dashboard() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  function conditionRender(){
+    if(!status && !reportCompleted){
+      return(
+
+
+      <Grid container 
+          spacing={3} 
+          direction="row"
+          justify="center"
+          alignItems="center">
+          <Grid item xs={12} className={classes.canvas}>        
+          <h1 className="animated fadeIn">We all have to do our part.</h1>
+          </Grid>
+          <Grid item xs={12} className={classes.canvas}>        
+          <h1 className="animated fadeIn delay-2s">Report your status to unlock virus tracking, and the affects in your area.</h1>
+          </Grid>
+          <Grid item xs={3} className={classes.canvas}>        
+            <Button className={buttonEnterance} variant="contained" color="primary" onClick={()=> setStatus(true)} onAnimationEnd={()=>setButtonEnterance("animated infinite pulse")}>Report Status</Button>
+          </Grid>
+          {/* <Grid item xs={3} className={classes.canvas}>
+            <Badge variant="dot" color="secondary">
+              <Button variant="contained" color="primary" onClick={handleClick}>Track Data</Button>
+            </Badge>
+          </Grid>
+
+
+          <Popover 
+          id={id}
+          open={OOpen}
+          anchorEl={anchorEl}
+          onClose={handleClose}
+          
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            transformOrigin={{
+              vertical: 'center',
+              horizontal: 'left',
+            }}
+          >
+          Please report your status for today before viewing data.
+        </Popover> */}
+
+      </Grid>
+      )
+    }else if(status && !reportCompleted){
+      
+      return <Report submit={(x)=>submittedAnswers(x)}></Report>
+
+    } else if(reportCompleted && status) {
+        return(
+      //   <Grid container 
+      //       spacing={3} 
+      //       direction="row"
+      //       justify="center"
+      //       alignItems="center">
+      //     <Grid item xs={3} className={classes.canvas}>        
+      //   <Button variant="contained" color="primary" onClick={()=> setStatus(true)}>{usersReport[0].status}</Button>
+      //   </Grid>
+      //   <Grid item xs={3} className={classes.canvas}>
+      //     <Button variant="contained" color="primary">Track Data</Button>
+      //   </Grid>
+      // </Grid>
+      <div>
+      <Skeleton variant="text" />
+      <Skeleton variant="circle" width={124} height={124} />
+      <Skeleton variant="rect" width={'100%'} height={'70vh'} />
+      </div>
+      )
+    }
+  }
 
   return (
     <div className={classes.root}>
@@ -111,7 +226,7 @@ export default function Dashboard() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap>
-            Persistent drawer
+            Home
           </Typography>
         </Toolbar>
       </AppBar>
@@ -131,22 +246,22 @@ export default function Dashboard() {
         </div>
         <Divider />
         <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-              <ListItemText primary={text} />
+            <ListItem button>
+              <ListItemIcon>
+                <AccountCircle></AccountCircle>
+              </ListItemIcon>
+              <ListItemText primary={'Account'} />
             </ListItem>
-          ))}
+
         </List>
-        <Divider />
+        {/* <Divider />
         <List>
           {['All mail', 'Trash', 'Spam'].map((text, index) => (
             <ListItem button key={text}>
-              <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
               <ListItemText primary={text} />
             </ListItem>
           ))}
-        </List>
+        </List> */}
       </Drawer>
       <main
         className={clsx(classes.content, {
@@ -155,10 +270,9 @@ export default function Dashboard() {
       >
         <div className={classes.drawerHeader} />
 
-        <div>
-            <Button>hey</Button>
-        </div>
-        
+          {
+            conditionRender()
+          }
 
 
       </main>
