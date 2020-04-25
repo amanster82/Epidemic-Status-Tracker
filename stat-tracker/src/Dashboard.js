@@ -23,6 +23,7 @@ import Report from './Report';
 import Badge from '@material-ui/core/Badge';
 import Popover from '@material-ui/core/Popover';
 import Skeleton from '@material-ui/lab/Skeleton';
+import axios from 'axios';
 
 
 
@@ -92,7 +93,6 @@ const useStyles = makeStyles((theme) => ({
   
 }));
 
-
 export default function Dashboard() {
   const classes = useStyles();
   const theme = useTheme();
@@ -102,7 +102,8 @@ export default function Dashboard() {
   const [usersReport, setUserReport] = React.useState({});
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [buttonEnterance, setButtonEnterance] = React.useState("animated fadeIn delay-3s");
-
+  const [showSpinner, setSpinner] = React.useState(true);
+  const [coordinates, setCoordinates] = React.useState("");
 
   console.log("after state refresh", usersReport);
 
@@ -120,11 +121,6 @@ export default function Dashboard() {
     setAnchorEl(null);
   };
 
-  const OOpen = Boolean(anchorEl);
-  const id = OOpen ? 'simple-popover' : undefined;
-
-
-
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -133,11 +129,33 @@ export default function Dashboard() {
     setOpen(false);
   };
 
+  function getCoordinates(postal){
+    // Make a request for a user with a given ID
+    axios.get('http://geogratis.gc.ca/services/geolocation/en/locate?q='+postal)
+      .then(function (response) {
+        // handle success
+        console.log("something went right");
+        console.log(response);
+        setSpinner(false);
+        let x = JSON.stringify(response)
+        setCoordinates(x)
+      })
+      .catch(function (error) {
+        // handle error
+        console.log("something went horribly wrong");
+        console.log(error);
+      })
+      .then(function () {
+        // always executed
+        console.log("something happened");
+      });
+
+  }
+
+
   function conditionRender(){
     if(!status && !reportCompleted){
       return(
-
-
       <Grid container 
           spacing={3} 
           direction="row"
@@ -152,31 +170,6 @@ export default function Dashboard() {
           <Grid item xs={3} className={classes.canvas}>        
             <Button className={buttonEnterance} variant="contained" color="primary" onClick={()=> setStatus(true)} onAnimationEnd={()=>setButtonEnterance("animated infinite pulse")}>Report Status</Button>
           </Grid>
-          {/* <Grid item xs={3} className={classes.canvas}>
-            <Badge variant="dot" color="secondary">
-              <Button variant="contained" color="primary" onClick={handleClick}>Track Data</Button>
-            </Badge>
-          </Grid>
-
-
-          <Popover 
-          id={id}
-          open={OOpen}
-          anchorEl={anchorEl}
-          onClose={handleClose}
-          
-            anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-            transformOrigin={{
-              vertical: 'center',
-              horizontal: 'left',
-            }}
-          >
-          Please report your status for today before viewing data.
-        </Popover> */}
-
       </Grid>
       )
     }else if(status && !reportCompleted){
@@ -184,98 +177,90 @@ export default function Dashboard() {
       return <Report submit={(x)=>submittedAnswers(x)}></Report>
 
     } else if(reportCompleted && status) {
-        return(
-      //   <Grid container 
-      //       spacing={3} 
-      //       direction="row"
-      //       justify="center"
-      //       alignItems="center">
-      //     <Grid item xs={3} className={classes.canvas}>        
-      //   <Button variant="contained" color="primary" onClick={()=> setStatus(true)}>{usersReport[0].status}</Button>
-      //   </Grid>
-      //   <Grid item xs={3} className={classes.canvas}>
-      //     <Button variant="contained" color="primary">Track Data</Button>
-      //   </Grid>
-      // </Grid>
-      <div>
-      <Skeleton variant="text" />
-      <Skeleton variant="circle" width={124} height={124} />
-      <Skeleton variant="rect" width={'100%'} height={'70vh'} />
-      </div>
-      )
+      console.log("this is the user report", usersReport);
+      console.log("this is the report location", usersReport[0].location);
+        getCoordinates(usersReport[0].location);
+        if(showSpinner)
+          return(          
+            <div>
+              <Skeleton variant="text" />
+              <Skeleton variant="circle" width={124} height={124} />
+              <Skeleton variant="rect" width={'100%'} height={'70vh'} />
+            </div>
+          )
+        else {
+          return (
+            <div className={classes.root}>
+            <CssBaseline />
+            <AppBar
+              position="fixed"
+              className={clsx(classes.appBar, {
+                [classes.appBarShift]: open,
+              })}
+            >
+              <Toolbar>
+                <IconButton
+                  color="inherit"
+                  aria-label="open drawer"
+                  onClick={handleDrawerOpen}
+                  edge="start"
+                  className={clsx(classes.menuButton, open && classes.hide)}
+                >
+                  <MenuIcon />
+                </IconButton>
+                <Typography variant="h6" noWrap>
+                  Home
+                </Typography>
+              </Toolbar>
+            </AppBar>
+            <Drawer
+              className={classes.drawer}
+              variant="persistent"
+              anchor="left"
+              open={open}
+              classes={{
+                paper: classes.drawerPaper,
+              }}
+            >
+              <div className={classes.drawerHeader}>
+                <IconButton onClick={handleDrawerClose}>
+                  {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+                </IconButton>
+              </div>
+              <Divider />
+              <List>
+                  <ListItem button>
+                    <ListItemIcon>
+                      <AccountCircle></AccountCircle>
+                    </ListItemIcon>
+                    <ListItemText primary={'Account'} />
+                  </ListItem>
+      
+              </List>
+              {/* <Divider />
+              <List>
+                {['All mail', 'Trash', 'Spam'].map((text, index) => (
+                  <ListItem button key={text}>
+                    <ListItemText primary={text} />
+                  </ListItem>
+                ))}
+              </List> */}
+            </Drawer>
+            <main
+              className={clsx(classes.content, {
+                [classes.contentShift]: open,
+              })}
+            >
+              <div className={classes.drawerHeader} />
+              <h1>{coordinates}</h1>
+            </main>
+          </div>
+          )
+        }
     }
   }
 
   return (
-    <div className={classes.root}>
-      <CssBaseline />
-      <AppBar
-        position="fixed"
-        className={clsx(classes.appBar, {
-          [classes.appBarShift]: open,
-        })}
-      >
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            className={clsx(classes.menuButton, open && classes.hide)}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap>
-            Home
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <Drawer
-        className={classes.drawer}
-        variant="persistent"
-        anchor="left"
-        open={open}
-        classes={{
-          paper: classes.drawerPaper,
-        }}
-      >
-        <div className={classes.drawerHeader}>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-          </IconButton>
-        </div>
-        <Divider />
-        <List>
-            <ListItem button>
-              <ListItemIcon>
-                <AccountCircle></AccountCircle>
-              </ListItemIcon>
-              <ListItemText primary={'Account'} />
-            </ListItem>
-
-        </List>
-        {/* <Divider />
-        <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
-        </List> */}
-      </Drawer>
-      <main
-        className={clsx(classes.content, {
-          [classes.contentShift]: open,
-        })}
-      >
-        <div className={classes.drawerHeader} />
-
-          {
-            conditionRender()
-          }
-
-
-      </main>
-    </div>
-  );
+    conditionRender()
+    );
 }

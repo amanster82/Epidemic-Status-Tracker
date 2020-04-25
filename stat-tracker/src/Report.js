@@ -69,7 +69,7 @@ export default function Report(props) {
   const handleNext = () => {
     if(activeStep === steps.length - 1){
       props.submit(FormReponsesObj);
-      audio.play();
+      //audio.play();
     }else {
       console.log("getting here??")
       setActiveStep((prevActiveStep) => prevActiveStep + 1);

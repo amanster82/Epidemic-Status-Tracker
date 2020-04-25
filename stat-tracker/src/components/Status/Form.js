@@ -4,26 +4,38 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
+import FormGroup from '@material-ui/core/FormGroup';
 import Typography from "@material-ui/core/Typography";
 import Checkbox from '@material-ui/core/Checkbox';
 import TextField from '@material-ui/core/TextField';
+import Grid from '@material-ui/core/Grid';
 import GoogleMaps from './GoogleMaps';
+import { makeStyles } from '@material-ui/core/styles';
+
 
 
 function Form(props) {
+
+  const useStyles = makeStyles((theme) => ({
+    root: {
+      flexGrow: 1,
+    }}));
+
 
   const [statusValue, setStatusValue] = React.useState("");
   const [riskValue, setRiskValue] = React.useState("");
   const [sympValue, setSympValue] = React.useState({});
   const [postalCodeValue, setpostalCodeValue] = React.useState("");
+  const classes = useStyles();
   
   const submitResponses = () => {
     const formResponses = [{
     status: statusValue,
-    Symptoms: Object.entries(sympValue).filter(([,v]) => v === true).reduce((prev, [k, v]) => ({...prev, [k]: v}), {}),
-    Risk: riskValue,
-    Location: postalCodeValue
+    symptoms: Object.entries(sympValue).filter(([,v]) => v === true).reduce((prev, [k, v]) => ({...prev, [k]: v}), {}),
+    risk: riskValue,
+    location: postalCodeValue
   }];
+  
 
   return(formResponses);
   };
@@ -58,9 +70,9 @@ function Form(props) {
       setpostalCodeValue(event.target.value);
       const formResponses = [{
         status: statusValue,
-        Symptoms: Object.entries(sympValue).filter(([,v]) => v === true).reduce((prev, [k, v]) => ({...prev, [k]: v}), {}),
-        Risk: riskValue,
-        Location: event.target.value
+        symptoms: Object.entries(sympValue).filter(([,v]) => v === true).reduce((prev, [k, v]) => ({...prev, [k]: v}), {}),
+        risk: riskValue,
+        location: event.target.value
       }]
       props.response(formResponses);
     }else{
@@ -72,26 +84,46 @@ function Form(props) {
   function conditionalRender() {
       if(statusValue=== "+" && props.step === 1 || statusValue === "s" && props.step === 1 || statusValue === "=" && props.step === 1){
         return(
-            <>
+            <div className={classes.root}>
                 { (statusValue === "=")
                   ? <Typography variant="h6" align="center">What symptoms did you encounter during your duration with COVID-19? (Please choose from below)</Typography>
                   : <Typography variant="h6" align="center">Please choose at least one of the following symptoms from the below list:</Typography>
                 }
-                <FormControlLabel control={ <Checkbox name="Cough" onChange={handleSympChange}/>}  label="Cough"></FormControlLabel>
-                <FormControlLabel control={ <Checkbox name="Fever" onChange={handleSympChange}onChange={handleSympChange}/>} label="Fever"></FormControlLabel>
-                <FormControlLabel control={ <Checkbox name="Shortness of breath" onChange={handleSympChange}/>} label="Shortness of breath"></FormControlLabel>
-                <FormControlLabel control={ <Checkbox name="Fatigue or tiredness" onChange={handleSympChange}/>} label="Fatigue or tiredness"></FormControlLabel>
-                <FormControlLabel control={ <Checkbox name="Loss of smell or taste" onChange={handleSympChange}/>} label="Loss sense of smell or taste"></FormControlLabel>
-                <FormControlLabel control={ <Checkbox name="Trouble breathing" onChange={handleSympChange}/>} label="Trouble breathing"></FormControlLabel>
-                <FormControlLabel control={ <Checkbox name="Persistent pain or pressure in the chest" onChange={handleSympChange}/>} label="Persistent pain or pressure in the chest"></FormControlLabel>
-                <FormControlLabel control={ <Checkbox name="Confusion" onChange={handleSympChange}/>} label="Confusion"></FormControlLabel>
-                <FormControlLabel control={ <Checkbox name="Bluish lips or face" onChange={handleSympChange}/>} label="Bluish lips or face"></FormControlLabel>
-                <FormControlLabel control={ <Checkbox name="Nausea" onChange={handleSympChange}/>} label="Nausea"></FormControlLabel>
-                <FormControlLabel control={ <Checkbox name="Vomiting" onChange={handleSympChange}/>} label="Vomiting"></FormControlLabel>
-                <FormControlLabel control={ <Checkbox name="Sweating and shaking chills" onChange={handleSympChange}/>} label="Sweating and shaking chills"></FormControlLabel>
-                <FormControlLabel control={ <Checkbox name="Lower than normal temperatures" onChange={handleSympChange}/>} label="Lower than normal temperatures"></FormControlLabel>
-                <br></br>
 
+
+                  <FormControl>
+                    <FormGroup>
+                        <FormControlLabel control={ <Checkbox name="Cough" onChange={handleSympChange}/>}  label="Cough"></FormControlLabel>
+                        <FormControlLabel control={ <Checkbox name="Fever" onChange={handleSympChange}onChange={handleSympChange}/>} label="Fever"></FormControlLabel>
+                        <FormControlLabel control={ <Checkbox name="Shortness of breath" onChange={handleSympChange}/>} label="Shortness of breath"></FormControlLabel>
+                    </FormGroup>
+                  </FormControl>
+
+                  <FormControl>
+                    <FormGroup>
+                    <FormControlLabel control={ <Checkbox name="Fatigue or tiredness" onChange={handleSympChange}/>} label="Fatigue or tiredness"></FormControlLabel>
+                      <FormControlLabel control={ <Checkbox name="Loss of smell or taste" onChange={handleSympChange}/>} label="Loss sense of smell or taste"></FormControlLabel>
+                      <FormControlLabel control={ <Checkbox name="Trouble breathing" onChange={handleSympChange}/>} label="Trouble breathing"></FormControlLabel>
+                    </FormGroup>
+                  </FormControl>
+
+                  <FormControl>
+                    <FormGroup>
+                      <FormControlLabel control={ <Checkbox name="Persistent pain or pressure in the chest" onChange={handleSympChange}/>} label="Persistent pain or pressure in the chest"></FormControlLabel>
+                      <FormControlLabel control={ <Checkbox name="Confusion" onChange={handleSympChange}/>} label="Confusion"></FormControlLabel>
+                      <FormControlLabel control={ <Checkbox name="Bluish lips or face" onChange={handleSympChange}/>} label="Bluish lips or face"></FormControlLabel>
+                    </FormGroup>
+                  </FormControl>
+
+                  <FormControl>
+                    <FormGroup>
+                          <FormControlLabel control={ <Checkbox name="Nausea" onChange={handleSympChange}/>} label="Nausea"></FormControlLabel>
+                          <FormControlLabel control={ <Checkbox name="Vomiting" onChange={handleSympChange}/>} label="Vomiting"></FormControlLabel>
+                          <FormControlLabel control={ <Checkbox name="Sweating and shaking chills" onChange={handleSympChange}/>} label="Sweating and shaking chills"></FormControlLabel>
+                          <FormControlLabel control={ <Checkbox name="Lower than normal temperatures" onChange={handleSympChange}/>} label="Lower than normal temperatures"></FormControlLabel>
+                    </FormGroup>
+                  </FormControl>
+                <br></br>
                 { (statusValue !== "=")
                   ?<div>
                   <Typography variant="h6" align="center">Please indicate if you have left the house today and/or are planning to expose yourself to a public area:</Typography>
@@ -103,7 +135,7 @@ function Form(props) {
                   : <div></div>
                 }
 
-            </>
+            </div>
         )
       }else if(statusValue === "-" && props.step === 1){
         return(
