@@ -24,7 +24,7 @@ import Badge from '@material-ui/core/Badge';
 import Popover from '@material-ui/core/Popover';
 import Skeleton from '@material-ui/lab/Skeleton';
 import axios from 'axios';
-
+import Canvas from './components/Canvas/Canvas'
 
 
 const drawerWidth = 240;
@@ -97,14 +97,14 @@ export default function Dashboard() {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const [status, setStatus] = React.useState(false);
-  const [reportCompleted, setReport] = React.useState(false);
+  const [status, setStatus] = React.useState(true); // change to false
+  const [reportCompleted, setReport] = React.useState(true); // change to false
   const [usersReport, setUserReport] = React.useState({});
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [buttonEnterance, setButtonEnterance] = React.useState("animated fadeIn delay-3s");
-  const [showSpinner, setSpinner] = React.useState(true);
+  const [showSpinner, setSpinner] = React.useState(false); //change to true
   const [coordinates, setCoordinates] = React.useState([]);
-  const [location, setLocation] = React.useState("");
+  const [location, setLocation] = React.useState("North Vancouver"); //change to empty
 
   console.log("after state refresh", usersReport);
 
@@ -279,7 +279,9 @@ export default function Dashboard() {
               })}
             >
               <div className={classes.drawerHeader} />
-              <h1>{location}</h1>
+              
+              <Canvas location={location}></Canvas>
+
             </main>
           </div>
           )

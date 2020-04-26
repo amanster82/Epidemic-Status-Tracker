@@ -9,7 +9,7 @@ import Typography from "@material-ui/core/Typography";
 import Checkbox from '@material-ui/core/Checkbox';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
-import GoogleMaps from './GoogleMaps';
+import GoogleMaps from '../Canvas/GoogleMaps';
 import { makeStyles } from '@material-ui/core/styles';
 
 
