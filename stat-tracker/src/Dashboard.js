@@ -104,6 +104,7 @@ export default function Dashboard() {
   const [buttonEnterance, setButtonEnterance] = React.useState("animated fadeIn delay-3s");
   const [showSpinner, setSpinner] = React.useState(true);
   const [coordinates, setCoordinates] = React.useState([]);
+  const [location, setLocation] = React.useState("");
 
   console.log("after state refresh", usersReport);
 
@@ -133,7 +134,7 @@ export default function Dashboard() {
     console.log("THE USE EFFECT!");
     console.log("the coordinates"+coordinates);
     getAreaInfo();
-  });
+  },[coordinates]);
 
   function getCoordinates(postal){
     // Make a request for a user with a given ID
@@ -162,10 +163,10 @@ export default function Dashboard() {
     console.log("the long:"+ coordinates[1]);
     var x = 'https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat='+coordinates[0]+'&lon='+coordinates[1];
     console.log(x);
-    axios.get(x)
+    axios.get(x) 
     .then(function (response) {
-      // handle success
-      console.log(response.display_name);
+      console.log(response.data.display_name);
+      setLocation(response.data.display_name);
     })
     .catch(function (error) {
       // handle error
@@ -278,7 +279,7 @@ export default function Dashboard() {
               })}
             >
               <div className={classes.drawerHeader} />
-              <h1>{}</h1>
+              <h1>{location}</h1>
             </main>
           </div>
           )
