@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -103,7 +103,7 @@ export default function Dashboard() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [buttonEnterance, setButtonEnterance] = React.useState("animated fadeIn delay-3s");
   const [showSpinner, setSpinner] = React.useState(true);
-  const [coordinates, setCoordinates] = React.useState("");
+  const [coordinates, setCoordinates] = React.useState([]);
 
   console.log("after state refresh", usersReport);
 
@@ -129,6 +129,12 @@ export default function Dashboard() {
     setOpen(false);
   };
 
+  useEffect(() => {
+    console.log("THE USE EFFECT!");
+    console.log("the coordinates"+coordinates);
+    getAreaInfo();
+  });
+
   function getCoordinates(postal){
     // Make a request for a user with a given ID
     axios.get('http://geogratis.gc.ca/services/geolocation/en/locate?q='+postal)
@@ -137,8 +143,8 @@ export default function Dashboard() {
         console.log("something went right");
         console.log(response);
         setSpinner(false);
-        let x = JSON.stringify(response)
-        setCoordinates(x)
+        let latAndLong = [response.data[0].geometry.coordinates[1], response.data[0].geometry.coordinates[0]]
+        setCoordinates(latAndLong);
       })
       .catch(function (error) {
         // handle error
@@ -149,7 +155,27 @@ export default function Dashboard() {
         // always executed
         console.log("something happened");
       });
+  }
 
+  function getAreaInfo(){
+    console.log("the lat:" + coordinates[0]);
+    console.log("the long:"+ coordinates[1]);
+    var x = 'https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat='+coordinates[0]+'&lon='+coordinates[1];
+    console.log(x);
+    axios.get(x)
+    .then(function (response) {
+      // handle success
+      console.log(response.display_name);
+    })
+    .catch(function (error) {
+      // handle error
+      console.log("something went horribly wrong");
+      console.log(error);
+    })
+    .then(function () {
+      // always executed
+      console.log("something happened");
+    });
   }
 
 
@@ -178,9 +204,9 @@ export default function Dashboard() {
 
     } else if(reportCompleted && status) {
       console.log("this is the user report", usersReport);
-      console.log("this is the report location", usersReport[0].location);
+        if(showSpinner){
+        console.log("this is the report location", usersReport[0].location);
         getCoordinates(usersReport[0].location);
-        if(showSpinner)
           return(          
             <div>
               <Skeleton variant="text" />
@@ -188,7 +214,7 @@ export default function Dashboard() {
               <Skeleton variant="rect" width={'100%'} height={'70vh'} />
             </div>
           )
-        else {
+        }else {
           return (
             <div className={classes.root}>
             <CssBaseline />
@@ -252,7 +278,7 @@ export default function Dashboard() {
               })}
             >
               <div className={classes.drawerHeader} />
-              <h1>{coordinates}</h1>
+              <h1>{}</h1>
             </main>
           </div>
           )
