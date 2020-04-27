@@ -97,12 +97,12 @@ export default function Dashboard() {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const [status, setStatus] = React.useState(true); // change to false
-  const [reportCompleted, setReport] = React.useState(true); // change to false
+  const [status, setStatus] = React.useState(false); // change to false
+  const [reportCompleted, setReport] = React.useState(false); // change to false
   const [usersReport, setUserReport] = React.useState({});
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [buttonEnterance, setButtonEnterance] = React.useState("animated fadeIn delay-3s");
-  const [showSpinner, setSpinner] = React.useState(false); //change to true
+  const [showSpinner, setSpinner] = React.useState(true); //change to true
   const [coordinates, setCoordinates] = React.useState([]);
   const [location, setLocation] = React.useState("North Vancouver"); //change to empty
 
@@ -138,14 +138,16 @@ export default function Dashboard() {
 
   function getCoordinates(postal){
     // Make a request for a user with a given ID
+    console.log("the postal code", postal);
     axios.get('http://geogratis.gc.ca/services/geolocation/en/locate?q='+postal)
       .then(function (response) {
         // handle success
         console.log("something went right");
         console.log(response);
-        setSpinner(false);
+
         let latAndLong = [response.data[0].geometry.coordinates[1], response.data[0].geometry.coordinates[0]]
         setCoordinates(latAndLong);
+
       })
       .catch(function (error) {
         // handle error
@@ -280,7 +282,7 @@ export default function Dashboard() {
             >
               <div className={classes.drawerHeader} />
               
-              <Canvas location={location}></Canvas>
+              <Canvas location={location} coordinates={coordinates}></Canvas>
 
             </main>
           </div>

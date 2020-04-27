@@ -65,7 +65,7 @@ function Form(props) {
 
 
   const handleLocationChange = (event) => {
-    let regEx = /[a-zA-Z][0-9][a-zA-Z]/;
+    let regEx = /[a-zA-Z][0-9][a-zA-Z](-| |)[0-9][a-zA-Z][0-9]/;
     if(regEx.test(event.target.value) ){
       setpostalCodeValue(event.target.value);
       const formResponses = [{
