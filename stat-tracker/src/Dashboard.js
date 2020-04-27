@@ -99,7 +99,7 @@ export default function Dashboard() {
   const [open, setOpen] = React.useState(false);
   const [status, setStatus] = React.useState(false); // change to false
   const [reportCompleted, setReport] = React.useState(false); // change to false
-  const [usersReport, setUserReport] = React.useState({});
+  const [usersReport, setUserReport] = React.useState([{location: ''}]);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [buttonEnterance, setButtonEnterance] = React.useState("animated fadeIn delay-3s");
   const [showSpinner, setSpinner] = React.useState(true); //change to true
@@ -131,12 +131,18 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
+    //problem lies here
+   // console.log("this is the report location", usersReport[0].location);
+    getCoordinates(usersReport[0].location);
     console.log("THE USE EFFECT!");
     console.log("the coordinates"+coordinates);
-    getAreaInfo();
-  },[coordinates]);
+   // getAreaInfo();
+  },[reportCompleted]);
 
   function getCoordinates(postal){
+    if(postal == 'undefined'){
+      return
+    }
     // Make a request for a user with a given ID
     console.log("the postal code", postal);
     axios.get('http://geogratis.gc.ca/services/geolocation/en/locate?q='+postal)
@@ -146,7 +152,10 @@ export default function Dashboard() {
         console.log(response);
 
         let latAndLong = [response.data[0].geometry.coordinates[1], response.data[0].geometry.coordinates[0]]
+        console.log("lat and long", latAndLong)
         setCoordinates(latAndLong);
+        setSpinner(false);
+
 
       })
       .catch(function (error) {
@@ -168,7 +177,8 @@ export default function Dashboard() {
     axios.get(x) 
     .then(function (response) {
       console.log(response.data.display_name);
-      setLocation(response.data.display_name);
+     // setLocation(response.data.display_name);
+     // setSpinner(false);
     })
     .catch(function (error) {
       // handle error
@@ -208,8 +218,6 @@ export default function Dashboard() {
     } else if(reportCompleted && status) {
       console.log("this is the user report", usersReport);
         if(showSpinner){
-        console.log("this is the report location", usersReport[0].location);
-        getCoordinates(usersReport[0].location);
           return(          
             <div>
               <Skeleton variant="text" />
