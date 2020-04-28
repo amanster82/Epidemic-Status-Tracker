@@ -89,6 +89,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    textAlign: 'center'
   }
   
 }));
@@ -140,9 +141,6 @@ export default function Dashboard() {
   },[reportCompleted]);
 
   function getCoordinates(postal){
-    if(postal == 'undefined'){
-      return
-    }
     // Make a request for a user with a given ID
     console.log("the postal code", postal);
     axios.get('http://geogratis.gc.ca/services/geolocation/en/locate?q='+postal)
@@ -154,9 +152,9 @@ export default function Dashboard() {
         let latAndLong = [response.data[0].geometry.coordinates[1], response.data[0].geometry.coordinates[0]]
         console.log("lat and long", latAndLong)
         setCoordinates(latAndLong);
-        setSpinner(false);
-
-
+        //setSpinner(false);
+        getAreaInfo(latAndLong)
+        
       })
       .catch(function (error) {
         // handle error
@@ -169,16 +167,14 @@ export default function Dashboard() {
       });
   }
 
-  function getAreaInfo(){
-    console.log("the lat:" + coordinates[0]);
-    console.log("the long:"+ coordinates[1]);
-    var x = 'https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat='+coordinates[0]+'&lon='+coordinates[1];
+  function getAreaInfo(latAndLong){
+    var x = 'https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat='+latAndLong[0]+'&lon='+latAndLong[1];
     console.log(x);
     axios.get(x) 
     .then(function (response) {
       console.log(response.data.display_name);
-     // setLocation(response.data.display_name);
-     // setSpinner(false);
+      setLocation(response.data.display_name);
+      setSpinner(false);
     })
     .catch(function (error) {
       // handle error
@@ -206,7 +202,7 @@ export default function Dashboard() {
           <Grid item xs={12} className={classes.canvas}>        
           <h1 className="animated fadeIn delay-2s">Report your status to unlock virus tracking, and the affects in your area.</h1>
           </Grid>
-          <Grid item xs={3} className={classes.canvas}>        
+          <Grid item xs={12} className={classes.canvas}>        
             <Button className={buttonEnterance} variant="contained" color="primary" onClick={()=> setStatus(true)} onAnimationEnd={()=>setButtonEnterance("animated infinite pulse")}>Report Status</Button>
           </Grid>
       </Grid>

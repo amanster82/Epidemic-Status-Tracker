@@ -58,7 +58,7 @@ function Canvas(props) {
           sm={12}
           md={6}
           lg={9}
-          xl={10}
+          xl={6}
           className={classes.portionCenter}
         >
           <Fab
@@ -76,7 +76,7 @@ function Canvas(props) {
           sm={12}
           md={6}
           lg={3}
-          xl={2}
+          xl={6}
           className={classes.center}
         >
           {locationClick ? (
@@ -135,13 +135,14 @@ function Canvas(props) {
           md={12}
           lg={5}
           xl={3}
-          style={{ display: "inline-grid", justifyContent: "center" }}
+          justify = "center"
+          style={{padding: '1%'}}
         >
           <CaseCards />
           <Info />
         </Grid>
-        <Grid item xs={12} sm={12} md={12} lg={7} xl={9}>
-          <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh'}}>
+        <Grid item xs={12} sm={12} md={12} lg={7} xl={9} style={{padding: '1%'}}>
+          <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: '70vh', border: 'solid'}}>
             <MapArea coordinates={props.coordinates}></MapArea>
           </div>
         </Grid>

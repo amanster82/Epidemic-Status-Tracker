@@ -13,6 +13,7 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 function Copyright() {
   return (
@@ -28,7 +29,7 @@ function Copyright() {
 }
 
 
-function postData(email, pass, setError) {
+function postData(email, pass, setError, setSpinner) {
 
   console.log("email:", email);
   console.log("pass:", pass);
@@ -38,6 +39,7 @@ function postData(email, pass, setError) {
         pass: pass
   }
 
+  setSpinner(true);
   axios.post(`http://localhost:9000/api/login`, login)
       .then( function(res) {
         console.log(res);
@@ -48,6 +50,7 @@ function postData(email, pass, setError) {
       .catch(function (error) {
         console.log("setting the error to true");
         setError(true);
+        setSpinner(false);
       })
   }
 
@@ -79,23 +82,29 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+
 export default function SignIn(props) {
   const classes = useStyles();
   const [email, setEmail] = useState('')
   const [pass, setPass] = useState('')
   const [isError, setError] = useState(false);
+  const [showSpinner, setSpinner] = useState(false);
+  let icon;
+
+  if(showSpinner){
+    icon = <CircularProgress/>;
+  } else{
+    icon =  <Avatar className={classes.avatar}><LockOutlinedIcon/></Avatar>;
+  }
 
   return (
-    <div className={classes.flexMe}>
+      <div className={classes.flexMe}>
       <Paper className={classes.paper} elevation={3}>
-          <Avatar className={classes.avatar}>
-            <LockOutlinedIcon />
-          </Avatar>
+          {icon}
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
           <form className={classes.form} noValidate>
-             
             <TextField
               error = {isError} 
               variant="outlined"
@@ -103,7 +112,7 @@ export default function SignIn(props) {
               required
               fullWidth
               id="email"
-              label="Alias"
+              label="Email"
               name="email"
               autoComplete="email"
               autoFocus
@@ -126,7 +135,7 @@ export default function SignIn(props) {
               label="Remember me"
             />
             <Button
-              onClick={()=>postData(email, pass, setError)}
+              onClick={()=>postData(email, pass, setError, setSpinner)}
               fullWidth
               variant="contained"
               color="primary"
