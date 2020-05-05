@@ -4,6 +4,7 @@ import Button from "@material-ui/core/Button";
 import "./App.css";
 import Login from "./components/Login/Login";
 import SignUp from "./components/Login/SignUp";
+import Dashboard from "./Dashboard";
 
 const useStyles = makeStyles({
 
@@ -35,12 +36,17 @@ function External() {
   /**State**/
   const [buttonContainer, removeButtonContainer] = useState(false);
   /**State**/
-
   const [signUp, signUpSwitch] = useState(false);
+  const [isAccessGranted, setAccess] = useState(false);
+  const [Pagechange, setPage] = useState(false);
   
   function signUpToggle(x){
     console.log("I fireed!!");
     signUpSwitch(x)
+  }
+
+  function accessGranted(value){
+    setAccess(value);
   }
 
   /**Conditional Render**/
@@ -59,26 +65,37 @@ function External() {
   } else if(!signUp){
     element=
     <div className="animated zoomIn">
-      <Login SignUpClick={ ()=>signUpToggle(true) }></Login>
+      <Login SignUpClick={ ()=>signUpToggle(true) } accessGranted = {(value)=>accessGranted(value)}></Login>
     </div>
   }else {
     element = <SignUp SignInClick={ ()=>signUpToggle(false) }></SignUp>
   }
   /**Conditional End**/
 
-  return (
-    <div className="App">
-      <header className="App-header">
-        <div className="Spacing">
-          <h1 className={classes.heading}>Epidemic Status Tracker</h1>
-          <h2 className={classes.heading}>
-            Use this app to log and track whose positive.
-          </h2>
+  let page;
+  if(Pagechange){
+    page = <Dashboard></Dashboard>
+  }else{
+    page = (
+        <div className="App">
+          <header className="App-header">
+            <div className= {(isAccessGranted) ? "Spacing animated fadeOutUp delay-1s" : "Spacing"} onAnimationEnd={()=>setPage(true)}>
+              <h1 className={classes.heading}>Epidemic Status Tracker</h1>
+              <h2 className={classes.heading}>
+                Use this app to log and track whose positive.
+              </h2>
+            </div>
+            {element}
+          </header>
         </div>
-        {element}
-      </header>
-    </div>
-  );
+      );
+  }
+
+  return (
+      <div>{page}</div>
+    );
+
+
 }
 
 export default External;

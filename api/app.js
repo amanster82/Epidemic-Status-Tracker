@@ -10,11 +10,49 @@ var testAPIRouter = require("./routes/testAPI");
 
 var app = express();
 
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
+var createWhitelistValidator = function(whitelist) {
+  return function(val) {
+    for (var i = 0; i < whitelist.length; i++) {
+      if (val === whitelist[i]) {
+        return true;
+      }
+    }
+    return false;
+  }
+};
+
+var originWhiteList = [
+  'http://localhost:3000',
+  'http://amanster.ddns.net:3000'
+];
+
+var corsOptions = {
+  allowOrigin: createWhitelistValidator(originWhiteList)
+};
+
+var handleCors = function(options){
+  return function(req, res, next){
+    if(options.allowOrigin){
+      console.log("made it here");
+      var origin = req.header('origin');
+      res.set('Access-Control-Allow-Origin', origin);
+      res.set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+      next();
+    } else{
+      res.set('Access-Control-Allow-Origin', '*')
+    }
+  }
+};
+
+
+app.use(handleCors(corsOptions));
+  //res.header("Access-Control-Allow-Origin", "http://amanster.ddns.net:3000");
+  //res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  //res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//   next();
+// });
+
+//handleCors(corsOptions);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -30,6 +68,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use("/testAPI", testAPIRouter);
 
+console.log("Starting the Nodejs server on Port 9000")
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

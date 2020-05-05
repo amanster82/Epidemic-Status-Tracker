@@ -29,27 +29,33 @@ function Copyright() {
 }
 
 
-function postData(email, pass, setError, setSpinner) {
+function postData(email, pass, setEmailError, setSpinner, setAccessGranted) {
 
   console.log("email:", email);
   console.log("pass:", pass);
 
   const login = {
-        alias: email,
+        email: email,
         pass: pass
   }
 
   setSpinner(true);
-  axios.post(`http://localhost:9000/api/login`, login)
+  let url = window.location.href;
+  url = url.split(":");
+  url = url[0]+":"+url[1];
+  console.log(url);
+  axios.post(url+`:9000/api/login`, login)
       .then( function(res) {
         console.log(res);
         console.log(res.data);
         console.log("setting the error to false");
-        setError(false);
+        setEmailError(false);
+        setSpinner(false);
+        setAccessGranted(true);
       })
       .catch(function (error) {
         console.log("setting the error to true");
-        setError(true);
+        setEmailError(true);
         setSpinner(false);
       })
   }
@@ -80,6 +86,13 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
     justifyContent: "center",
   },
+
+  iconContainer:{
+    height: "6vh",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
+  }
 }));
 
 
@@ -87,8 +100,10 @@ export default function SignIn(props) {
   const classes = useStyles();
   const [email, setEmail] = useState('')
   const [pass, setPass] = useState('')
-  const [isError, setError] = useState(false);
+  const [isEmailError, setEmailError] = useState(false);
+  //const [isError, setEmailError] = useState(false);
   const [showSpinner, setSpinner] = useState(false);
+  const [accessGranted, setAccessGranted] = useState(false);
   let icon;
 
   if(showSpinner){
@@ -98,21 +113,23 @@ export default function SignIn(props) {
   }
 
   return (
-      <div className={classes.flexMe}>
+      <div className={(accessGranted) ? classes.flexMe+" animated bounceOutDown":classes.flexMe} onAnimationEnd={ (accessGranted) ? props.accessGranted(true) : false }>
       <Paper className={classes.paper} elevation={3}>
+        <div className={classes.iconContainer}>
           {icon}
+        </div>
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
           <form className={classes.form} noValidate>
             <TextField
-              error = {isError} 
+              error = {isEmailError} 
               variant="outlined"
               margin="normal"
               required
               fullWidth
               id="email"
-              label="Email"
+              label={isEmailError ? "Please enter an appropriate email" : "Email"}
               name="email"
               autoComplete="email"
               autoFocus
@@ -135,7 +152,7 @@ export default function SignIn(props) {
               label="Remember me"
             />
             <Button
-              onClick={()=>postData(email, pass, setError, setSpinner)}
+              onClick={()=>postData(email, pass, setEmailError, setSpinner, setAccessGranted)}
               fullWidth
               variant="contained"
               color="primary"
