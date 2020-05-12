@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import "./App.css";
 import Login from "./components/Login/Login";
 import SignUp from "./components/Login/SignUp";
 import Dashboard from "./Dashboard";
+import axios from 'axios';
 
 const useStyles = makeStyles({
 
@@ -39,6 +40,18 @@ function External() {
   const [signUp, signUpSwitch] = useState(false);
   const [isAccessGranted, setAccess] = useState(false);
   const [Pagechange, setPage] = useState(false);
+
+  useEffect(() => {
+    let url = window.location.href;
+    url = url.split(":");
+    url = url[0]+":"+url[1];
+    console.log(url);
+    axios.get(url+`:9000/api/authentication`, {withCredentials: true})
+      .then( function(res) {
+        console.log(res);
+        console.log(res.data);
+      });
+  });
   
   function signUpToggle(x){
     console.log("I fireed!!");
@@ -68,7 +81,7 @@ function External() {
       <Login SignUpClick={ ()=>signUpToggle(true) } accessGranted = {(value)=>accessGranted(value)}></Login>
     </div>
   }else {
-    element = <SignUp SignInClick={ ()=>signUpToggle(false) }></SignUp>
+    element = <SignUp SignInClick={ ()=>signUpToggle(false) } accessGranted = {(value)=>accessGranted(value)}></SignUp>
   }
   /**Conditional End**/
 

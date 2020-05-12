@@ -29,7 +29,7 @@ function Copyright() {
 }
 
 
-function postData(email, pass, setEmailError, setSpinner, setAccessGranted) {
+function postData(email, pass, setSpinner, setAccessGranted, setEmailError, setEmailLabel, setPassError, setPassLabel) {
 
   console.log("email:", email);
   console.log("pass:", pass);
@@ -44,7 +44,7 @@ function postData(email, pass, setEmailError, setSpinner, setAccessGranted) {
   url = url.split(":");
   url = url[0]+":"+url[1];
   console.log(url);
-  axios.post(url+`:9000/api/login`, login)
+  axios.post(url+`:9000/api/login`, login, {withCredentials: true})
       .then( function(res) {
         console.log(res);
         console.log(res.data);
@@ -55,7 +55,16 @@ function postData(email, pass, setEmailError, setSpinner, setAccessGranted) {
       })
       .catch(function (error) {
         console.log("setting the error to true");
-        setEmailError(true);
+        console.log(error.response.data);
+        console.log(error.response);
+        if(error.response.data.message.indexOf("Password") > -1){
+          setPassLabel(error.response.data.message);
+          setPassError(true); 
+        }else{
+          setEmailLabel(error.response.data.message);
+          setEmailError(true);
+        }
+        
         setSpinner(false);
       })
   }
@@ -101,7 +110,9 @@ export default function SignIn(props) {
   const [email, setEmail] = useState('')
   const [pass, setPass] = useState('')
   const [isEmailError, setEmailError] = useState(false);
-  //const [isError, setEmailError] = useState(false);
+  const [isPassError, setPassError] = useState(false);
+  const [emailLabel, setEmailLabel] = useState("Email");
+  const [passLabel, setPassLabel] = useState("Password");
   const [showSpinner, setSpinner] = useState(false);
   const [accessGranted, setAccessGranted] = useState(false);
   let icon;
@@ -113,7 +124,7 @@ export default function SignIn(props) {
   }
 
   return (
-      <div className={(accessGranted) ? classes.flexMe+" animated bounceOutDown":classes.flexMe} onAnimationEnd={ (accessGranted) ? props.accessGranted(true) : false }>
+      <div className={(accessGranted) ? classes.flexMe+" animated bounceOutDown":classes.flexMe} onAnimationEnd={ (accessGranted) ? props.accessGranted(true) : null }>
       <Paper className={classes.paper} elevation={3}>
         <div className={classes.iconContainer}>
           {icon}
@@ -129,30 +140,31 @@ export default function SignIn(props) {
               required
               fullWidth
               id="email"
-              label={isEmailError ? "Please enter an appropriate email" : "Email"}
+              label={emailLabel}
               name="email"
               autoComplete="email"
               autoFocus
-              onChange={(e)=> setEmail(e.target.value)}
+              onChange={(e)=> { setEmail(e.target.value); setEmailLabel("Email"); setEmailError(false) } }
             />
             <TextField
+              error = {isPassError}
               variant="outlined"
               margin="normal"
               required
               fullWidth
               name="password"
-              label="Password"
+              label={passLabel}
               type="password"
               id="password"
               autoComplete="current-password"
-              onChange={(e)=> setPass(e.target.value)}
+              onChange={(e)=> {setPass(e.target.value); setPassLabel("Password"); setPassError(false)}}
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
             <Button
-              onClick={()=>postData(email, pass, setEmailError, setSpinner, setAccessGranted)}
+              onClick={()=>postData(email, pass, setSpinner, setAccessGranted, setEmailError, setEmailLabel, setPassError, setPassLabel)}
               fullWidth
               variant="contained"
               color="primary"

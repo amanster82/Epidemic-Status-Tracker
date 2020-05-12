@@ -1,12 +1,18 @@
+if(process.env.NODE_ENV !== 'production'){
+  require('dotenv').config()
+}
+
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var testAPIRouter = require("./routes/testAPI");
+var passport = require('passport');
+var flash = require('express-flash');
+var session = require('express-session');
 
 var app = express();
 
@@ -37,6 +43,7 @@ var handleCors = function(options){
       var origin = req.header('origin');
       res.set('Access-Control-Allow-Origin', origin);
       res.set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+      res.set('Access-Control-Allow-Credentials', true);
       next();
     } else{
       res.set('Access-Control-Allow-Origin', '*')
@@ -63,17 +70,28 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(flash())
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      sameSite: false
+    }
+}))
+app.use(passport.initialize())
+app.use(passport.session())
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use("/testAPI", testAPIRouter);
 
-console.log("Starting the Nodejs server on Port 9000")
+console.log("Starting the Nodejs server on Port 9000");
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
-});
+}); 
 
 // error handler
 app.use(function(err, req, res, next) {
