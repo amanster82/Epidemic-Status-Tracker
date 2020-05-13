@@ -32,9 +32,9 @@ router.get("/api/authentication", (req, res, next) => {
   console.log(req.user);
   console.log(req.isAuthenticated());
   if (req.isAuthenticated()) {
-    res.send("logged in");
+     res.send("logged in");
   } else {
-    res.send("not logged in");
+     res.send("not logged in");
   }
 });
 

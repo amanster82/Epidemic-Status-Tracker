@@ -70,8 +70,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(flash())
+//app.use(flash())
+var PostgreSqlStore = require('connect-pg-simple')(session);
+
 app.use(session({
+    store : new PostgreSqlStore({ conString: "postgres://postgres:postgres@localhost:5433/postgres"}),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
