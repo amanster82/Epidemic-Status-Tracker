@@ -24,8 +24,7 @@ import Badge from '@material-ui/core/Badge';
 import Popover from '@material-ui/core/Popover';
 import Skeleton from '@material-ui/lab/Skeleton';
 import axios from 'axios';
-import Canvas from './components/Canvas/Canvas'
-
+import Canvas from './components/Canvas/Canvas';
 
 const drawerWidth = 240;
 

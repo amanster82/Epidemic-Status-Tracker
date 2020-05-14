@@ -12,7 +12,7 @@ function initialize(passport, knex) {
         return done(null, false, {message:"Email missing"});
     }
     console.log("ABOUT TO KNEX");
-    knex("account")
+    knex("user")
       .where({
         email: email,
       })

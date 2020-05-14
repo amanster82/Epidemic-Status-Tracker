@@ -74,7 +74,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 var PostgreSqlStore = require('connect-pg-simple')(session);
 
 app.use(session({
-    store : new PostgreSqlStore({ conString: "postgres://postgres:postgres@localhost:5433/postgres"}),
+    store : new PostgreSqlStore({ conString: "postgres://postgres:postgres@localhost:5433/TrackerData"}),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,

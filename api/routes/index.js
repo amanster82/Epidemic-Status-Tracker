@@ -5,7 +5,7 @@ var passport = require("passport");
 var initializePassport = require("./passport-config");
 
 const connectionString =
-  "postgressql://postgres:postgres@localhost:5433/postgres";
+  "postgressql://postgres:postgres@localhost:5433/TrackerData";
 
 var knex = require("knex")({
   client: "pg",
@@ -32,7 +32,7 @@ router.get("/api/authentication", (req, res, next) => {
   console.log(req.user);
   console.log(req.isAuthenticated());
   if (req.isAuthenticated()) {
-     res.send("logged in");
+     res.json({Auth: req.isAuthenticated(), message: "logged in"});
   } else {
      res.send("not logged in");
   }
@@ -133,8 +133,12 @@ router.post("/api/register", async (req, res, next) => {
   let obj = req.body;
   let email = obj.email;
   let pass = obj.pass;
+  let gender = obj.gender;
+  let birthdate = obj.birthdate;
   console.log("email:", email);
   console.log("password:", pass);
+  console.log("gender", gender);
+  console.log("birthday", birthdate);
   const rows = await knex("account").where({
     email: email,
   });
@@ -145,10 +149,12 @@ router.post("/api/register", async (req, res, next) => {
   } else {
     const hash = await bcrypt.hash(pass, 10);
     console.log("the encrypted password", hash);
-    const user = await knex("account")
+    const user = await knex("user")
       .insert({
         email: email,
         password: hash,
+        gender: gender,
+        birthdate: birthdate
       })
       .returning("id");
 
@@ -161,8 +167,8 @@ router.post("/api/register", async (req, res, next) => {
       }
       res.status(200);
       console.log("user created", user);
-      res.send(user);
-      res.redirect("/api/authentication");
+      //res.send(user);
+      //res.redirect("/api/authentication");
     });
   }
 
