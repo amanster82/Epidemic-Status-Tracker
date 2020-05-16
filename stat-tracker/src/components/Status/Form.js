@@ -71,7 +71,7 @@ function Form(props) {
       const formResponses = [{
         status: statusValue,
         symptoms: Object.entries(sympValue).filter(([,v]) => v === true).reduce((prev, [k, v]) => ({...prev, [k]: v}), {}),
-        risk: riskValue,
+        risk: (riskValue=='Yes' ? true: false),
         location: event.target.value
       }]
       props.response(formResponses);

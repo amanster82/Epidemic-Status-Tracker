@@ -68,7 +68,16 @@ export default function Report(props) {
 
   const handleNext = () => {
     if(activeStep === steps.length - 1){
-      props.submit(FormReponsesObj);
+
+      let restructuredResponse = 
+      {
+        location: FormReponsesObj[0].location,
+        risk: FormReponsesObj[0].risk,
+        status: FormReponsesObj[0].status,
+        symptoms: Object.keys(FormReponsesObj[0].symptoms)
+      } 
+      console.log("this is restructured", restructuredResponse);
+      props.submit(restructuredResponse);
       //audio.play();
     }else {
       console.log("getting here??")

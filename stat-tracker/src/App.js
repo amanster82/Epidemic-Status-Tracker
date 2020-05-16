@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { BrowserRouter, Route } from "react-router-dom";
 import External from './External';
 import Report from './Report';
@@ -16,8 +16,6 @@ function authenticate (setPage){
   axios
     .get(url + `:9000/api/authentication`, { withCredentials: true })
     .then(function (res) {
-      console.log(res);
-      console.log(res.data);
       if(res.data.Auth){
         setPage(true)
       }else{
@@ -28,7 +26,10 @@ function authenticate (setPage){
 
 function App() {
     const [Pagechange, setPage] = useState(null);
-    authenticate(setPage);
+    useEffect(()=>{
+      (Pagechange==null ? authenticate(setPage) : console.log("App.js Effect Done"))
+    });
+
     return (
         <MyContext.Provider value={{Pagechange, setPage}}>
         

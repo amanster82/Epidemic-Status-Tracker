@@ -13,13 +13,6 @@ var knex = require("knex")({
   debug: true,
 });
 
-// const { Client } = require('pg');
-// const client = new Client({
-//   connectionString:connectionString
-// })
-
-// client.connect();
-//const getUserById = "hey";
 initializePassport(passport, knex);
 
 /* GET home page. */
@@ -27,14 +20,57 @@ router.get("/", function (req, res, next) {
   res.render("index", { title: "Express" });
 });
 
+router.post("/api/report", (req, res, next) => {
+  console.log("INCOMING.....");
+
+  let obj = Object.assign(req.body, {
+    user_id: req.user,
+    date_stamp: new Date(),
+  });
+
+  console.log(obj);
+  knex("report")
+    .insert(obj)
+    .then((result) => {
+      console.log("success"), res.json({ success: true, message: "ok" }); // respond back to request
+    });
+  //  .catch(
+  //   console.log("something went horribly wrong"),
+  //   res.status(500)
+  //  )
+});
+
+router.get("/api/dashboard", (req, res, next) => {
+  console.log(req.user);
+  knex("report")
+    .where({ user_id: req.user })
+    .andWhere({ date_stamp: new Date() })
+    .then((rows) => {
+      console.log("something went right have a look", rows[0]);
+      res.json({ success: true, message: "ok", rows: rows[0] }); // respond back to request
+    })
+    .catch(() => {
+      res.send("hey")
+    })
+});
+
 router.get("/api/authentication", (req, res, next) => {
   console.log("Cookie assigned: ", req.cookies);
   console.log(req.user);
   console.log(req.isAuthenticated());
   if (req.isAuthenticated()) {
-     res.json({Auth: req.isAuthenticated(), message: "logged in"});
+    let test;
+    knex("user")
+      .where({ id: req.user })
+      .then((rows) => {
+        test = Object.assign(
+          { Auth: req.isAuthenticated(), message: "logged in" },
+          rows[0]
+        );
+        res.json({ Auth: req.isAuthenticated(), message: "logged in" });
+      });
   } else {
-     res.send("not logged in");
+    res.send("not logged in");
   }
 });
 
@@ -73,62 +109,6 @@ router.post("/api/login", (req, res, next) => {
   )(req, res, next);
 });
 
-// router.post('/api/login', (req, res) => {
-
-//   let obj = req.body;
-//   let email = obj.email
-//   let pass = obj.pass;
-
-//   console.log("  in table now...");
-// knex('account')
-// .where({
-//   email:  email,
-//   password: pass
-// })
-// .then(rows => {
-//   if(rows.length > 0){
-//     res.status(200).json({status: "Success"});
-//   } else{
-//     res.status(500).json({status: "Error"})
-//   }
-// })
-// });
-
-// router.post("/api/register", (req, res) => {
-//   let obj = req.body;
-//   let email = obj.email;
-//   let pass = obj.pass;
-
-//   console.log("email:", email);
-//   console.log("password:", pass);
-
-//   knex("account")
-//     .where({
-//       email: email,
-//     })
-//     .then((rows) => {
-//       if (rows.length > 0) {
-//         console.log("sending it!");
-//         res.status(404);
-//         res.send("Account already exists");
-//         //res.sendStatus(404);
-//       } else {
-//         bcrypt.hash(pass, 10).then(function (hash) {
-//           console.log("the encrypted password", hash);
-//           knex("account")
-//             .insert({
-//               email: email,
-//               password: hash,
-//             })
-//             .then(() => {
-//               res.status(200);
-//               res.send("Account created!");
-//             });
-//         });
-//       }
-//     });
-// });
-
 router.post("/api/register", async (req, res, next) => {
   let obj = req.body;
   let email = obj.email;
@@ -139,14 +119,20 @@ router.post("/api/register", async (req, res, next) => {
   console.log("password:", pass);
   console.log("gender", gender);
   console.log("birthday", birthdate);
-  const rows = await knex("account").where({
+
+  console.log("***REGISTERING***")
+  const rows = await knex("user").where({
     email: email,
-  });
-  if (rows.length > 0) {
-    console.log("sending it!");
-    res.status(404);
-    res.send("Account already exists");
-  } else {
+  })
+  try{
+    if (rows.length > 0) {
+      console.log("sending it!");
+      res.status(404);
+      res.send("Account already exists");
+    }
+  }catch{
+    console.log("HEY HEY HEY")
+  }
     const hash = await bcrypt.hash(pass, 10);
     console.log("the encrypted password", hash);
     const user = await knex("user")
@@ -154,23 +140,23 @@ router.post("/api/register", async (req, res, next) => {
         email: email,
         password: hash,
         gender: gender,
-        birthdate: birthdate
+        birthdate: birthdate,
       })
       .returning("id");
 
     console.log("is this the id", user);
+  
 
-    //Create a session
-    req.login(user, function (err) {
-      if (err) {
-        return next(err);
-      }
-      res.status(200);
-      console.log("user created", user);
-      //res.send(user);
-      //res.redirect("/api/authentication");
-    });
-  }
+  //Create a session
+  req.login(user, function (err) {
+    if (err) {
+      return next(err);
+    }
+    res.status(200);
+    console.log("user created", user);
+    res.send(user);
+    //res.redirect("/api/authentication");
+  });
 
   console.log(req.user);
   console.log(req.isAuthenticated());
