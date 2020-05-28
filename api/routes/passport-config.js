@@ -12,7 +12,7 @@ function initialize(passport, knex) {
         return done(null, false, {message:"Email missing"});
     }
     console.log("ABOUT TO KNEX");
-    knex("user")
+    knex("users")
       .where({
         email: email,
       })
@@ -30,10 +30,11 @@ function initialize(passport, knex) {
           } catch (e) {
             return done(e);
           }
-        } else {
-          //console.log("no user with that email is running here")
-          return done(null, false, { message: "No user with that email" }); //first parameter is the error, second is the user, third is message
-        }
+        } 
+      })
+      .catch(()=>{
+        console.log("no user");
+        return done(null, false, { message: "No user with that email" }); //first parameter is the error, second is the user, third is message
       });
   };
   passport.use(new LocalStrategy({ usernameField: "email", passwordField: "pass" }, authenticateUser));

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useContext} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
@@ -9,6 +9,7 @@ import InfoCard from "./InfoCard";
 import GoogleMaps from "./GoogleMaps";
 import MapArea from "../Map/MapArea.js";
 import { sizing } from "@material-ui/system";
+import { MyContext } from "../../MyContext";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -42,6 +43,10 @@ const useStyles = makeStyles((theme) => ({
 function Canvas(props) {
   const classes = useStyles();
   const [locationClick, setLocation] = React.useState(false);
+  const { MetaData } = useContext(MyContext);
+
+  console.log("-----------------in the Canvas---------------");
+  console.log(MetaData);
 
   function onLocationChange(value) {
     // alert(!value);
@@ -93,19 +98,19 @@ function Canvas(props) {
     return (
       <React.Fragment>
         <Grid item xs={12}>
-          <CaseCard status="Positive" number="8"></CaseCard>
+          <CaseCard status="Positive" number={MetaData.data.positives}></CaseCard>
         </Grid>
 
         <Grid item xs={12}>
-          <CaseCard status="Possible" number="7"></CaseCard>
+          <CaseCard status="Possible" number={MetaData.data.possibilities}></CaseCard>
         </Grid>
 
         <Grid item xs={12}>
-          <CaseCard status="Negative" number="6"></CaseCard>
+          <CaseCard status="Negative" number={MetaData.data.negatives}></CaseCard>
         </Grid>
 
         <Grid item xs={12}>
-          <CaseCard status="Recovered" number="5"></CaseCard>
+          <CaseCard status="Recovered" number={MetaData.data.recoveries}></CaseCard>
         </Grid>
       </React.Fragment>
     );
@@ -143,7 +148,7 @@ function Canvas(props) {
         </Grid>
         <Grid item xs={12} sm={12} md={12} lg={7} xl={9} style={{padding: '1%'}}>
           <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: '70vh', border: 'solid'}}>
-            <MapArea coordinates={props.coordinates}></MapArea>
+            <MapArea coordinates={props.coordinates} boundingBox={props.boundingBox}></MapArea>
           </div>
         </Grid>
       </Grid>

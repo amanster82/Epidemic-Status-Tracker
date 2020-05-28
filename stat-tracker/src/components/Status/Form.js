@@ -65,7 +65,7 @@ function Form(props) {
 
 
   const handleLocationChange = (event) => {
-    let regEx = /[a-zA-Z][0-9][a-zA-Z]/;
+    let regEx = /^(?!.*[DFIOQU])[A-VXY][0-9][A-Z] ?[0-9][A-Z][0-9]$/;
     if(regEx.test(event.target.value) ){
       setpostalCodeValue(event.target.value);
       const formResponses = [{
@@ -163,7 +163,7 @@ function Form(props) {
       }else{
         return(
           <>
-              <Typography variant="h6" align="center">Please type the first 3 digits of your postal code (where you reside)</Typography>
+              <Typography variant="h6" align="center">Please enter a postal code (where you reside or a reference point near you)</Typography>
               {/* <GoogleMaps response={props.response}></GoogleMaps> */}
               <TextField 
               onChange={handleLocationChange}>

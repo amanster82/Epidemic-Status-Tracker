@@ -20,71 +20,165 @@ router.get("/", function (req, res, next) {
   res.render("index", { title: "Express" });
 });
 
-router.post("/api/report", (req, res, next) => {
-  console.log("INCOMING.....");
+router.get("/api/metadata", async (req, res, next) => {
+  console.log("------------------/api/metadata-----------------------")
+  console.log(req.user);
+  if(req.user == "undefined"){
+    console.error("user is not logged in");
+    return next();
+  }
+try{
+  var postalCode = await knex("report")
+    .select("location")
+    .where({ user_id: req.user })
+    .andWhere({active: true});
+
+ 
+    console.log("POSTALLLLLLLL>>>>>>>>" + postalCode);
+    console.log(postalCode[0].location);
+
+    postalCode = "%" + postalCode[0].location.substring(0, 3) + "%";
+    console.log("THIS IS THE LOCATION:", postalCode);
+
+    var positiveCount = await knex("report")
+      .count("user_id")
+      .where({ status: "+" })
+      .andWhere("location", "like", postalCode)
+      .andWhere({active: true})
+    positiveCount = positiveCount[0].count;
+    console.log("THIS IS THE POSITIVES:", positiveCount);
+
+    var negativeCount = await knex("report")
+      .count("user_id")
+      .where({ status: "-" })
+      .andWhere("location", "like", postalCode)
+      .andWhere({active: true})
+    negativeCount = negativeCount[0].count;
+    console.log("THIS IS THE NEGATIVES:", negativeCount);
+
+    var recoveredCount = await knex("report")
+      .count("user_id")
+      .where({ status: "=" })
+      .andWhere("location", "like", postalCode)
+      .andWhere({active: true})
+    recoveredCount = recoveredCount[0].count;
+    console.log("THIS IS THE RECOVERED:", recoveredCount);
+
+    var symptomCount = await knex("report")
+      .count("user_id")
+      .where({ status: "s" })
+      .andWhere("location", "like", postalCode)
+      .andWhere({active: true})
+    symptomCount = symptomCount[0].count;
+    console.log("THIS IS THE SYMPTOMATIC:", symptomCount);
+
+    var coordinates = await knex("report")
+      .where("location", "like", postalCode)
+      .andWhere({active: true})
+
+    console.log("these are the coordinates:", coordinates);
+
+    res.json({
+      positives: positiveCount,
+      negatives: negativeCount,
+      recoveries: recoveredCount,
+      possibilities: symptomCount,
+      locations: coordinates,
+    });
+  }
+  catch{
+    if(!req.isAuthenticated()){
+      console.error("not logged in");
+      return next();
+    }
+    console.error("Not logged information yet")
+    return res.sendStatus(500);
+  }  
+});
+
+router.post("/api/report", async (req, res, next) => {
+  console.log("------------------/api/report-----------------------")
 
   let obj = Object.assign(req.body, {
     user_id: req.user,
     date_stamp: new Date(),
+    active: true,
   });
 
-  console.log(obj);
+  const check = await knex("report").where({ user_id: req.user });
+  try{
+    console.log("Trying to check");
+    await knex("report")
+      .where({ user_id: req.user })
+      .andWhere({ active: true })
+      .update({ active: false });
+  }
+  catch{
+    console.log("this is the first time...")
+  }
+
   knex("report")
-    .insert(obj)
-    .then((result) => {
-      console.log("success"), res.json({ success: true, message: "ok" }); // respond back to request
-    });
-  //  .catch(
-  //   console.log("something went horribly wrong"),
-  //   res.status(500)
-  //  )
+  .insert(obj)
+  .then((result) => {
+    console.log("success"), res.json({ success: true, message: "ok" }); // respond back to request
+  });
+
+
 });
 
 router.get("/api/dashboard", (req, res, next) => {
+  console.log("------------------/api/dashboard-----------------------")
   console.log(req.user);
   knex("report")
     .where({ user_id: req.user })
     .andWhere({ date_stamp: new Date() })
     .then((rows) => {
       console.log("something went right have a look", rows[0]);
-      res.json({ success: true, message: "ok", rows: rows[0] }); // respond back to request
+      res.json({ rows: rows[0] }); // respond back to request
     })
     .catch(() => {
-      res.send("hey")
-    })
+      res.send("hey");
+    });
 });
 
 router.get("/api/authentication", (req, res, next) => {
+  console.log("------------------/api/authentication-----------------------")
   console.log("Cookie assigned: ", req.cookies);
   console.log(req.user);
   console.log(req.isAuthenticated());
   if (req.isAuthenticated()) {
-    let test;
-    knex("user")
+    knex("users")
       .where({ id: req.user })
       .then((rows) => {
-        test = Object.assign(
-          { Auth: req.isAuthenticated(), message: "logged in" },
-          rows[0]
-        );
         res.json({ Auth: req.isAuthenticated(), message: "logged in" });
       });
   } else {
-    res.send("not logged in");
+    console.log("not logged in");
+    return res.send("not logged in");
+  }
+});
+
+router.get("/api/logout", (req, res, next) => {
+  console.log("logging out...");
+  req.logOut();
+  req.session.destroy();
+  console.log("successfully? Logged out?");
+  if(!req.isAuthenticated()){
+    res.send(true)
+    console.log("100% logged out");
   }
 });
 
 router.post("/api/login", (req, res, next) => {
-  return passport.authenticate(
-    "local",
-    { session: true },
-    (err, passportUser, info) => {
+  console.log("------------------/api/login-----------------------")
+  return passport.authenticate("local", { session: true },(err, passportUser, info) => {
       console.log(
         "HEEEEEEEEEEEEEEEEEEEEEEEEEEEY Bitch",
         err,
         passportUser,
         info
       );
+
       if (err) {
         return next(err);
       }
@@ -110,6 +204,7 @@ router.post("/api/login", (req, res, next) => {
 });
 
 router.post("/api/register", async (req, res, next) => {
+  console.log("------------------/api/register-----------------------")
   let obj = req.body;
   let email = obj.email;
   let pass = obj.pass;
@@ -120,42 +215,42 @@ router.post("/api/register", async (req, res, next) => {
   console.log("gender", gender);
   console.log("birthday", birthdate);
 
-  console.log("***REGISTERING***")
-  const rows = await knex("user").where({
+  console.log("***REGISTERING***");
+  const rows = await knex("users").where({
     email: email,
-  })
-  try{
+  });
+  try {
     if (rows.length > 0) {
       console.log("sending it!");
       res.status(404);
       res.send("Account already exists");
     }
-  }catch{
-    console.log("HEY HEY HEY")
+  } catch {
+    console.log("HEY HEY HEY");
   }
-    const hash = await bcrypt.hash(pass, 10);
-    console.log("the encrypted password", hash);
-    const user = await knex("user")
-      .insert({
-        email: email,
-        password: hash,
-        gender: gender,
-        birthdate: birthdate,
-      })
-      .returning("id");
+  const hash = await bcrypt.hash(pass, 10);
+  console.log("the encrypted password", hash);
+  const user = await knex("users")
+    .insert({
+      email: email,
+      password: hash,
+      gender: gender,
+      birthdate: birthdate,
+    })
+    .returning("id");
 
-    console.log("is this the id", user);
-  
+  console.log("is this the id", user[0]);
 
   //Create a session
-  req.login(user, function (err) {
+  req.login(user[0], function (err) {
     if (err) {
       return next(err);
     }
     res.status(200);
-    console.log("user created", user);
-    res.send(user);
+    console.log("user created", req.user);
+    //res.send(req.user);
     //res.redirect("/api/authentication");
+    res.send("Registration Complete");
   });
 
   console.log(req.user);

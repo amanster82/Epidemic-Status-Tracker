@@ -8,6 +8,7 @@ import Typography from "@material-ui/core/Typography";
 import Form from "./components/Status/Form";
 import Paper from '@material-ui/core/Paper';
 import { BrowserRouter, Route, RouteComponentProps } from "react-router-dom";
+import axios from "axios";
 import ReportSound from './static/sounds/Drip_Echo.wav';
 
 const useStyles = makeStyles((theme) => ({
@@ -66,15 +67,18 @@ export default function Report(props) {
       // }
   }
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if(activeStep === steps.length - 1){
-
+      props.setSpinner(true);
+      let coordinates = await axios.get('https://geocoder.ca/?locate='+(FormReponsesObj[0].location).toUpperCase()+'&geoit=XML&json=1')
       let restructuredResponse = 
       {
-        location: FormReponsesObj[0].location,
+        location: (FormReponsesObj[0].location).toUpperCase(),
         risk: FormReponsesObj[0].risk,
         status: FormReponsesObj[0].status,
-        symptoms: Object.keys(FormReponsesObj[0].symptoms)
+        symptoms: Object.keys(FormReponsesObj[0].symptoms),
+        lat: coordinates.data.latt,
+        long: coordinates.data.longt
       } 
       console.log("this is restructured", restructuredResponse);
       props.submit(restructuredResponse);

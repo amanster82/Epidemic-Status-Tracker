@@ -38,7 +38,7 @@ function External() {
   const [signUp, signUpSwitch] = useState(false);
   const [isAccessGranted, setAccess] = useState(false);
 
-  const {Pagechange, setPage} = useContext(MyContext);
+  const {Pagechange, setPage, MetaData, setMetaData} = useContext(MyContext);
 
   function signUpToggle(x) {
     console.log("I fireed!!");
@@ -95,7 +95,7 @@ function External() {
                 ? "Spacing animated fadeOutUp delay-1s"
                 : "Spacing"
             }
-            onAnimationEnd={() => setPage(true)}
+            onAnimationEnd={() => {setPage(null); setMetaData(null); } }
           >
             <h1 className={classes.heading}>Epidemic Status Tracker</h1>
             <h2 className={classes.heading}>

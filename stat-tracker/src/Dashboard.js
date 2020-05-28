@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import clsx from "clsx";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
@@ -17,12 +17,14 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import InboxIcon from "@material-ui/icons/MoveToInbox";
 import AccountCircle from "@material-ui/icons/AccountCircle";
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import Report from "./Report";
 import axios from "axios";
 import Canvas from "./components/Canvas/Canvas";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import { MyContext } from "./MyContext";
 
 const drawerWidth = 240;
 
@@ -107,9 +109,26 @@ function onPageLoad(setStatus, setReport, setUserReport, setSpinner) {
       }else{
         setStatus(true);
         setReport(true);
+        console.log("res.data.rows**************************")
         setUserReport(res.data.rows);
       }
     })
+}
+
+
+async function logout(setPage){
+  let url = window.location.href;
+  url = url.split(":");
+  url = url[0] + ":" + url[1];
+  console.log(url);
+  const logout = await axios.get(url + `:9000/api/logout`, { withCredentials: true })
+  try{
+    //alert("trying to log out now", logout)
+    setPage(null);
+  }catch{
+    //alert("error logging out", logout)
+  }
+  
 }
 
 export default function Dashboard() {
@@ -127,6 +146,8 @@ export default function Dashboard() {
   const [coordinates, setCoordinates] = React.useState([]);
   const [location, setLocation] = React.useState("North Vancouver"); //change to empty
   const [APIDown, setApiDown] = React.useState(null);
+  const [boundingBox, setboudingBox] = React.useState(null);
+  const {Pagechange, setPage, MetaData, setMetaData, getMetaData} = useContext(MyContext);
 
   const SpinnerElement = (
     <div
@@ -146,21 +167,22 @@ export default function Dashboard() {
     url = url.split(":");
     url = url[0] + ":" + url[1];
     console.log(url);
-    setSpinner(true);
     console.log("THE SUBMITTED ANSWERS ARE THE FOLLOWING:");
     console.log(value);
     axios
       .post(url + `:9000/api/report`, value, { withCredentials: true })
-      .then(function (response) {
-        console.log("inside the then");
-        console.log(response);
-        console.log(response);
-        setReport(true);
-        setStatus(true);
-        setUserReport(value);
+      .then(async function (response) {
+        console.log("A CAll to Get METADATA")
+        let metaDataLoaded = await getMetaData(setMetaData);      
+        if(metaDataLoaded){
+          setStatus(true);
+          setReport(true);
+          setUserReport(value);
+        }
       })
 
       .catch(function (error) {
+        console.log("-------THERE ARE NO ROWS------")
         console.log(error);
       });
   }
@@ -186,6 +208,7 @@ export default function Dashboard() {
     // console.log("this is the report location", usersReport[0].location);
     if (usersReport != null) {
       getCoordinates(usersReport.location);
+      getCityNameAndPoints(usersReport.location);
     }
     //console.log("THE USE EFFECT!");
     //console.log("the coordinates" + coordinates);
@@ -202,8 +225,8 @@ export default function Dashboard() {
     // Make a request for a user with a given ID
     console.log("the postal code", postal);
     axios
-      .get("http://geogratisg.ca/services/geolocation/en/locate?q=" + postal)
-      .then(function (response) {
+      .get("http://geogratis.gc.ca/services/geolocation/en/locate?q=" + postal)
+      .then(function (response) { 
         // handle success
         console.log("something went right");
         console.log(response);
@@ -240,7 +263,7 @@ export default function Dashboard() {
       .get(x)
       .then(function (response) {
         console.log(response.data.display_name);
-        setLocation(response.data.display_name);
+        setboudingBox(response.data.boundingbox);
         setSpinner(false);
       })
       .catch(function (error) {
@@ -255,6 +278,14 @@ export default function Dashboard() {
         // always executed
         console.log("something happened");
       });
+  }
+
+  async function getCityNameAndPoints(postal){
+    const info = await axios .get("https://geocoder.ca/?locate=" + postal + "&geoit=XML&json=1")
+    console.log("info is the following:", info);
+    let city = info.data.standard.city;
+    console.log("data.standard.city", info.data.standard.city);
+    setLocation(city);
   }
 
   function conditionRender() {
@@ -292,8 +323,8 @@ export default function Dashboard() {
         </Grid>
       );
     } else if (status && !reportCompleted) {
-      return <Report submit={(x) => submittedAnswers(x)}></Report>;
-    } else if (reportCompleted && status) {
+      return <Report submit={(x) => submittedAnswers(x)} setSpinner={(x)=>setSpinner(x)}></Report>;
+    } else if (reportCompleted && status && MetaData) {
       console.log("this is the user report", usersReport);
       return (
         <div className={classes.root}>
@@ -345,6 +376,12 @@ export default function Dashboard() {
                 </ListItemIcon>
                 <ListItemText primary={"Account"} />
               </ListItem>
+              <ListItem button onClick={()=> logout(setPage)}>
+                <ListItemIcon>
+                  <ExitToAppIcon></ExitToAppIcon>
+                </ListItemIcon>
+                <ListItemText primary={"Logout"} />
+              </ListItem>
             </List>
             {/* <Divider />
               <List>
@@ -362,7 +399,7 @@ export default function Dashboard() {
           >
             <div className={classes.drawerHeader} />
 
-            <Canvas location={location} coordinates={coordinates}></Canvas>
+            <Canvas location={location} coordinates={coordinates} boundingBox={boundingBox}></Canvas>
           </main>
         </div>
       );

@@ -64,7 +64,7 @@ function postData(
   url = url[0] + ":" + url[1];
   console.log(url);
   axios
-    .post(url + `:9000/api/register`, register)
+    .post(url + `:9000/api/register`, register, { withCredentials: true })
     .then(function (res) {
       console.log(res);
       console.log(res.data);

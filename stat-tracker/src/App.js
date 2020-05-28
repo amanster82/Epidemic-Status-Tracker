@@ -8,7 +8,7 @@ import { MyContext } from "./MyContext";
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 
-function authenticate (setPage){
+function authenticate (setPage, setMetaData){
   let url = window.location.href;
   url = url.split(":");
   url = url[0] + ":" + url[1];
@@ -17,23 +17,53 @@ function authenticate (setPage){
     .get(url + `:9000/api/authentication`, { withCredentials: true })
     .then(function (res) {
       if(res.data.Auth){
-        setPage(true)
+        //alert("setting the page to true and setting the metadata to null")
+        setPage(true);
+        //setMetaData(null);
       }else{
-        setPage(false)
+        setPage(false);
+        setMetaData(false);
       }
     });
 };
 
+async function getMetaData(setMetaData){
+  let url = window.location.href;
+  url = url.split(":");
+  url = url[0] + ":" + url[1];
+  console.log(url);  
+  try{
+  const results = await axios.get(url + `:9000/api/metadata`, { withCredentials: true });
+  console.log("-------------------THE METADATA HERE---------------------")
+    console.log(results);
+    setMetaData(results);
+    return(results);
+  }catch{
+    console.log("@@@@@@NO METADATA TO SHOW@@@@@@@@@");
+    setMetaData(false);
+  }
+}
+
 function App() {
     const [Pagechange, setPage] = useState(null);
-    useEffect(()=>{
-      (Pagechange==null ? authenticate(setPage) : console.log("App.js Effect Done"))
+    console.log("what is the page", Pagechange);
+    const [MetaData, setMetaData] = useState(null);
+    console.log("what is the metadata", MetaData);
+    useEffect(() =>{
+      
+      if(Pagechange==null || MetaData==null) {
+        authenticate(setPage, setMetaData);
+        getMetaData(setMetaData);
+      }else{
+        console.log("App.js Effect Done")
+      } 
+
     });
 
     return (
-        <MyContext.Provider value={{Pagechange, setPage}}>
+        <MyContext.Provider value={{Pagechange, setPage, MetaData, setMetaData, getMetaData}}>
         
-        {Pagechange != null
+        {Pagechange != null && MetaData !=null
         ?
         <BrowserRouter>
             <Route path='/' exact component={External} />
