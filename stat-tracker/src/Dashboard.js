@@ -92,7 +92,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function onPageLoad(setStatus, setReport, setUserReport, setSpinner) {
+function onPageLoad(setStatus, setReport, setUserReport, setSpinner, setboundingBox, setLocation) {
+  console.log("------------------/api/dashboard-----------------------");
   let url = window.location.href;
   url = url.split(":");
   url = url[0] + ":" + url[1];
@@ -102,6 +103,8 @@ function onPageLoad(setStatus, setReport, setUserReport, setSpinner) {
     .then(function (res) {
       console.log(res);
       console.log("THE ROWS THE RWOS!!!!", res.data.rows);
+      console.log("the boundries", res.data.boundries);
+      setboundingBox(res.data.boundries);
       if(res.data.rows == undefined){
         setStatus(false);
         setReport(false);
@@ -111,6 +114,7 @@ function onPageLoad(setStatus, setReport, setUserReport, setSpinner) {
         setReport(true);
         console.log("res.data.rows**************************")
         setUserReport(res.data.rows);
+        setLocation(res.data.rows.location);
       }
     })
 }
@@ -146,7 +150,7 @@ export default function Dashboard() {
   const [coordinates, setCoordinates] = React.useState([]);
   const [location, setLocation] = React.useState("North Vancouver"); //change to empty
   const [APIDown, setApiDown] = React.useState(null);
-  const [boundingBox, setboudingBox] = React.useState(null);
+  const [boundingBox, setboundingBox] = React.useState(null);
   const {Pagechange, setPage, MetaData, setMetaData, getMetaData} = useContext(MyContext);
 
   const SpinnerElement = (
@@ -208,7 +212,7 @@ export default function Dashboard() {
     // console.log("this is the report location", usersReport[0].location);
     if (usersReport != null) {
       getCoordinates(usersReport.location);
-      getCityNameAndPoints(usersReport.location);
+      //getCityNameAndPoints(usersReport.location);
     }
     //console.log("THE USE EFFECT!");
     //console.log("the coordinates" + coordinates);
@@ -217,7 +221,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     status == null && reportCompleted == null
-      ? onPageLoad(setStatus, setReport, setUserReport, setSpinner)
+      ? onPageLoad(setStatus, setReport, setUserReport, setSpinner, setboundingBox, setLocation)
       : console.log("Dashboard.js Effect Done");
   });
 
@@ -237,7 +241,7 @@ export default function Dashboard() {
         ];
         console.log("lat and long", latAndLong);
         setCoordinates(latAndLong);
-        //setSpinner(false);
+        setSpinner(false);
         getAreaInfo(latAndLong);
       })
       .catch(function (error) {
@@ -263,7 +267,6 @@ export default function Dashboard() {
       .get(x)
       .then(function (response) {
         console.log(response.data.display_name);
-        setboudingBox(response.data.boundingbox);
         setSpinner(false);
       })
       .catch(function (error) {

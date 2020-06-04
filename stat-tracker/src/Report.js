@@ -70,16 +70,17 @@ export default function Report(props) {
   const handleNext = async () => {
     if(activeStep === steps.length - 1){
       props.setSpinner(true);
-      let coordinates = await axios.get('https://geocoder.ca/?locate='+(FormReponsesObj[0].location).toUpperCase()+'&geoit=XML&json=1')
+      let response = await axios.get("http://geogratis.gc.ca/services/geolocation/en/locate?q="+(FormReponsesObj[0].location).toUpperCase())
       let restructuredResponse = 
       {
         location: (FormReponsesObj[0].location).toUpperCase(),
         risk: FormReponsesObj[0].risk,
         status: FormReponsesObj[0].status,
         symptoms: Object.keys(FormReponsesObj[0].symptoms),
-        lat: coordinates.data.latt,
-        long: coordinates.data.longt
-      } 
+        lat: response.data[0].geometry.coordinates[1],
+        long: response.data[0].geometry.coordinates[0]
+      }
+       
       console.log("this is restructured", restructuredResponse);
       props.submit(restructuredResponse);
       //audio.play();

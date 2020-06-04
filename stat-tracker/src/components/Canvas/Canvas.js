@@ -9,6 +9,7 @@ import InfoCard from "./InfoCard";
 import GoogleMaps from "./GoogleMaps";
 import MapArea from "../Map/MapArea.js";
 import { sizing } from "@material-ui/system";
+import axios from "axios";
 import { MyContext } from "../../MyContext";
 
 const useStyles = makeStyles((theme) => ({
@@ -93,12 +94,17 @@ function Canvas(props) {
       </React.Fragment>
     );
   }
+  async function test() {
+    console.log("hey");
+    let coordinates = await axios.get("http://geogratis.gc.ca/services/geolocation/en/locate?q=v7n");
+    console.log("coordinates:", coordinates);
+  }
 
   function CaseCards() {
     return (
       <React.Fragment>
         <Grid item xs={12}>
-          <CaseCard status="Positive" number={MetaData.data.positives}></CaseCard>
+          <CaseCard status="Positive" number={MetaData.data.positives} onClick={()=>console.log("hey bitch")}></CaseCard>
         </Grid>
 
         <Grid item xs={12}>

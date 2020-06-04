@@ -1,13 +1,21 @@
 import React, { useContext } from "react";
-import { Map, Marker, Popup, TileLayer, Rectangle } from "react-leaflet";
+import {
+  Map,
+  Marker,
+  Popup,
+  Tooltip,
+  TileLayer,
+  GeoJSON,
+  AttributionControl,
+} from "react-leaflet";
 import { MyContext } from "../../MyContext";
 import { Icon } from "leaflet";
 import "./MapStyle.css";
 
 function MapArea(props) {
   const coordinates = props.coordinates;
-  const boundingBox = [props.boundingBox[0], props.boundingBox[2], props.boundingBox[1], props.boundingBox[3]];
-  console.log("bounding box", boundingBox)
+  const boundries = props.boundingBox;
+  console.log("BOUNDRIES IN MAP", boundries);
   const { MetaData } = useContext(MyContext);
   const greenIcon = new Icon({
     iconUrl:
@@ -53,7 +61,6 @@ function MapArea(props) {
     shadowSize: [41, 41],
   });
 
-  console.log(coordinates);
   console.log("-----------------in the Map---------------");
   console.log(MetaData);
 
@@ -61,13 +68,13 @@ function MapArea(props) {
     if (status == "-") return greenIcon;
     else if (status == "+") return redIcon;
     else if (status == "=") return blueIcon;
-    else return blueIcon;
+    else return yellowIcon;
   }
 
   function popUpInfo(status, date_stamp) {
-    switch(status){
+    switch (status) {
       case "+":
-        status = 'positive'
+        status = "positive";
         return (
           <div>
             <strong>Status</strong>:{status}
@@ -76,7 +83,7 @@ function MapArea(props) {
           </div>
         );
       case "-":
-        status = 'negative'
+        status = "negative";
         return (
           <div>
             <strong>Status</strong>:{status}
@@ -85,7 +92,7 @@ function MapArea(props) {
           </div>
         );
       case "=":
-        status = "recovered"
+        status = "recovered";
         return (
           <div>
             <strong>Status</strong>:{status}
@@ -94,7 +101,7 @@ function MapArea(props) {
           </div>
         );
       case "s":
-        status = "possible case"
+        status = "possible case";
         return (
           <div>
             <strong>Status</strong>:{status}
@@ -111,7 +118,71 @@ function MapArea(props) {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
       />
-      {MetaData.data.locations.map((pinpoint, index) => {
+      {boundries
+        .filter((bound) => bound.location !== null)
+        .map((b, index) => {
+          console.log(index);
+          if (Number(b.pos_count) > 0) {
+            return (
+              <>
+                <GeoJSON
+                  data={JSON.parse(b.geojson)}
+                  style={{ color: "red", weight: 5, opacity: 0.65 }}
+                >
+                  <Tooltip>
+                    <strong>Positive Cases</strong>:{b.pos_count}
+                    <br></br>
+                    <strong>Possible Cases</strong>:{b.symp_count}
+                    <br></br>
+                    <strong>Negative Cases</strong>:{b.neg_count}
+                    <br></br>
+                    <strong>Recovered Cases</strong>:{b.recov_count}
+                  </Tooltip>
+                </GeoJSON>
+              </>
+            );
+          } else if (Number(b.symp_count) > 0) {
+            return (
+              <>
+                <GeoJSON
+                  data={JSON.parse(b.geojson)}
+                  style={{ color: "yellow", weight: 5, opacity: 0.65 }}
+                >
+                  <Tooltip>
+                    <strong>Positive Cases</strong>:{b.pos_count}
+                    <br></br>
+                    <strong>Possible Cases</strong>:{b.symp_count}
+                    <br></br>
+                    <strong>Negative Cases</strong>:{b.neg_count}
+                    <br></br>
+                    <strong>Recovered Cases</strong>:{b.recov_count}
+                  </Tooltip>
+                </GeoJSON>
+              </>
+            );
+          } else {
+            return (
+              <>
+                <GeoJSON
+                  data={JSON.parse(b.geojson)}
+                  style={{ color: "green", weight: 5, opacity: 0.65 }}
+                >
+                  <Tooltip>
+                    <strong>Positive Cases</strong>:{b.pos_count}
+                    <br></br>
+                    <strong>Possible Cases</strong>:{b.symp_count}
+                    <br></br>
+                    <strong>Negative Cases</strong>:{b.neg_count}
+                    <br></br>
+                    <strong>Recovered Cases</strong>:{b.recov_count}
+                  </Tooltip>
+                </GeoJSON>
+              </>
+            );
+          }
+        })}
+      ;
+      {/* {MetaData.data.locations.map((pinpoint, index) => {
         console.log("this is the pinpoint", pinpoint);
         console.log("and the index", index);
         console.log(pinpoint.status);
@@ -126,7 +197,7 @@ function MapArea(props) {
             </Marker>
           </>
         );
-      })}
+      })} */}
     </Map>
   );
 }

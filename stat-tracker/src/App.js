@@ -8,23 +8,27 @@ import { MyContext } from "./MyContext";
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 
-function authenticate (setPage, setMetaData){
+async function authenticate (setPage, setMetaData){
   let url = window.location.href;
   url = url.split(":");
   url = url[0] + ":" + url[1];
   console.log(url);
-  axios
-    .get(url + `:9000/api/authentication`, { withCredentials: true })
-    .then(function (res) {
-      if(res.data.Auth){
+  try{
+  const results = await axios.get(url + `:9000/api/authentication`, { withCredentials: true })
+      if(results.data.Auth){
         //alert("setting the page to true and setting the metadata to null")
         setPage(true);
         //setMetaData(null);
+        getMetaData(setMetaData);
       }else{
         setPage(false);
         setMetaData(false);
       }
-    });
+  }catch(error){
+    console.error(error)
+    setPage(false);
+    setMetaData(false);
+  }
 };
 
 async function getMetaData(setMetaData){
@@ -40,7 +44,7 @@ async function getMetaData(setMetaData){
     return(results);
   }catch{
     console.log("@@@@@@NO METADATA TO SHOW@@@@@@@@@");
-    setMetaData(false);
+    setMetaData(false); 
   }
 }
 
@@ -49,11 +53,11 @@ function App() {
     console.log("what is the page", Pagechange);
     const [MetaData, setMetaData] = useState(null);
     console.log("what is the metadata", MetaData);
+
     useEffect(() =>{
       
-      if(Pagechange==null || MetaData==null) {
+      if(Pagechange==null && MetaData==null) {
         authenticate(setPage, setMetaData);
-        getMetaData(setMetaData);
       }else{
         console.log("App.js Effect Done")
       } 

@@ -3,6 +3,7 @@ var router = express.Router();
 var bcrypt = require("bcrypt");
 var passport = require("passport");
 var initializePassport = require("./passport-config");
+let pCode = "";
 
 const connectionString =
   "postgressql://postgres:postgres@localhost:5433/TrackerData";
@@ -21,30 +22,29 @@ router.get("/", function (req, res, next) {
 });
 
 router.get("/api/metadata", async (req, res, next) => {
-  console.log("------------------/api/metadata-----------------------")
-  console.log(req.user);
-  if(req.user == "undefined"){
+  console.log("------------------/api/metadata-----------------------");
+  console.log("this is the user:", req.user);
+  if (req.user == "undefined") {
     console.error("user is not logged in");
     return next();
   }
-try{
-  var postalCode = await knex("report")
-    .select("location")
-    .where({ user_id: req.user })
-    .andWhere({active: true});
+  try {
+    pCode = await knex("report")
+      .select("location")
+      .where({ user_id: req.user })
+      .andWhere({ active: true });
 
- 
-    console.log("POSTALLLLLLLL>>>>>>>>" + postalCode);
-    console.log(postalCode[0].location);
+    pCode = pCode[0].location;
+    console.log("the Pcode", pCode);
 
-    postalCode = "%" + postalCode[0].location.substring(0, 3) + "%";
+    postalCode = "%" + pCode + "%";
     console.log("THIS IS THE LOCATION:", postalCode);
 
     var positiveCount = await knex("report")
       .count("user_id")
       .where({ status: "+" })
       .andWhere("location", "like", postalCode)
-      .andWhere({active: true})
+      .andWhere({ active: true });
     positiveCount = positiveCount[0].count;
     console.log("THIS IS THE POSITIVES:", positiveCount);
 
@@ -52,7 +52,7 @@ try{
       .count("user_id")
       .where({ status: "-" })
       .andWhere("location", "like", postalCode)
-      .andWhere({active: true})
+      .andWhere({ active: true });
     negativeCount = negativeCount[0].count;
     console.log("THIS IS THE NEGATIVES:", negativeCount);
 
@@ -60,7 +60,7 @@ try{
       .count("user_id")
       .where({ status: "=" })
       .andWhere("location", "like", postalCode)
-      .andWhere({active: true})
+      .andWhere({ active: true });
     recoveredCount = recoveredCount[0].count;
     console.log("THIS IS THE RECOVERED:", recoveredCount);
 
@@ -68,13 +68,13 @@ try{
       .count("user_id")
       .where({ status: "s" })
       .andWhere("location", "like", postalCode)
-      .andWhere({active: true})
+      .andWhere({ active: true });
     symptomCount = symptomCount[0].count;
     console.log("THIS IS THE SYMPTOMATIC:", symptomCount);
 
     var coordinates = await knex("report")
       .where("location", "like", postalCode)
-      .andWhere({active: true})
+      .andWhere({ active: true });
 
     console.log("these are the coordinates:", coordinates);
 
@@ -85,19 +85,19 @@ try{
       possibilities: symptomCount,
       locations: coordinates,
     });
-  }
-  catch{
-    if(!req.isAuthenticated()){
+  } catch (error) {
+    if (!req.isAuthenticated()) {
       console.error("not logged in");
       return next();
     }
-    console.error("Not logged information yet")
+    console.error(error);
+    console.error("Not logged information yet");
     return res.sendStatus(500);
-  }  
+  }
 });
 
 router.post("/api/report", async (req, res, next) => {
-  console.log("------------------/api/report-----------------------")
+  console.log("------------------/api/report-----------------------");
 
   let obj = Object.assign(req.body, {
     user_id: req.user,
@@ -106,35 +106,68 @@ router.post("/api/report", async (req, res, next) => {
   });
 
   const check = await knex("report").where({ user_id: req.user });
-  try{
+  try {
     console.log("Trying to check");
     await knex("report")
       .where({ user_id: req.user })
       .andWhere({ active: true })
       .update({ active: false });
-  }
-  catch{
-    console.log("this is the first time...")
+  } catch {
+    console.log("this is the first time...");
   }
 
   knex("report")
-  .insert(obj)
-  .then((result) => {
-    console.log("success"), res.json({ success: true, message: "ok" }); // respond back to request
-  });
-
-
+    .insert(obj)
+    .then((result) => {
+      console.log("success"), res.json({ success: true, message: "ok" }); // respond back to request
+    });
 });
 
-router.get("/api/dashboard", (req, res, next) => {
-  console.log("------------------/api/dashboard-----------------------")
+router.get("/api/dashboard", async (req, res, next) => {
+  console.log("------------------/api/dashboard-----------------------");
   console.log(req.user);
-  knex("report")
+  console.log("this is the postal code:", pCode);
+  //pCode = pCode.substring(0,3);
+  console.log("this is the first three characters", pCode);
+  const objectToSend = {};
+  await knex("report")
     .where({ user_id: req.user })
     .andWhere({ date_stamp: new Date() })
     .then((rows) => {
       console.log("something went right have a look", rows[0]);
-      res.json({ rows: rows[0] }); // respond back to request
+      Object.assign(objectToSend, { rows: rows[0] });
+      if (rows[0] == undefined) {
+        res.json({ rows: rows[0] });
+      } else {
+        var query =
+          "SELECT pos_count, neg_count, symp_count, recov_count, location, ST_AsGeoJSON(ST_Transform(canada_fsa.geom, 4326)) as geojson \
+        FROM ( \
+              SELECT location \
+            , COUNT(*) FILTER (WHERE status = '+') AS pos_count \
+            , COUNT(*) FILTER (WHERE status = '-') AS neg_count \
+            , COUNT(*) FILTER (WHERE status = 's') AS symp_count \
+            , COUNT(*) FILTER (WHERE status = '=') AS recov_count \
+          FROM report \
+          WHERE report.active = true \
+          GROUP BY location \
+    ) AS counts \
+    right JOIN canada_fsa ON canada_fsa.cfsauid=counts.location \
+    order by st_distance(ST_Centroid(ST_Transform( \
+    (SELECT geom FROM canada_fsa WHERE cfsauid = '" +
+          pCode.toUpperCase() +
+          "'), 4326)), ST_Centroid(ST_Transform(canada_fsa.geom, 4326))) asc limit 5";
+
+        knex
+          .raw(query)
+          .then((results) => {
+            Object.assign(objectToSend, { boundries: results.rows });
+            res.json(objectToSend);
+            //res.json(objectToSend);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
     })
     .catch(() => {
       res.send("hey");
@@ -142,7 +175,7 @@ router.get("/api/dashboard", (req, res, next) => {
 });
 
 router.get("/api/authentication", (req, res, next) => {
-  console.log("------------------/api/authentication-----------------------")
+  console.log("------------------/api/authentication-----------------------");
   console.log("Cookie assigned: ", req.cookies);
   console.log(req.user);
   console.log(req.isAuthenticated());
@@ -163,15 +196,18 @@ router.get("/api/logout", (req, res, next) => {
   req.logOut();
   req.session.destroy();
   console.log("successfully? Logged out?");
-  if(!req.isAuthenticated()){
-    res.send(true)
+  if (!req.isAuthenticated()) {
+    res.send(true);
     console.log("100% logged out");
   }
 });
 
 router.post("/api/login", (req, res, next) => {
-  console.log("------------------/api/login-----------------------")
-  return passport.authenticate("local", { session: true },(err, passportUser, info) => {
+  console.log("------------------/api/login-----------------------");
+  return passport.authenticate(
+    "local",
+    { session: true },
+    (err, passportUser, info) => {
       console.log(
         "HEEEEEEEEEEEEEEEEEEEEEEEEEEEY Bitch",
         err,
@@ -204,7 +240,7 @@ router.post("/api/login", (req, res, next) => {
 });
 
 router.post("/api/register", async (req, res, next) => {
-  console.log("------------------/api/register-----------------------")
+  console.log("------------------/api/register-----------------------");
   let obj = req.body;
   let email = obj.email;
   let pass = obj.pass;
