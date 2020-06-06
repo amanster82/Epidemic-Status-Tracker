@@ -31,13 +31,13 @@ async function authenticate (setPage, setMetaData){
   }
 };
 
-async function getMetaData(setMetaData){
+async function getMetaData(setMetaData, changeLocation){
   let url = window.location.href;
   url = url.split(":");
   url = url[0] + ":" + url[1];
   console.log(url);  
   try{
-  const results = await axios.get(url + `:9000/api/metadata`, { withCredentials: true });
+  const results = await axios.post(url + `:9000/api/metadata`, {locationChange: changeLocation}, { withCredentials: true });
   console.log("-------------------THE METADATA HERE---------------------")
     console.log(results);
     setMetaData(results);

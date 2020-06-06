@@ -17,7 +17,7 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import InboxIcon from "@material-ui/icons/MoveToInbox";
 import AccountCircle from "@material-ui/icons/AccountCircle";
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import Report from "./Report";
@@ -92,7 +92,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function onPageLoad(setStatus, setReport, setUserReport, setSpinner, setboundingBox, setLocation) {
+function onPageLoad(
+  setStatus,
+  setReport,
+  setUserReport,
+  setSpinner,
+  setboundingBox,
+  setLocation,
+  setCoordinates
+) {
   console.log("------------------/api/dashboard-----------------------");
   let url = window.location.href;
   url = url.split(":");
@@ -105,34 +113,37 @@ function onPageLoad(setStatus, setReport, setUserReport, setSpinner, setbounding
       console.log("THE ROWS THE RWOS!!!!", res.data.rows);
       console.log("the boundries", res.data.boundries);
       setboundingBox(res.data.boundries);
-      if(res.data.rows == undefined){
+      if (res.data.rows == undefined) {
         setStatus(false);
         setReport(false);
         setSpinner(false);
-      }else{
+      } else {
         setStatus(true);
         setReport(true);
-        console.log("res.data.rows**************************")
+        console.log("res.data.rows**************************");
         setUserReport(res.data.rows);
-        setLocation(res.data.rows.location);
+        setLocation(res.data.rows.postal);
+        setCoordinates([res.data.rows.lat, res.data.rows.long])
+        setSpinner(false);
       }
-    })
+    });
 }
 
-
-async function logout(setPage){
+async function logout(setPage, setMetaData) {
   let url = window.location.href;
   url = url.split(":");
   url = url[0] + ":" + url[1];
   console.log(url);
-  const logout = await axios.get(url + `:9000/api/logout`, { withCredentials: true })
-  try{
+  const logout = await axios.get(url + `:9000/api/logout`, {
+    withCredentials: true,
+  });
+  try {
     //alert("trying to log out now", logout)
     setPage(null);
-  }catch{
+    setMetaData(null);
+  } catch {
     //alert("error logging out", logout)
   }
-  
 }
 
 export default function Dashboard() {
@@ -151,7 +162,13 @@ export default function Dashboard() {
   const [location, setLocation] = React.useState("North Vancouver"); //change to empty
   const [APIDown, setApiDown] = React.useState(null);
   const [boundingBox, setboundingBox] = React.useState(null);
-  const {Pagechange, setPage, MetaData, setMetaData, getMetaData} = useContext(MyContext);
+  const {
+    Pagechange,
+    setPage,
+    MetaData,
+    setMetaData,
+    getMetaData,
+  } = useContext(MyContext);
 
   const SpinnerElement = (
     <div
@@ -176,9 +193,9 @@ export default function Dashboard() {
     axios
       .post(url + `:9000/api/report`, value, { withCredentials: true })
       .then(async function (response) {
-        console.log("A CAll to Get METADATA")
-        let metaDataLoaded = await getMetaData(setMetaData);      
-        if(metaDataLoaded){
+        console.log("A CAll to Get METADATA");
+        let metaDataLoaded = await getMetaData(setMetaData);
+        if (metaDataLoaded) {
           setStatus(true);
           setReport(true);
           setUserReport(value);
@@ -186,7 +203,7 @@ export default function Dashboard() {
       })
 
       .catch(function (error) {
-        console.log("-------THERE ARE NO ROWS------")
+        console.log("-------THERE ARE NO ROWS------");
         console.log(error);
       });
   }
@@ -208,88 +225,18 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    //problem lies here
-    // console.log("this is the report location", usersReport[0].location);
-    if (usersReport != null) {
-      getCoordinates(usersReport.location);
-      //getCityNameAndPoints(usersReport.location);
-    }
-    //console.log("THE USE EFFECT!");
-    //console.log("the coordinates" + coordinates);
-    // getAreaInfo();
-  }, [usersReport]);
-
-  useEffect(() => {
     status == null && reportCompleted == null
-      ? onPageLoad(setStatus, setReport, setUserReport, setSpinner, setboundingBox, setLocation)
+      ? onPageLoad(
+          setStatus,
+          setReport,
+          setUserReport,
+          setSpinner,
+          setboundingBox,
+          setLocation,
+          setCoordinates
+        )
       : console.log("Dashboard.js Effect Done");
   });
-
-  function getCoordinates(postal) {
-    // Make a request for a user with a given ID
-    console.log("the postal code", postal);
-    axios
-      .get("http://geogratis.gc.ca/services/geolocation/en/locate?q=" + postal)
-      .then(function (response) { 
-        // handle success
-        console.log("something went right");
-        console.log(response);
-
-        let latAndLong = [
-          response.data[0].geometry.coordinates[1],
-          response.data[0].geometry.coordinates[0],
-        ];
-        console.log("lat and long", latAndLong);
-        setCoordinates(latAndLong);
-        setSpinner(false);
-        getAreaInfo(latAndLong);
-      })
-      .catch(function (error) {
-        // handle error
-        console.log("Connection error to geotgratis");
-        console.log(error);
-        setApiDown(true);
-      })
-      .then(function () {
-        // always executed
-        console.log("something happened");
-      });
-  }
-
-  function getAreaInfo(latAndLong) {
-    var x =
-      "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=" +
-      latAndLong[0] +
-      "&lon=" +
-      latAndLong[1];
-    console.log(x);
-    axios
-      .get(x)
-      .then(function (response) {
-        console.log(response.data.display_name);
-        setSpinner(false);
-      })
-      .catch(function (error) {
-        // handle error
-        console.log(
-          "Connecting error to open streetmaps. Please try again later"
-        );
-        console.log(error);
-        setApiDown(true);
-      })
-      .then(function () {
-        // always executed
-        console.log("something happened");
-      });
-  }
-
-  async function getCityNameAndPoints(postal){
-    const info = await axios .get("https://geocoder.ca/?locate=" + postal + "&geoit=XML&json=1")
-    console.log("info is the following:", info);
-    let city = info.data.standard.city;
-    console.log("data.standard.city", info.data.standard.city);
-    setLocation(city);
-  }
 
   function conditionRender() {
     if (!status && !reportCompleted) {
@@ -323,10 +270,24 @@ export default function Dashboard() {
               Report Status
             </Button>
           </Grid>
+          <Button
+              className={buttonEnterance}
+              variant="contained"
+              onClick={() => logout(setPage, setMetaData)}
+              onAnimationEnd={() =>
+                setButtonEnterance("animated infinite pulse")
+              }
+              
+            >Logout</Button>
         </Grid>
       );
     } else if (status && !reportCompleted) {
-      return <Report submit={(x) => submittedAnswers(x)} setSpinner={(x)=>setSpinner(x)}></Report>;
+      return (
+        <Report
+          submit={(x) => submittedAnswers(x)}
+          setSpinner={(x) => setSpinner(x)}
+        ></Report>
+      );
     } else if (reportCompleted && status && MetaData) {
       console.log("this is the user report", usersReport);
       return (
@@ -379,7 +340,7 @@ export default function Dashboard() {
                 </ListItemIcon>
                 <ListItemText primary={"Account"} />
               </ListItem>
-              <ListItem button onClick={()=> logout(setPage)}>
+              <ListItem button onClick={() => logout(setPage, setMetaData)}>
                 <ListItemIcon>
                   <ExitToAppIcon></ExitToAppIcon>
                 </ListItemIcon>
@@ -402,7 +363,11 @@ export default function Dashboard() {
           >
             <div className={classes.drawerHeader} />
 
-            <Canvas location={location} coordinates={coordinates} boundingBox={boundingBox}></Canvas>
+            <Canvas
+              location={location}
+              coordinates={coordinates}
+              boundingBox={boundingBox}
+            ></Canvas>
           </main>
         </div>
       );

@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React, { useContext, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
@@ -9,8 +9,8 @@ import InfoCard from "./InfoCard";
 import GoogleMaps from "./GoogleMaps";
 import MapArea from "../Map/MapArea.js";
 import { sizing } from "@material-ui/system";
-import axios from "axios";
 import { MyContext } from "../../MyContext";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -44,7 +44,18 @@ const useStyles = makeStyles((theme) => ({
 function Canvas(props) {
   const classes = useStyles();
   const [locationClick, setLocation] = React.useState(false);
-  const { MetaData } = useContext(MyContext);
+  const [spinner, setSpinner] = React.useState(false);
+  const {setMetaData, MetaData, getMetaData } = useContext(MyContext);
+
+  
+  useEffect(() => {
+    if(spinner){
+      console.log("TURNED ON");
+      
+    }else{
+      console.log("TURNED OFF");
+    }
+  }, [spinner]);
 
   console.log("-----------------in the Canvas---------------");
   console.log(MetaData);
@@ -53,6 +64,20 @@ function Canvas(props) {
     // alert(!value);
     // console.log('value', !value);
     setLocation(!value);
+  }
+
+  function onStateChange(val){
+    console.log("DONT FUCK IT UP:", val)
+    if(val !== ''){
+      setSpinner(true);
+      let returned = getMetaData(setMetaData, val);
+      if(returned){
+        setSpinner(false);
+      }
+    }else{
+      setSpinner(false);
+    }
+    
   }
 
   function Headline() {
@@ -86,7 +111,7 @@ function Canvas(props) {
           className={classes.center}
         >
           {locationClick ? (
-            <GoogleMaps></GoogleMaps>
+            <GoogleMaps place={(x)=>onStateChange(x)}></GoogleMaps>
           ) : (
             <h1>{props.location}</h1>
           )}
@@ -94,29 +119,36 @@ function Canvas(props) {
       </React.Fragment>
     );
   }
-  async function test() {
-    console.log("hey");
-    let coordinates = await axios.get("http://geogratis.gc.ca/services/geolocation/en/locate?q=v7n");
-    console.log("coordinates:", coordinates);
-  }
 
   function CaseCards() {
     return (
       <React.Fragment>
         <Grid item xs={12}>
-          <CaseCard status="Positive" number={MetaData.data.positives} onClick={()=>console.log("hey bitch")}></CaseCard>
+          <CaseCard
+            status="Positive"
+            number={MetaData.data.positives}
+          ></CaseCard>
         </Grid>
 
         <Grid item xs={12}>
-          <CaseCard status="Possible" number={MetaData.data.possibilities}></CaseCard>
+          <CaseCard
+            status="Possible"
+            number={MetaData.data.possibilities}
+          ></CaseCard>
         </Grid>
 
         <Grid item xs={12}>
-          <CaseCard status="Negative" number={MetaData.data.negatives}></CaseCard>
+          <CaseCard
+            status="Negative"
+            number={MetaData.data.negatives}
+          ></CaseCard>
         </Grid>
 
         <Grid item xs={12}>
-          <CaseCard status="Recovered" number={MetaData.data.recoveries}></CaseCard>
+          <CaseCard
+            status="Recovered"
+            number={MetaData.data.recoveries}
+          ></CaseCard>
         </Grid>
       </React.Fragment>
     );
@@ -132,32 +164,68 @@ function Canvas(props) {
     );
   }
 
+  const SpinnerElement = (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100vh",
+      }}
+    >
+      <CircularProgress></CircularProgress>
+    </div>
+  );
+
   return (
     <div>
-      <Grid container>
-        <Grid item xs={12} className={classes.perfectCenter}>
-          <Headline />
-        </Grid>
+      {spinner ? (
+        SpinnerElement
+      ) : (
+        <Grid container>
+          <Grid item xs={12} className={classes.perfectCenter}>
+            <Headline />
+          </Grid>
 
-        <Grid
-          item
-          xs={12}
-          sm={12}
-          md={12}
-          lg={5}
-          xl={3}
-          justify = "center"
-          style={{padding: '1%'}}
-        >
-          <CaseCards />
-          <Info />
+          <Grid
+            item
+            xs={12}
+            sm={12}
+            md={12}
+            lg={5}
+            xl={3}
+            justify="center"
+            style={{ padding: "1%" }}
+          >
+            <CaseCards />
+            <Info />
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={12}
+            md={12}
+            lg={7}
+            xl={9}
+            style={{ padding: "1%" }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                height: "70vh",
+                border: "solid",
+              }}
+            >
+              <MapArea
+                coordinates={props.coordinates}
+                boundingBox={props.boundingBox}
+              ></MapArea>
+            </div>
+          </Grid>
         </Grid>
-        <Grid item xs={12} sm={12} md={12} lg={7} xl={9} style={{padding: '1%'}}>
-          <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: '70vh', border: 'solid'}}>
-            <MapArea coordinates={props.coordinates} boundingBox={props.boundingBox}></MapArea>
-          </div>
-        </Grid>
-      </Grid>
+      )}
     </div>
   );
 }

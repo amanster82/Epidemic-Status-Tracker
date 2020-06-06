@@ -160,7 +160,7 @@ function MapArea(props) {
                 </GeoJSON>
               </>
             );
-          } else {
+          } else if(Number(b.neg_count !== null)) {
             return (
               <>
                 <GeoJSON

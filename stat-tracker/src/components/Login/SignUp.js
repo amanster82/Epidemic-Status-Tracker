@@ -293,7 +293,7 @@ export default function SignUp(props) {
               <Link onClick={props.SignInClick} variant="body2">
                 {"Already have an account? Sign In"}
               </Link>
-            </Grid>
+            </Grid> 
           </Grid>
         </form>
         <Box mt={8}></Box>

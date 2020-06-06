@@ -28,19 +28,6 @@ function Form(props) {
   const [postalCodeValue, setpostalCodeValue] = React.useState("");
   const classes = useStyles();
   
-  const submitResponses = () => {
-    const formResponses = [{
-    status: statusValue,
-    symptoms: Object.entries(sympValue).filter(([,v]) => v === true).reduce((prev, [k, v]) => ({...prev, [k]: v}), {}),
-    risk: riskValue,
-    location: postalCodeValue
-  }];
-  
-
-  return(formResponses);
-  };
-
-  
   console.log(sympValue);
   const handleStatusChange = (event) => {
     setStatusValue(event.target.value);
@@ -72,7 +59,7 @@ function Form(props) {
         status: statusValue,
         symptoms: Object.entries(sympValue).filter(([,v]) => v === true).reduce((prev, [k, v]) => ({...prev, [k]: v}), {}),
         risk: (riskValue=='Yes' ? true: false),
-        location: event.target.value
+        postal: event.target.value
       }]
       props.response(formResponses);
     }else{

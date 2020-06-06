@@ -21,29 +21,61 @@ router.get("/", function (req, res, next) {
   res.render("index", { title: "Express" });
 });
 
-router.get("/api/metadata", async (req, res, next) => {
+router.post("/api/search", (req, res, next) => {
+  console.log("------------------/api/Search-----------------------");
+  console.log(req.body);
+
+  if (req.body.input.length > 3) {
+    knex("report")
+      .select("location")
+      .where("location", "like", "%" + req.body.input + "%")
+      .andWhere({ active: true })
+      .then((search_results) => {
+        console.log(search_results);
+        res.json({ results: search_results });
+        res.end();
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  } else {
+    res.send("No results");
+  }
+});
+
+router.post("/api/metadata", async (req, res, next) => {
   console.log("------------------/api/metadata-----------------------");
   console.log("this is the user:", req.user);
+
+  console.log("request body", req.body.locationChange);
+
   if (req.user == "undefined") {
     console.error("user is not logged in");
     return next();
   }
   try {
-    pCode = await knex("report")
-      .select("location")
-      .where({ user_id: req.user })
-      .andWhere({ active: true });
+    if (req.body.locationChange !== undefined) {
+      pCode = await knex("report")
+        .select("postal")
+        .where({ location: req.body.locationChange })
+        .limit(1);
+    } else {
+      pCode = await knex("report")
+        .select("postal")
+        .where({ user_id: req.user })
+        .andWhere({ active: true });
+    }
 
-    pCode = pCode[0].location;
+    pCode = pCode[0].postal;
     console.log("the Pcode", pCode);
 
     postalCode = "%" + pCode + "%";
-    console.log("THIS IS THE LOCATION:", postalCode);
+    console.log("THIS IS THE POSTALCODE:", postalCode);
 
     var positiveCount = await knex("report")
       .count("user_id")
       .where({ status: "+" })
-      .andWhere("location", "like", postalCode)
+      .andWhere("postal", "like", postalCode)
       .andWhere({ active: true });
     positiveCount = positiveCount[0].count;
     console.log("THIS IS THE POSITIVES:", positiveCount);
@@ -51,7 +83,7 @@ router.get("/api/metadata", async (req, res, next) => {
     var negativeCount = await knex("report")
       .count("user_id")
       .where({ status: "-" })
-      .andWhere("location", "like", postalCode)
+      .andWhere("postal", "like", postalCode)
       .andWhere({ active: true });
     negativeCount = negativeCount[0].count;
     console.log("THIS IS THE NEGATIVES:", negativeCount);
@@ -59,7 +91,7 @@ router.get("/api/metadata", async (req, res, next) => {
     var recoveredCount = await knex("report")
       .count("user_id")
       .where({ status: "=" })
-      .andWhere("location", "like", postalCode)
+      .andWhere("postal", "like", postalCode)
       .andWhere({ active: true });
     recoveredCount = recoveredCount[0].count;
     console.log("THIS IS THE RECOVERED:", recoveredCount);
@@ -67,13 +99,13 @@ router.get("/api/metadata", async (req, res, next) => {
     var symptomCount = await knex("report")
       .count("user_id")
       .where({ status: "s" })
-      .andWhere("location", "like", postalCode)
+      .andWhere("postal", "like", postalCode)
       .andWhere({ active: true });
     symptomCount = symptomCount[0].count;
     console.log("THIS IS THE SYMPTOMATIC:", symptomCount);
 
     var coordinates = await knex("report")
-      .where("location", "like", postalCode)
+      .where("postal", "like", postalCode)
       .andWhere({ active: true });
 
     console.log("these are the coordinates:", coordinates);
@@ -140,18 +172,18 @@ router.get("/api/dashboard", async (req, res, next) => {
         res.json({ rows: rows[0] });
       } else {
         var query =
-          "SELECT pos_count, neg_count, symp_count, recov_count, location, ST_AsGeoJSON(ST_Transform(canada_fsa.geom, 4326)) as geojson \
+          "SELECT pos_count, neg_count, symp_count, recov_count, postal, ST_AsGeoJSON(ST_Transform(canada_fsa.geom, 4326)) as geojson \
         FROM ( \
-              SELECT location \
+              SELECT postal \
             , COUNT(*) FILTER (WHERE status = '+') AS pos_count \
             , COUNT(*) FILTER (WHERE status = '-') AS neg_count \
             , COUNT(*) FILTER (WHERE status = 's') AS symp_count \
             , COUNT(*) FILTER (WHERE status = '=') AS recov_count \
           FROM report \
           WHERE report.active = true \
-          GROUP BY location \
+          GROUP BY postal \
     ) AS counts \
-    right JOIN canada_fsa ON canada_fsa.cfsauid=counts.location \
+    right JOIN canada_fsa ON canada_fsa.cfsauid=counts.postal \
     order by st_distance(ST_Centroid(ST_Transform( \
     (SELECT geom FROM canada_fsa WHERE cfsauid = '" +
           pCode.toUpperCase() +
@@ -302,37 +334,5 @@ passport.deserializeUser((user, done) => {
   console.log("hey there???", user);
   return done(null, user); // take the id created and remove session
 });
-
-// //API Endpoints
-// router.post('/api/login', (req, res)=> {
-//   console.log('Received a body ', req.body);
-//   console.log("timing the app out....")
-
-//   let obj = req.body;
-//   let email = obj.email
-//   let pass = obj.pass;
-//   console.log("this is object", obj);
-//   console.log("this is email", email);
-
-//   console.log("the query is this:");
-//   console.log('SELECT * FROM account WHERE email= \'' + email + '\' AND password= \'' + pass+'\'');
-
-//   client.query('SELECT * FROM account WHERE email= \'' + email + '\' AND password= \'' + pass+'\'', (err, result) =>{
-//     if(err){
-//       console.log("what the fuck is going on here!?");
-//       console.log(err);
-//     }
-//     if(result.rowCount != 0){
-//       console.log(result.rows);
-//       find = true;
-//       res.status(200).json({status: "Success"});
-//     }else{
-//       console.log("it was an error");
-//       res.status(500).json({status: "Error"})
-//     }
-//     //console.log(err, res);
-//     client.end;
-//   })
-// });
 
 module.exports = router;
