@@ -39,7 +39,7 @@ async function getMetaData(setMetaData, changeLocation){
   try{
   const results = await axios.post(url + `:9000/api/metadata`, {locationChange: changeLocation}, { withCredentials: true });
   console.log("-------------------THE METADATA HERE---------------------")
-    console.log(results);
+    console.log("THEEEEEEEEEEEEE REEEESSSSSUUSUUUULTTTS:", results);
     setMetaData(results);
     return(results);
   }catch{
@@ -65,7 +65,7 @@ function App() {
     });
 
     return (
-        <MyContext.Provider value={{Pagechange, setPage, MetaData, setMetaData, getMetaData}}>
+        <MyContext.Provider value={{Pagechange, setPage, MetaData, setMetaData, getMetaData, }}>
         
         {Pagechange != null && MetaData !=null
         ?

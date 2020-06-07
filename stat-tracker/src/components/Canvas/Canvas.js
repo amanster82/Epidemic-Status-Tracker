@@ -11,6 +11,8 @@ import MapArea from "../Map/MapArea.js";
 import { sizing } from "@material-ui/system";
 import { MyContext } from "../../MyContext";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import { set } from "date-fns";
+import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -45,17 +47,22 @@ function Canvas(props) {
   const classes = useStyles();
   const [locationClick, setLocation] = React.useState(false);
   const [spinner, setSpinner] = React.useState(false);
+  const [coordinates, setCoordinates] = React.useState(props.coordinates);
+  const [boundingBox, setBoundingbox] = React.useState(props.boundingBox);
+  const [title, setTitle] = React.useState(props.location);
   const {setMetaData, MetaData, getMetaData } = useContext(MyContext);
 
+  console.log("WTF!!@@##", coordinates);
   
   useEffect(() => {
     if(spinner){
-      console.log("TURNED ON");
-      
-    }else{
       console.log("TURNED OFF");
+      console.log("THESE ARE THE COORDINATES", coordinates);
+      setSpinner(false);
+    }else{
+      console.log("TURNED ON");
     }
-  }, [spinner]);
+  }, [boundingBox]);
 
   console.log("-----------------in the Canvas---------------");
   console.log(MetaData);
@@ -66,14 +73,26 @@ function Canvas(props) {
     setLocation(!value);
   }
 
-  function onStateChange(val){
+  async function onStateChange(val){
     console.log("DONT FUCK IT UP:", val)
+    let url = window.location.href;
+    url = url.split(":");
+    url = url[0] + ":" + url[1];
+    console.log(url);
+    setSpinner(true);
     if(val !== ''){
-      setSpinner(true);
-      let returned = getMetaData(setMetaData, val);
-      if(returned){
-        setSpinner(false);
-      }
+      let returned = await getMetaData(setMetaData, val);
+      let bounds = await axios.get(url + `:9000/api/dashboard`, { withCredentials: true })
+      console.log(bounds);
+      console.log("THE ROWS THE RWOS!!!!", bounds.data.rows);
+      console.log("the boundries", bounds.data.boundries);
+      console.log("RETURNEDDDDDDD:", returned);
+      setMetaData(returned);
+      let coordinates = [returned.data.locations[0].lat, returned.data.locations[0].long]
+      setCoordinates(coordinates);
+      setTitle(returned.data.locations[0].postal);
+      setLocation(false);
+      setBoundingbox(bounds.data.boundries);      
     }else{
       setSpinner(false);
     }
@@ -113,7 +132,7 @@ function Canvas(props) {
           {locationClick ? (
             <GoogleMaps place={(x)=>onStateChange(x)}></GoogleMaps>
           ) : (
-            <h1>{props.location}</h1>
+            <h1>{title}</h1>
           )}
         </Grid>
       </React.Fragment>
@@ -219,8 +238,8 @@ function Canvas(props) {
               }}
             >
               <MapArea
-                coordinates={props.coordinates}
-                boundingBox={props.boundingBox}
+                coordinates={coordinates}
+                boundingBox={boundingBox}
               ></MapArea>
             </div>
           </Grid>

@@ -92,43 +92,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function onPageLoad(
-  setStatus,
-  setReport,
-  setUserReport,
-  setSpinner,
-  setboundingBox,
-  setLocation,
-  setCoordinates
-) {
-  console.log("------------------/api/dashboard-----------------------");
-  let url = window.location.href;
-  url = url.split(":");
-  url = url[0] + ":" + url[1];
-  console.log(url);
-  axios
-    .get(url + `:9000/api/dashboard`, { withCredentials: true })
-    .then(function (res) {
-      console.log(res);
-      console.log("THE ROWS THE RWOS!!!!", res.data.rows);
-      console.log("the boundries", res.data.boundries);
-      setboundingBox(res.data.boundries);
-      if (res.data.rows == undefined) {
-        setStatus(false);
-        setReport(false);
-        setSpinner(false);
-      } else {
-        setStatus(true);
-        setReport(true);
-        console.log("res.data.rows**************************");
-        setUserReport(res.data.rows);
-        setLocation(res.data.rows.postal);
-        setCoordinates([res.data.rows.lat, res.data.rows.long])
-        setSpinner(false);
-      }
-    });
-}
-
 async function logout(setPage, setMetaData) {
   let url = window.location.href;
   url = url.split(":");
@@ -196,9 +159,7 @@ export default function Dashboard() {
         console.log("A CAll to Get METADATA");
         let metaDataLoaded = await getMetaData(setMetaData);
         if (metaDataLoaded) {
-          setStatus(true);
-          setReport(true);
-          setUserReport(value);
+          onPageLoad();
         }
       })
 
@@ -226,18 +187,39 @@ export default function Dashboard() {
 
   useEffect(() => {
     status == null && reportCompleted == null
-      ? onPageLoad(
-          setStatus,
-          setReport,
-          setUserReport,
-          setSpinner,
-          setboundingBox,
-          setLocation,
-          setCoordinates
-        )
+      ? onPageLoad()
       : console.log("Dashboard.js Effect Done");
   });
 
+  function onPageLoad() {
+    console.log("------------------/api/dashboard-----------------------");
+    let url = window.location.href;
+    url = url.split(":");
+    url = url[0] + ":" + url[1];
+    console.log(url);
+    axios
+      .get(url + `:9000/api/dashboard`, { withCredentials: true })
+      .then(function (res) {
+        console.log(res);
+        console.log("THE ROWS THE RWOS!!!!", res.data.rows);
+        console.log("the boundries", res.data.boundries);
+        setboundingBox(res.data.boundries);
+        if (res.data.rows == undefined) {
+          setStatus(false);
+          setReport(false);
+          setSpinner(false);
+        } else {
+          setStatus(true);
+          setReport(true);
+          console.log("res.data.rows**************************");
+          setUserReport(res.data.rows);
+          setLocation(res.data.rows.postal);
+          setCoordinates([res.data.rows.lat, res.data.rows.long])
+          setSpinner(false);
+        }
+      });
+  }
+  
   function conditionRender() {
     if (!status && !reportCompleted) {
       return (

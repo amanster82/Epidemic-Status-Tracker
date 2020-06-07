@@ -13,9 +13,10 @@ import { Icon } from "leaflet";
 import "./MapStyle.css";
 
 function MapArea(props) {
-  const coordinates = props.coordinates;
-  const boundries = props.boundingBox;
+  const [coordinates, setCoordinates] = React.useState(props.coordinates);
+  const [boundries, setBoundries] = React.useState(props.boundingBox);
   console.log("BOUNDRIES IN MAP", boundries);
+  console.log("COORDINTATES IN THE MAP", coordinates);
   const { MetaData } = useContext(MyContext);
   const greenIcon = new Icon({
     iconUrl:
