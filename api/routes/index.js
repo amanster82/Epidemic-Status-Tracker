@@ -4,6 +4,7 @@ var bcrypt = require("bcrypt");
 var passport = require("passport");
 var initializePassport = require("./passport-config");
 let pCode = "";
+let province = "";
 
 const connectionString =
   "postgressql://postgres:postgres@localhost:5433/TrackerData";
@@ -28,7 +29,7 @@ router.post("/api/search", (req, res, next) => {
   if (req.body.input.length > 3) {
     knex("report")
       .select("location")
-      .where("location", "like", "%" + req.body.input + "%")
+      .where(knex.raw("UPPER(location) like upper('%"+req.body.input+"%')"))
       .andWhere({ active: true })
       .then((search_results) => {
         console.log(search_results);
@@ -59,15 +60,28 @@ router.post("/api/metadata", async (req, res, next) => {
         .select("postal")
         .where({ location: req.body.locationChange })
         .limit(1);
+      
+      province = await knex("report")
+      .select("province")
+      .where({ location: req.body.locationChange })
+      .limit(1);
+
     } else {
       pCode = await knex("report")
         .select("postal")
         .where({ user_id: req.user })
         .andWhere({ active: true });
+      
+      province = await knex("report")
+        .select("province")
+        .where({ user_id: req.user })
+        .andWhere({ active: true });
     }
 
     pCode = pCode[0].postal;
+    province = province[0].province;
     console.log("the Pcode", pCode);
+    console.log("the provice", province);
 
     postalCode = "%" + pCode + "%";
     console.log("THIS IS THE POSTALCODE:", postalCode);
@@ -137,7 +151,6 @@ router.post("/api/report", async (req, res, next) => {
     active: true,
   });
 
-  const check = await knex("report").where({ user_id: req.user });
   try {
     console.log("Trying to check");
     await knex("report")
@@ -184,6 +197,7 @@ router.get("/api/dashboard", async (req, res, next) => {
           GROUP BY postal \
     ) AS counts \
     right JOIN canada_fsa ON canada_fsa.cfsauid=counts.postal \
+    WHERE canada_fsa.prname like '%"+province+"%' \
     order by st_distance(ST_Centroid(ST_Transform( \
     (SELECT geom FROM canada_fsa WHERE cfsauid = '" +
           pCode.toUpperCase() +

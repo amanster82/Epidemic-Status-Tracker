@@ -4,8 +4,40 @@ import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import axios from "axios";
 import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
+import { makeStyles } from "@material-ui/core/styles";
+
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    flexGrow: 1,
+  },
+  paper: {
+    padding: theme.spacing(1),
+    textAlign: "center",
+    color: theme.palette.text.secondary,
+  },
+
+  center: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-start",
+  },
+
+  portionCenter: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-start",
+  },
+
+  centerGoAndBar: {
+    display: "flex",
+    alignItems: "center",
+  },
+}));
 
 export default function FreeSolo(props) {
+  const classes = useStyles();
   const [places, setPlaces] = React.useState([]);
   const [chosenOption, setChoice] = React.useState("");
   console.log("chosenOption", chosenOption);
@@ -18,18 +50,40 @@ export default function FreeSolo(props) {
         onChange={(event, newValue) => {
           setChoice(newValue);
         }}
-        autoComplete	
+        autoComplete
         renderInput={(params) => (
-          <TextField
-            onChange={(event) => {  search(event.target.value, setPlaces, places); } }
-            {...params}
-            label="Search Places"
-            margin="normal"
-            variant="outlined"
-          />
+          <>
+            <Grid container className={classes.centerGoAndBar}>
+              <Grid item
+              style={{marginRight: '5%'}}
+              xs={12}
+              sm={12}
+              md={12}
+              lg={10}
+              xl={10}>
+                <TextField
+                  onChange={(event) => {
+                    search(event.target.value, setPlaces, places);
+                  }}
+                  {...params}
+                  label="Search Places"
+                  margin="normal"
+                  variant="outlined"
+                  onKeyDown={ (e) => (e.key==='Enter') ? props.place(chosenOption) : false } 
+                />
+              </Grid>
+              <Grid item
+              xs={1}
+              sm={1}
+              md={1}
+              lg={1}
+              xl={1}>
+                <Button variant="contained" color="primary" onClick={() => props.place(chosenOption)}>Go</Button>
+              </Grid>
+            </Grid>
+          </>
         )}
       />
-      <Button onClick={()=>props.place(chosenOption)}>Go</Button>
     </div>
   );
 }
@@ -49,7 +103,7 @@ async function search(value, setPlaces, places) {
   if (response.data === "No results") {
     return;
   }
-  console.log(response.data.results.location);
+  console.log(response.data.results);
   response.data.results.map((element, index) => {
     if (places.indexOf(element.location) === -1) {
       console.log("this is the element: ", element);

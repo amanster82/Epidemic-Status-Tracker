@@ -17,6 +17,7 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import InboxIcon from "@material-ui/icons/MoveToInbox";
 import AccountCircle from "@material-ui/icons/AccountCircle";
+import DashboardIcon from '@material-ui/icons/Dashboard';
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
@@ -24,6 +25,7 @@ import Report from "./Report";
 import axios from "axios";
 import Canvas from "./components/Canvas/Canvas";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import Profile from "./Profile";
 import { MyContext } from "./MyContext";
 
 const drawerWidth = 240;
@@ -125,6 +127,7 @@ export default function Dashboard() {
   const [location, setLocation] = React.useState("North Vancouver"); //change to empty
   const [APIDown, setApiDown] = React.useState(null);
   const [boundingBox, setboundingBox] = React.useState(null);
+  const [showProfile, setProfile] = React.useState(true);
   const {
     Pagechange,
     setPage,
@@ -186,10 +189,13 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    status == null && reportCompleted == null
+    status == null &&
+    reportCompleted == null &&
+    Pagechange != null &&
+    MetaData != null
       ? onPageLoad()
       : console.log("Dashboard.js Effect Done");
-  });
+  }, []);
 
   function onPageLoad() {
     console.log("------------------/api/dashboard-----------------------");
@@ -214,12 +220,26 @@ export default function Dashboard() {
           console.log("res.data.rows**************************");
           setUserReport(res.data.rows);
           setLocation(res.data.rows.postal);
-          setCoordinates([res.data.rows.lat, res.data.rows.long])
+          setCoordinates([res.data.rows.lat, res.data.rows.long]);
           setSpinner(false);
         }
       });
   }
-  
+
+  function dashboardFocus() {
+    if (showProfile) {
+      return <Profile></Profile>;
+    } else {
+      return (
+        <Canvas
+          location={location}
+          coordinates={coordinates}
+          boundingBox={boundingBox}
+        ></Canvas>
+      );
+    }
+  }
+
   function conditionRender() {
     if (!status && !reportCompleted) {
       return (
@@ -253,14 +273,13 @@ export default function Dashboard() {
             </Button>
           </Grid>
           <Button
-              className={buttonEnterance}
-              variant="contained"
-              onClick={() => logout(setPage, setMetaData)}
-              onAnimationEnd={() =>
-                setButtonEnterance("animated infinite pulse")
-              }
-              
-            >Logout</Button>
+            className={buttonEnterance}
+            variant="contained"
+            onClick={() => logout(setPage, setMetaData)}
+            onAnimationEnd={() => setButtonEnterance("animated infinite pulse")}
+          >
+            Logout
+          </Button>
         </Grid>
       );
     } else if (status && !reportCompleted) {
@@ -316,11 +335,17 @@ export default function Dashboard() {
             </div>
             <Divider />
             <List>
-              <ListItem button>
+              <ListItem button onClick={() => setProfile(true)}>
                 <ListItemIcon>
                   <AccountCircle></AccountCircle>
                 </ListItemIcon>
-                <ListItemText primary={"Account"} />
+                <ListItemText primary={"Profile"} />
+              </ListItem>
+              <ListItem button onClick={() => setProfile(false)}>
+                <ListItemIcon>
+                  <DashboardIcon></DashboardIcon>
+                </ListItemIcon>
+                <ListItemText primary={"Dashboard"} />
               </ListItem>
               <ListItem button onClick={() => logout(setPage, setMetaData)}>
                 <ListItemIcon>
@@ -344,12 +369,7 @@ export default function Dashboard() {
             })}
           >
             <div className={classes.drawerHeader} />
-
-            <Canvas
-              location={location}
-              coordinates={coordinates}
-              boundingBox={boundingBox}
-            ></Canvas>
+            {dashboardFocus()}
           </main>
         </div>
       );

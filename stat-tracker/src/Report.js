@@ -81,7 +81,8 @@ export default function Report(props) {
         symptoms: Object.keys(FormReponsesObj[0].symptoms),
         lat: responseA.data[0].geometry.coordinates[1],
         long: responseA.data[0].geometry.coordinates[0],
-        location: responseB.data.display_name
+        location: responseB.data.display_name,
+        province: responseB.data.address.state
       }
        
       console.log("this is restructured", restructuredResponse);

@@ -8,6 +8,7 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import imageSrc from '../../static/images/mask.jpg';
+import axios from 'axios';
 
 const useStyles = makeStyles({
   root: {
@@ -17,6 +18,9 @@ const useStyles = makeStyles({
     height: 140,
   },
 });
+
+
+
 
 export default function InfoCard() {
   const classes = useStyles();

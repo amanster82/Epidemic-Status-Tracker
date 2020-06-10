@@ -11,10 +11,12 @@ import {
 import { MyContext } from "../../MyContext";
 import { Icon } from "leaflet";
 import "./MapStyle.css";
+import Grid from "@material-ui/core/Grid";
 
 function MapArea(props) {
   const [coordinates, setCoordinates] = React.useState(props.coordinates);
   const [boundries, setBoundries] = React.useState(props.boundingBox);
+  console.log("-----------------in the Map---------------");
   console.log("BOUNDRIES IN MAP", boundries);
   console.log("COORDINTATES IN THE MAP", coordinates);
   const { MetaData } = useContext(MyContext);
@@ -62,7 +64,6 @@ function MapArea(props) {
     shadowSize: [41, 41],
   });
 
-  console.log("-----------------in the Map---------------");
   console.log(MetaData);
 
   function iconCheck(status) {
@@ -119,6 +120,11 @@ function MapArea(props) {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
       />
+      <Marker 
+        position={[coordinates[0], coordinates[1]]}
+      >
+        <Popup>{MetaData.data.locations[0].postal}</Popup>
+      </Marker>
       {boundries
         .filter((bound) => bound.location !== null)
         .map((b, index) => {

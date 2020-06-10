@@ -72,7 +72,8 @@ function App() {
         <BrowserRouter>
             <Route path='/' exact component={External} />
             <Route path='/self-report' exact component={Report} />
-            <Route path='/Dashboard' exact component={Dashboard} />  
+            <Route path='/Dashboard' exact component={Dashboard} /> 
+            {/* <Route path='/Profile' exact component={Profile}/> */}
         </BrowserRouter>
         : <div style={{ 
             display: 'flex',

@@ -80,34 +80,34 @@ function Form(props) {
 
                   <FormControl>
                     <FormGroup>
-                        <FormControlLabel control={ <Checkbox name="Cough" onChange={handleSympChange}/>}  label="Cough"></FormControlLabel>
-                        <FormControlLabel control={ <Checkbox name="Fever" onChange={handleSympChange}onChange={handleSympChange}/>} label="Fever"></FormControlLabel>
-                        <FormControlLabel control={ <Checkbox name="Shortness of breath" onChange={handleSympChange}/>} label="Shortness of breath"></FormControlLabel>
+                        <FormControlLabel control={ <Checkbox name="Cough" color="primary" onChange={handleSympChange}/>}  label="Cough"></FormControlLabel>
+                        <FormControlLabel control={ <Checkbox name="Fever" color="primary" onChange={handleSympChange}onChange={handleSympChange}/>} label="Fever"></FormControlLabel>
+                        <FormControlLabel control={ <Checkbox name="Shortness of breath" color="primary" onChange={handleSympChange}/>} label="Shortness of breath"></FormControlLabel>
                     </FormGroup>
                   </FormControl>
 
                   <FormControl>
                     <FormGroup>
-                    <FormControlLabel control={ <Checkbox name="Fatigue or tiredness" onChange={handleSympChange}/>} label="Fatigue or tiredness"></FormControlLabel>
-                      <FormControlLabel control={ <Checkbox name="Loss of smell or taste" onChange={handleSympChange}/>} label="Loss sense of smell or taste"></FormControlLabel>
-                      <FormControlLabel control={ <Checkbox name="Trouble breathing" onChange={handleSympChange}/>} label="Trouble breathing"></FormControlLabel>
+                    <FormControlLabel control={ <Checkbox name="Fatigue or tiredness" color="primary" onChange={handleSympChange}/>} label="Fatigue or tiredness"></FormControlLabel>
+                      <FormControlLabel control={ <Checkbox name="Loss of smell or taste" color="primary" onChange={handleSympChange}/>} label="Loss sense of smell or taste"></FormControlLabel>
+                      <FormControlLabel control={ <Checkbox name="Trouble breathing" color="primary" onChange={handleSympChange}/>} label="Trouble breathing"></FormControlLabel>
                     </FormGroup>
                   </FormControl>
 
                   <FormControl>
                     <FormGroup>
-                      <FormControlLabel control={ <Checkbox name="Persistent pain or pressure in the chest" onChange={handleSympChange}/>} label="Persistent pain or pressure in the chest"></FormControlLabel>
-                      <FormControlLabel control={ <Checkbox name="Confusion" onChange={handleSympChange}/>} label="Confusion"></FormControlLabel>
-                      <FormControlLabel control={ <Checkbox name="Bluish lips or face" onChange={handleSympChange}/>} label="Bluish lips or face"></FormControlLabel>
+                      <FormControlLabel control={ <Checkbox name="Persistent pain or pressure in the chest" color="primary" onChange={handleSympChange}/>} label="Persistent pain or pressure in the chest"></FormControlLabel>
+                      <FormControlLabel control={ <Checkbox name="Confusion" color="primary" onChange={handleSympChange}/>} label="Confusion"></FormControlLabel>
+                      <FormControlLabel control={ <Checkbox name="Bluish lips or face" color="primary" onChange={handleSympChange}/>} label="Bluish lips or face"></FormControlLabel>
                     </FormGroup>
                   </FormControl>
 
                   <FormControl>
                     <FormGroup>
-                          <FormControlLabel control={ <Checkbox name="Nausea" onChange={handleSympChange}/>} label="Nausea"></FormControlLabel>
-                          <FormControlLabel control={ <Checkbox name="Vomiting" onChange={handleSympChange}/>} label="Vomiting"></FormControlLabel>
-                          <FormControlLabel control={ <Checkbox name="Sweating and shaking chills" onChange={handleSympChange}/>} label="Sweating and shaking chills"></FormControlLabel>
-                          <FormControlLabel control={ <Checkbox name="Lower than normal temperatures" onChange={handleSympChange}/>} label="Lower than normal temperatures"></FormControlLabel>
+                          <FormControlLabel control={ <Checkbox name="Nausea" color="primary" onChange={handleSympChange}/>} label="Nausea"></FormControlLabel>
+                          <FormControlLabel control={ <Checkbox name="Vomiting" color="primary" onChange={handleSympChange}/>} label="Vomiting"></FormControlLabel>
+                          <FormControlLabel control={ <Checkbox name="Sweating and shaking chills" color="primary" onChange={handleSympChange}/>} label="Sweating and shaking chills"></FormControlLabel>
+                          <FormControlLabel control={ <Checkbox name="Lower than normal temperatures" color="primary" onChange={handleSympChange}/>} label="Lower than normal temperatures"></FormControlLabel>
                     </FormGroup>
                   </FormControl>
                 <br></br>
