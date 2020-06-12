@@ -234,7 +234,7 @@ function Canvas(props) {
             xl={3}
             style={{ padding: "1%" }}
           >
-            <UserData/>
+            {/* <UserData/> */}
             <CaseCards />
             <Info />
           </Grid>

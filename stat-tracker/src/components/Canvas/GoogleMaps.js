@@ -8,6 +8,7 @@ import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
 
 
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -41,6 +42,7 @@ export default function FreeSolo(props) {
   const [places, setPlaces] = React.useState([]);
   const [chosenOption, setChoice] = React.useState("");
   console.log("chosenOption", chosenOption);
+  console.log("THIS IS THE PLACES", places)
   return (
     <div style={{ width: "100%" }}>
       <Autocomplete
@@ -111,6 +113,7 @@ async function search(value, setPlaces, places) {
       console.log("this is the index: ", index);
       setPlaces([...places, element.location]);
     }
+
   });
 }
 
