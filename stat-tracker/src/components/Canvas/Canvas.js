@@ -112,10 +112,10 @@ function Canvas(props) {
         <Grid container style={{padding: '1%'}}>
           <Grid
             item
-            xs={locationClick ? 12 : 8}
+            xs={locationClick ? 12 : 12}
             sm={locationClick ? 12 : 8}
-            md={locationClick ? 12 : 3}
-            lg={2}
+            md={locationClick ? 12 : 4}
+            lg={3}
             xl={2}
             className={classes.perfectCenter}
           >

@@ -1,218 +1,100 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import UserInfo from "./components/Profile/UserCard";
-import ReportCard from "./components/Profile/ReportCard";
-import Grid from "@material-ui/core/Grid";
-import StatusCard from "./components/Profile/StatusCard";
-import Avatar from "@material-ui/core/Avatar";
-import PersonIcon from "@material-ui/icons/Person";
-import { Typography } from "@material-ui/core";
-import ReportActivity from "./components/Profile/ReportActivity";
-import Button from "@material-ui/core/Button";
-import Chip from "@material-ui/core/Chip";
-import FaceIcon from "@material-ui/icons/Face";
-import DoneIcon from "@material-ui/icons/Done";
-import Paper from "@material-ui/core/Paper";
+import PropTypes from "prop-types";
+import SwipeableViews from "react-swipeable-views";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
+import AppBar from "@material-ui/core/AppBar";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import Typography from "@material-ui/core/Typography";
+import Box from "@material-ui/core/Box";
+import ProfileOverview from "./ProfileOverview";
+import Settings from "./Settings.js";
 
-const useStyles = makeStyles((theme) => ({
-  container: {
-    marginRight: "10%",
-   // marginBottom: "10%",
-  },
-  center: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  left: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "flex-start",
-  },
-  small: {
-    width: theme.spacing(3),
-    height: theme.spacing(3),
-  },
-  large: {
-    width: theme.spacing(7),
-    height: theme.spacing(7),
-  },
-  table: {
-    fontSize: "larger",
-  },
-  test: {
-    maxWidth: "100% !important",
-  },
-  pushUp:{
-      marginTop: "10%"
-  },  
-  centerColumn: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "column"
-  },
-}));
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
 
-function Profile(props) {
-  const classes = useStyles();
   return (
-    <div>
-      <div className={classes.center}>
-        <Grid container className={classes.center}>
-          <Grid
-            item
-            className={classes.left}
-            xs={12}
-            sm={12}
-            md={4}
-            lg={3}
-            xl={2}
-          >
-            <Avatar className={classes.large}>
-              <PersonIcon fontSize="large"></PersonIcon>
-            </Avatar>
-            <div style={{ marginLeft: "10px" }}>
-              <div>
-                <Typography component="h" variant="h5">
-                  Profile
-                </Typography>
-              </div>
-              <div>
-                <Typography component="h" variant="subtitle1">
-                  ID: 123456789
-                </Typography>
-              </div>
-            </div>
-          </Grid>
-          <Grid item xs={12} sm={12} md={4} lg={3} xl={2}>
-            <table className={classes.table}>
-              <tr>
-                <td>
-                  <strong>Age:</strong>
-                </td>
-                <td>27</td>
-              </tr>
-              <tr>
-                <td>
-                  <strong>Birth:</strong>
-                </td>
-                <td>February 8th 1993</td>
-              </tr>
-            </table>
-          </Grid>
-          <Grid item xs={12} sm={12} md={4} lg={3} xl={2}>
-            <table className={classes.table}>
-              <tr>
-                <td>
-                  <strong>Email:</strong>
-                </td>
-                <td>sample@email.com</td>
-              </tr>
-              <tr>
-                <td>
-                  <strong>Province:</strong>
-                </td>
-                <td>British Columbia</td>
-              </tr>
-            </table>
-          </Grid>
-        </Grid>
-      </div>
-      <Grid
-        container
-        className={classes.center}
-        style={{ marginBottom: "3%", marginTop: "3%" }}
-      >
-        <Grid item xs={12} sm={12} md={4} lg={3} xl={2}>
-          <StatusCard
-            title="Region"
-            data="V7N"
-            sub="BC"
-            color="white"
-          ></StatusCard>
-        </Grid>
-        <Grid
-          item
-          xs={12}
-          sm={12}
-          md={4}
-          lg={3}
-          xl={2}
-          className={classes.test}
-        >
-          <StatusCard
-            title="Status"
-            data="Positive"
-            sub="Today"
-            color="red"
-          ></StatusCard>
-        </Grid>
-        <Grid item xs={12} sm={12} md={4} lg={3} xl={2}>
-          <StatusCard
-            title="Leaving House?"
-            data="Yes"
-            sub="Today"
-            color="white"
-          ></StatusCard>
-        </Grid>
-      </Grid>
-      <Grid container className={classes.center}>
-        <Grid
-          item
-          xs={12}
-          sm={12}
-          md={5}
-          lg={3}
-          xl={3}
-          className={classes.container}
-        >
-          <UserInfo
-            email="test"
-            password="test"
-            gender="test"
-            birthday="test"
-          ></UserInfo>
-        </Grid>
-
-        <Grid item xs={12} sm={12} md={5} lg={6} xl={3} className={classes.centerColumn}>
-        <Button variant="contained" color="primary" className={classes.pushUp} >Change Daily Report</Button>
-
-          <Paper style={{ padding: "5%", marginTop: "10%" }}>
-            <h2>Symptom List</h2>
-            <Chip
-              label="Coughing"
-              clickable
-              //onDelete={handleDelete}
-              deleteIcon={<DoneIcon />}
-            />
-            <Chip
-              label="Fever"
-              clickable
-              //onDelete={handleDelete}
-              deleteIcon={<DoneIcon />}
-            />
-            <Chip
-              label="Shortness of Breath"
-              clickable
-              //onDelete={handleDelete}
-              deleteIcon={<DoneIcon />}
-            />
-            <Chip
-              label="Trouble Breathing"
-              clickable
-              //onDelete={handleDelete}
-              deleteIcon={<DoneIcon />}
-            />
-          </Paper>
-        </Grid>
-
-        <Grid item xs={12} sm={12} md={5} lg={3} xl={6}>
-          {/* <ReportActivity></ReportActivity> */}
-        </Grid>
-      </Grid>
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`full-width-tabpanel-${index}`}
+      aria-labelledby={`full-width-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box p={3}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
     </div>
   );
 }
 
-export default Profile;
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.any.isRequired,
+  value: PropTypes.any.isRequired,
+};
+
+function a11yProps(index) {
+  return {
+    id: `full-width-tab-${index}`,
+    "aria-controls": `full-width-tabpanel-${index}`,
+  };
+}
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    backgroundColor: "none",
+    width: "100%",
+  },
+}));
+
+export default function FullWidthTabs() {
+  const classes = useStyles();
+  const theme = useTheme();
+  const [value, setValue] = React.useState(0);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
+  const handleChangeIndex = (index) => {
+    setValue(index);
+  };
+
+  return (
+    <div className={classes.root}>
+      <AppBar position="static" color="default">
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          indicatorColor="primary"
+          textColor="primary"
+          variant="fullWidth"
+          aria-label="full width tabs example"
+        >
+          <Tab label="Overview" {...a11yProps(0)} />
+          <Tab label="Account Settings" {...a11yProps(1)} />
+          <Tab label="Item Three" {...a11yProps(2)} />
+        </Tabs>
+      </AppBar>
+      <SwipeableViews
+        axis={theme.direction === "rtl" ? "x-reverse" : "x"}
+        index={value}
+        onChangeIndex={handleChangeIndex}
+      >
+        <TabPanel value={value} index={0} dir={theme.direction}>
+        <ProfileOverview></ProfileOverview>
+        </TabPanel>
+        <TabPanel value={value} index={1} dir={theme.direction}>          
+           <Settings></Settings>
+        </TabPanel>
+        <TabPanel value={value} index={2} dir={theme.direction}>
+     
+        </TabPanel>
+
+      </SwipeableViews>
+    </div>
+  );
+}
