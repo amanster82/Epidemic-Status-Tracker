@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
@@ -28,6 +28,30 @@ function Form(props) {
   const [postalCodeValue, setpostalCodeValue] = React.useState("");
   const classes = useStyles();
   
+  useEffect(() => {
+   clearValuesWhenBack(); 
+  });
+  
+
+  function clearValuesWhenBack(){
+    if(props.step===0 && props.Ipressed==="Back"){
+      setStatusValue("");
+      setSympValue("");
+      setRiskValue("");
+      setpostalCodeValue("");
+      props.setButton("Next");
+    }else if(props.step===1 && props.Ipressed==="Back"){
+      setSympValue("");
+      setRiskValue("");
+      setpostalCodeValue("");
+      props.setButton("Next");
+    }else if(props.step===2 && props.Ipressed==="Back"){
+      setpostalCodeValue("");
+      props.setButton("Next");
+    }
+
+  }
+
   console.log(sympValue);
   const handleStatusChange = (event) => {
     setStatusValue(event.target.value);

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
@@ -35,15 +35,15 @@ function getSteps() {
   return ["Status", "Risk", "Location"];
 }
 
-function getStepContent(stepIndex, getResponse, value) {
+function getStepContent(whichButton, setButtonPress, stepIndex, getResponse, value) {
   console.log("is this called twice?")
   switch (stepIndex) {
     case 0:
-      return <Form step={stepIndex}  response={(value)=> getResponse(value, stepIndex)}></Form>;
+      return <Form Ipressed={whichButton} setButton={(value) => setButtonPress(value)} step={stepIndex} response={(value)=> getResponse(value, stepIndex)}></Form>;
     case 1:
-      return <Form step={stepIndex} response={(value)=> getResponse(value, stepIndex)}></Form>;
+      return <Form Ipressed={whichButton} setButton={(value) => setButtonPress(value)} step={stepIndex} response={(value)=> getResponse(value, stepIndex)}></Form>;
     case 2:
-      return <Form step={stepIndex} response={(value)=> getResponse(value, stepIndex)} ></Form>;
+      return <Form Ipressed={whichButton} setButton={(value) => setButtonPress(value)} step={stepIndex} response={(value)=> getResponse(value, stepIndex)} ></Form>;
     default: 
       return "Unknown stepIndex";
   }
@@ -55,7 +55,13 @@ export default function Report(props) {
   const [activeStep, setActiveStep] = React.useState(0);
   const [Response, setResponse] = React.useState(false);
   const [FormReponsesObj, setFormResponseObj] = React.useState({});
+  const [whichButton, setButtonPress] = React.useState("Next");
   const steps = getSteps();
+
+//   useEffect(() => {
+//     setButtonPress("Next");   
+// });
+ 
 
   function getResponse(value, stepIndex){
       console.log("got response", value)
@@ -93,10 +99,13 @@ export default function Report(props) {
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
       setResponse(false);
     }
+    setButtonPress("Next");
   };
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    setResponse(false);
+    setButtonPress("Back");
   };
 
   const handleReset = () => {
@@ -124,7 +133,7 @@ export default function Report(props) {
           <Paper elevation={0}>
             <div className={classes.flex}>
               <div className={classes.instructions}>
-                  {getStepContent(activeStep, getResponse)}
+                  {getStepContent(whichButton,setButtonPress, activeStep, getResponse)}
               </div>
               <div>
                 <Button
