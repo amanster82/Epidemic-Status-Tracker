@@ -54,8 +54,26 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+
 function Profile(props) {
   const classes = useStyles();
+
+  function calculate_Age(birthday) { // birthday is a date
+    var ageDifMs = Date.now() - birthday.getTime();
+    var ageDate = new Date(ageDifMs); // miliseconds from epoch
+    return Math.abs(ageDate.getUTCFullYear() - 1970);
+  }
+
+  function format_birthday(birthday) {
+    var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    var month = months[birthday.getMonth()];
+    var day = birthday.getDate();
+    var year = birthday.getFullYear();
+    var format = month+", " + day + " " + year
+
+    return format;
+  }
+  
   return (
     <div>
       <div className={classes.center}>
@@ -80,7 +98,7 @@ function Profile(props) {
               </div>
               <div>
                 <Typography component="h" variant="subtitle1">
-                  ID: 123456789
+                  ID: {props.id}
                 </Typography>
               </div>
             </div>
@@ -91,13 +109,13 @@ function Profile(props) {
                 <td>
                   <strong>Age:</strong>
                 </td>
-                <td>27</td>
+                <td>{calculate_Age(new Date(props.birthdate))}</td>
               </tr>
               <tr>
                 <td>
                   <strong>Birth:</strong>
                 </td>
-                <td>February 8th 1993</td>
+                <td>{format_birthday(new Date(props.birthdate))}</td>
               </tr>
             </table>
           </Grid>
@@ -107,13 +125,13 @@ function Profile(props) {
                 <td>
                   <strong>Email:</strong>
                 </td>
-                <td>sample@email.com</td>
+                <td>{props.email}</td>
               </tr>
               <tr>
                 <td>
                   <strong>Province:</strong>
                 </td>
-                <td>British Columbia</td>
+                <td>{props.province}</td>
               </tr>
             </table>
           </Grid>
@@ -127,8 +145,8 @@ function Profile(props) {
         <Grid item xs={12} sm={12} md={4} lg={3} xl={2}>
           <StatusCard
             title="Region"
-            data="V7N"
-            sub="BC"
+            data={props.region}
+            sub={props.province}
             color="white"
           ></StatusCard>
         </Grid>
@@ -143,9 +161,9 @@ function Profile(props) {
         >
           <StatusCard
             title="Status"
-            data="Positive"
+            data={props.status}
             sub="Today"
-            color="red"
+            color="yellow"
           ></StatusCard>
         </Grid>
         <Grid item xs={12} sm={12} md={4} lg={3} xl={2} className={classes.test}>
@@ -160,7 +178,7 @@ function Profile(props) {
       <Grid container className={classes.center}>
         <Grid item xs={12} sm={12} md={5} lg={6} xl={12} className={classes.centerColumn}>
 
-          <Paper style={{ padding: "5%"}}>
+          <Paper style={{ padding: "20px"}}>
             <h2>Symptom List</h2>
             <Chip
               label="Coughing"

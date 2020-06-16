@@ -19,7 +19,15 @@ function Form(props) {
   const useStyles = makeStyles((theme) => ({
     root: {
       flexGrow: 1,
-    }}));
+    },
+
+    input:{
+      textTransform: 'uppercase',
+      textAlign: 'center'
+    }
+  
+  
+  }));
 
 
   const [statusValue, setStatusValue] = React.useState("");
@@ -60,18 +68,33 @@ function Form(props) {
 
   const handleRiskChange = (event) => {
     setRiskValue(event.target.value);
-    props.response(event.target.value);
+    if(
+      statusValue === "+" && !(Object.keys(sympValue).length === 0 && sympValue.constructor === Object) || 
+      statusValue === "s" && !(Object.keys(sympValue).length === 0 && sympValue.constructor === Object)
+    ){
+      props.response(true);
+    }else if( statusValue === "=" || statusValue === "-"){
+      props.response(event.target.value);
+    }
+
   };
 
   const handleSympChange = (event) => {
-    setSympValue({...sympValue, [event.target.name]: event.target.checked });
     
-    if(statusValue==="="){
-      props.response(true);
+
+    let obj = {...sympValue, [event.target.name]: event.target.checked }
+    obj = Object.entries(obj).filter(([,v]) => v === true).reduce((prev, [k, v]) => ({...prev, [k]: v}), {})
+    setSympValue(obj);
+    console.log("this is the obj", obj);
+    let showNext =  !(Object.keys(obj).length === 0 && obj.constructor === Object) && riskValue !== ""
+    let specialCase = !(Object.keys(obj).length === 0 && obj.constructor === Object)
+
+    if(statusValue === "=") {
+      props.response(specialCase);
     }else{
-      props.response(event.target.value);
+      props.response(showNext);
     }
-    
+  
   };
 
 
@@ -88,7 +111,7 @@ function Form(props) {
       props.response(formResponses);
     }else{
       console.log("error");
-      //props.response(false);
+      props.response(false);
     }
   };
 
@@ -164,21 +187,31 @@ function Form(props) {
             <>
                 <Typography variant="h6" align="center">Please select a status that best suites you</Typography>
                 <RadioGroup name="status" value={statusValue} onChange={handleStatusChange}>
-                <FormControlLabel value="+" control={<Radio color="primary" />} label="Positive" />
-                <FormControlLabel value="s" control={<Radio color="primary"/>} label="Symptomatic" />
-                <FormControlLabel value="-" control={<Radio color="primary"/>} label="Negative" />
-                <FormControlLabel value="=" control={<Radio color="primary"/>} label="Recovered" />
+                <FormControlLabel value="+" control={<Radio color="primary" />} label="Positive - I have been tested, and I am currently confirmed positive" />
+                <FormControlLabel value="s" control={<Radio color="primary"/>} label="Symptomatic - I have familiarized myself with viral symptoms and I think I am showing possible signs" />
+                <FormControlLabel value="-" control={<Radio color="primary"/>} label="Negative - I have been tested and am currently negative/I am confident I am COVID-19 free" />
+                <FormControlLabel value="=" control={<Radio color="primary"/>} label="Recovered - I tested positive for COVID-19 and now I have recovered" />
                 </RadioGroup>
             </>
         )
       }else{
         return(
           <>
-              <Typography variant="h6" align="center">Please enter a postal code (where you reside or a reference point near you)</Typography>
+              <Typography variant="h6" align="center">Please enter the first three letters of your postal code</Typography>
               {/* <GoogleMaps response={props.response}></GoogleMaps> */}
-              <TextField 
-              onChange={handleLocationChange}>
+              <Grid container alignItems='center' justify="center">
+                <Grid item xs={3}>
+                <TextField 
+              variant="outlined"
+              onChange={handleLocationChange}
+              inputProps={{
+                maxLength: 3,
+                className: classes.input
+              }}
+              >
             </TextField>
+                </Grid>
+            </Grid>
           </>
         ) 
       }

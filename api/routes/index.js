@@ -3,6 +3,7 @@ var router = express.Router();
 var bcrypt = require("bcrypt");
 var passport = require("passport");
 var initializePassport = require("./passport-config");
+const { KnexTimeoutError } = require("knex");
 let pCode = "";
 let province = "";
 
@@ -124,12 +125,24 @@ router.post("/api/metadata", async (req, res, next) => {
 
     console.log("these are the coordinates:", coordinates);
 
+    var userInfo = await knex("users")
+    .where({id: req.user})
+    console.log("this is the user info:", coordinates);
+
+    var reportInfo = await knex("report")
+    .where({user_id: req.user})
+    .andWhere({ active: true })
+    .limit(1);
+
+
     res.json({
       positives: positiveCount,
       negatives: negativeCount,
       recoveries: recoveredCount,
       possibilities: symptomCount,
       locations: coordinates,
+      user: userInfo[0],
+      report: reportInfo[0]  
     });
   } catch (error) {
     if (!req.isAuthenticated()) {

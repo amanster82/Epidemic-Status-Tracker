@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useContext} from "react";
 import PropTypes from "prop-types";
 import SwipeableViews from "react-swipeable-views";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
@@ -9,6 +9,7 @@ import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import ProfileOverview from "./ProfileOverview";
 import Settings from "./Settings.js";
+import { MyContext } from "./MyContext";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -54,6 +55,9 @@ export default function FullWidthTabs() {
   const classes = useStyles();
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
+  const {MetaData} = useContext(MyContext);
+
+  console.log("MMMMMMMM---->", MetaData);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -85,7 +89,19 @@ export default function FullWidthTabs() {
         onChangeIndex={handleChangeIndex}
       >
         <TabPanel value={value} index={0} dir={theme.direction}>
-        <ProfileOverview></ProfileOverview>
+        <ProfileOverview 
+          id={MetaData.data.user.id}
+          birthdate={MetaData.data.user.birthdate}
+          email={MetaData.data.user.gender}
+          province={MetaData.data.report.province}
+          region={MetaData.data.report.postal}
+          status={MetaData.data.report.status}
+          timestamp={MetaData.data.report.date_stamp}
+          symptoms={MetaData.data.report.symptoms}
+
+        >
+
+        </ProfileOverview>
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>          
            <Settings></Settings>
