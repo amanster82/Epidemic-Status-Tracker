@@ -92,19 +92,25 @@ export default function FullWidthTabs() {
         <ProfileOverview 
           id={MetaData.data.user.id}
           birthdate={MetaData.data.user.birthdate}
-          email={MetaData.data.user.gender}
+          email={MetaData.data.user.email}
+          gender={MetaData.data.user.gender}
           province={MetaData.data.report.province}
           region={MetaData.data.report.postal}
           status={MetaData.data.report.status}
           timestamp={MetaData.data.report.date_stamp}
           symptoms={MetaData.data.report.symptoms}
-
         >
 
         </ProfileOverview>
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>          
-           <Settings></Settings>
+           <Settings
+            birthdate={MetaData.data.user.birthdate}
+            email={MetaData.data.user.email}
+            gender={MetaData.data.user.gender}
+           >
+
+           </Settings>
         </TabPanel>
         <TabPanel value={value} index={2} dir={theme.direction}>
      

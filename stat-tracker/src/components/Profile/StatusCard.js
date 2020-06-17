@@ -26,10 +26,19 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     width: '100%'
   },
-  cover: {
+  "+": {
     width: 20,
     background: 'red',
   },
+  "s":{
+    width: 20,
+    background: 'yellow',
+  },
+  "-":{
+    width: 20,
+    background: 'green',
+  },
+  
   controls: {
     display: 'flex',
     alignItems: 'center',
@@ -59,11 +68,7 @@ export default function MediaControlCard(props) {
   const theme = useTheme();
 
   function colorStrip () {
-    if(props.color==="red"){
-      return <div className={classes.cover}></div>
-    }else{
-      return
-    }
+      return <div className={classes[props.color]}></div>
   }
 
 

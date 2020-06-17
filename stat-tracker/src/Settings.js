@@ -51,7 +51,7 @@ function changePassword (){
         return( 
             <>          
         <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-        <TextField label="Password"></TextField>
+        <TextField label="New Password"></TextField>
       </Grid>
       <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
         <TextField label="Repeat Password"></TextField>
@@ -59,6 +59,23 @@ function changePassword (){
       </>
       )
     }
+}
+
+function format_birthday(birthday){
+  var year = birthday.getFullYear();
+  var month = birthday.getMonth();
+  var date = birthday.getDate();
+
+  if(String(month).length < 2){
+    month= "0"+month;
+  }
+
+  if(String(date).length < 2){
+    date = "0"+date;
+  }
+
+  return(year+'-'+month+'-'+date)
+  
 }
 
   return (
@@ -72,10 +89,10 @@ function changePassword (){
             <Button variant="outlined" color="primary">Save Changes</Button>
           </Grid>
           <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-            <TextField label="Email"></TextField>
+            <TextField label="Email" value={props.email}></TextField>
           </Grid>
           <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-            <TextField label="Birthdate"></TextField>
+            <TextField label="Birthdate" defaultValue={format_birthday( new Date(props.birthdate) )} type="date"  InputLabelProps={{shrink: true}}></TextField>
           </Grid>
           <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
             <FormControl component="fieldset">
@@ -84,7 +101,7 @@ function changePassword (){
                 aria-label="position"
                 name="position"
                 defaultValue="top"
-                //value={gender}
+                value={props.gender}
                 //onChange={(event) => setGender(event.target.value)}
               >
                 <FormControlLabel
@@ -93,6 +110,7 @@ function changePassword (){
                   label="Male"
                   labelPlacement="start"
                   className={classes.radioLabel}
+
                 />
                 <FormControlLabel
                   value="female"

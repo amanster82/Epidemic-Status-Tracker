@@ -6,7 +6,7 @@ import Grid from "@material-ui/core/Grid";
 import StatusCard from "./components/Profile/StatusCard";
 import Avatar from "@material-ui/core/Avatar";
 import PersonIcon from "@material-ui/icons/Person";
-import { Typography } from "@material-ui/core";
+import { Typography, Switch } from "@material-ui/core";
 import ReportActivity from "./components/Profile/ReportActivity";
 import Button from "@material-ui/core/Button";
 import Chip from "@material-ui/core/Chip";
@@ -73,6 +73,53 @@ function Profile(props) {
 
     return format;
   }
+
+  function format_status(status) {
+    switch(status){
+      case "+":
+        return "Positive";
+      case "-":
+        return "Negative";
+      case "=":
+        return "Recovered";
+      case "s":
+        return "Symptomatic"
+    }
+  }
+
+  function province_shortHand(province){
+    const keys = {
+      "Newfoundland and Labrador": "NL", 
+      "Prince Edward Island":"PE", 
+      "Nova Scotia": "NS",
+      "New Brunswick": "NB",
+      "Quebec": "QC",
+      "Ontario": "ON",
+      "Manitoba": "MB",
+      "Saskatchewan": "SK",
+      "Alberta": "AB",
+     "British Columbia": "BC",
+     "Yukon": "YT",
+     "Northwest Territories": "NT",
+     "Nunavut": "NU"
+    }
+    return keys[province];
+  }
+
+  function format_time(time){
+    var hour = time.getHours();
+    var min = time.getMinutes();
+
+    hour = checkTime(hour);
+    min = checkTime(min);
+
+    function checkTime(i) {
+      if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+      return i;
+    }
+
+    return hour+":"+min
+  }
   
   return (
     <div>
@@ -123,9 +170,9 @@ function Profile(props) {
             <table className={classes.table}>
               <tr>
                 <td>
-                  <strong>Email:</strong>
+                  <strong>Gender:</strong>
                 </td>
-                <td>{props.email}</td>
+                <td>{props.gender}</td>
               </tr>
               <tr>
                 <td>
@@ -146,7 +193,7 @@ function Profile(props) {
           <StatusCard
             title="Region"
             data={props.region}
-            sub={props.province}
+            sub={province_shortHand(props.province)}
             color="white"
           ></StatusCard>
         </Grid>
@@ -161,49 +208,42 @@ function Profile(props) {
         >
           <StatusCard
             title="Status"
-            data={props.status}
+            data={format_status(props.status)}
             sub="Today"
-            color="yellow"
+            color={props.status}
           ></StatusCard>
         </Grid>
         <Grid item xs={12} sm={12} md={4} lg={3} xl={2} className={classes.test}>
           <StatusCard
             title="Last Reported"
-            data="12:00am"
-            sub="PST"
+            data={format_time(new Date(props.timestamp))}
+            sub={new Date(props.timestamp).toLocaleTimeString('en-us',{timeZoneName:'short'}).split(' ')[2]}
             color="white"
           ></StatusCard>
         </Grid>
       </Grid>
       <Grid container className={classes.center}>
-        <Grid item xs={12} sm={12} md={5} lg={6} xl={12} className={classes.centerColumn}>
-
+        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} className={classes.centerColumn}>
           <Paper style={{ padding: "20px"}}>
-            <h2>Symptom List</h2>
-            <Chip
-              label="Coughing"
+            <h2>Symptoms</h2>
+            {
+            (props.symptoms.length === 0) 
+            ?
+             <Chip
+              label="No Symptoms"
               clickable
               //onDelete={handleDelete}
               deleteIcon={<DoneIcon />}
             />
-            <Chip
-              label="Fever"
-              clickable
-              //onDelete={handleDelete}
-              deleteIcon={<DoneIcon />}
-            />
-            <Chip
-              label="Shortness of Breath"
-              clickable
-              //onDelete={handleDelete}
-              deleteIcon={<DoneIcon />}
-            />
-            <Chip
-              label="Trouble Breathing"
-              clickable
-              //onDelete={handleDelete}
-              deleteIcon={<DoneIcon />}
-            />
+            :
+            props.symptoms.map( (item, index) => {
+              return <Chip
+                label={item}
+                clickable
+                //onDelete={handleDelete}
+                deleteIcon={<DoneIcon />}
+              />;
+            } )}
           </Paper>
         </Grid>
 
