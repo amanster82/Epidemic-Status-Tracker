@@ -3,7 +3,11 @@ var router = express.Router();
 var bcrypt = require("bcrypt");
 var passport = require("passport");
 var initializePassport = require("./passport-config");
+const scrapeCovid = require("./scarpers.js")
 const { KnexTimeoutError } = require("knex");
+const nodemailer = require("nodemailer");
+const jwt = require("jsonwebtoken");
+const { token } = require("morgan");
 let pCode = "";
 let province = "";
 
@@ -23,6 +27,110 @@ router.get("/", function (req, res, next) {
   res.render("index", { title: "Express" });
 });
 
+router.post("/api/settings", async (req, res, next) => {
+  console.log(req.body);
+
+  let newEmail = req.body.email;
+  let newBirth = req.body.birth;
+  let newGender = req.body.gender;
+  let newPass = req.body.pass;
+
+  try {
+    if (newPass.length !== 0) {
+      const hash = await bcrypt.hash(newPass, 10);
+      console.log("the encrypted password", hash);
+      let updateUser = await knex("users")
+        .where({ id: req.user })
+        .update({
+          email: newEmail,
+          birthdate: newBirth,
+          gender: newGender,
+          password: hash,
+        });
+    }
+
+    let updateUser = await knex("users")
+      .where({ id: req.user })
+      .update({ email: newEmail, birthdate: newBirth, gender: newGender });
+    return res.send(200);
+  } catch (err) {
+    console.log(err);
+    return res.send(500);
+  }
+});
+
+router.post("/api/email", async (req, res, next) => {
+  try {
+    let user = await knex("users").where({ email: req.body.email }).limit(1);
+    console.log("this is the user: ", user);
+    if (user.length === 0) {
+      console.log("No records found");
+      return res.status(404).send("Account not registered.");
+    } else {
+      user = user[0];
+      console.log("user:", user.id);
+      const token = jwt.sign({ id: user.id }, "SECRET", { expiresIn: "1d" });
+      console.log("created a token.", token);
+      // const verification = jwt.verify(token, "SECRET");
+      // console.log("this is the verification:", verification);
+
+      // async..await is not allowed in global scope, must use a wrapper
+      async function main() {
+        // Generate test SMTP service account from ethereal.email
+        // Only needed if you don't have a real mail account for testing
+        let testAccount = await nodemailer.createTestAccount();
+
+        // create reusable transporter object using the default SMTP transport
+        let transporter = nodemailer.createTransport({
+          service: "Gmail",
+          auth: {
+            user: process.env.GMAIL_USER, // generated ethereal user
+            pass: process.env.GMAIL_PASS, // generated ethereal password
+          },
+        });
+
+        // send mail with defined transport object
+        let info = await transporter.sendMail({
+          from: '"COVID-19 Tracker 😷" <foo@example.com>', // sender address
+          to: req.body.email, // list of receivers
+          subject: "Password Reset", // Subject line
+          text:
+            "Please click the following link to reset your password: " +
+            req.body.link +
+            ":3000/" +
+            token, // plain text body
+          html:
+            "<b>Please click the following link to reset your password: " +
+            req.body.link +
+            ":3000/" +
+            token +
+            "</b>", // html body
+        });
+
+        console.log("Message sent: %s", info.messageId);
+        // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+
+        // Preview only available when sending through an Ethereal account
+        console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+        // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+
+        res.sendStatus(200);
+      }
+
+      main().catch(() => {
+        console.log("an error");
+        console.error;
+        res.sendStatus(500);
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    console.log("No records found");
+    //res.status(404);
+    return res.status(500).send("Something went wrong.");
+  }
+});
+
 router.post("/api/search", (req, res, next) => {
   console.log("------------------/api/Search-----------------------");
   console.log(req.body);
@@ -30,7 +138,7 @@ router.post("/api/search", (req, res, next) => {
   if (req.body.input.length > 3) {
     knex("report")
       .select("location")
-      .where(knex.raw("UPPER(location) like upper('%"+req.body.input+"%')"))
+      .where(knex.raw("UPPER(location) like upper('%" + req.body.input + "%')"))
       .andWhere({ active: true })
       .then((search_results) => {
         console.log(search_results);
@@ -61,18 +169,17 @@ router.post("/api/metadata", async (req, res, next) => {
         .select("postal")
         .where({ location: req.body.locationChange })
         .limit(1);
-      
-      province = await knex("report")
-      .select("province")
-      .where({ location: req.body.locationChange })
-      .limit(1);
 
+      province = await knex("report")
+        .select("province")
+        .where({ location: req.body.locationChange })
+        .limit(1);
     } else {
       pCode = await knex("report")
         .select("postal")
         .where({ user_id: req.user })
         .andWhere({ active: true });
-      
+
       province = await knex("report")
         .select("province")
         .where({ user_id: req.user })
@@ -125,15 +232,15 @@ router.post("/api/metadata", async (req, res, next) => {
 
     console.log("these are the coordinates:", coordinates);
 
-    var userInfo = await knex("users")
-    .where({id: req.user})
+    var userInfo = await knex("users").where({ id: req.user });
     console.log("this is the user info:", coordinates);
 
     var reportInfo = await knex("report")
-    .where({user_id: req.user})
-    .andWhere({ active: true })
-    .limit(1);
+      .where({ user_id: req.user })
+      .andWhere({ active: true })
+      .limit(1);
 
+    //let covid19 = await scrapeCovid('https://www.ctvnews.ca/health/coronavirus/tracking-every-case-of-covid-19-in-canada-1.4852102');
 
     res.json({
       positives: positiveCount,
@@ -142,7 +249,8 @@ router.post("/api/metadata", async (req, res, next) => {
       possibilities: symptomCount,
       locations: coordinates,
       user: userInfo[0],
-      report: reportInfo[0]  
+      report: reportInfo[0],
+      scrapedData: "covid19",
     });
   } catch (error) {
     if (!req.isAuthenticated()) {
@@ -210,7 +318,9 @@ router.get("/api/dashboard", async (req, res, next) => {
           GROUP BY postal \
     ) AS counts \
     right JOIN canada_fsa ON canada_fsa.cfsauid=counts.postal \
-    WHERE canada_fsa.prname like '%"+province+"%' \
+    WHERE canada_fsa.prname like '%" +
+          province +
+          "%' \
     order by st_distance(ST_Centroid(ST_Transform( \
     (SELECT geom FROM canada_fsa WHERE cfsauid = '" +
           pCode.toUpperCase() +

@@ -133,7 +133,7 @@ function Canvas(props) {
               xs={locationClick ? 12 : 4}
               sm={locationClick ? 12 : 4}
               md={locationClick ? 10 : 4}
-              lg={locationClick ? 10 : 4}
+              lg={locationClick ? 7 : 4}
               xl={10}
             >
               {locationClick ? (
@@ -150,28 +150,28 @@ function Canvas(props) {
   function CaseCards() {
     return (
       <React.Fragment>
-        <Grid item xs={12}>
+        <Grid item xs={12} sm={12} lg={12} xl={12}>
           <CaseCard
             status="Positive"
             number={MetaData.data.positives}
           ></CaseCard>
         </Grid>
 
-        <Grid item xs={12}>
+        <Grid item xs={12} sm={12} lg={12} xl={12}>
           <CaseCard
             status="Possible"
             number={MetaData.data.possibilities}
           ></CaseCard>
         </Grid>
 
-        <Grid item xs={12}>
+        <Grid item xs={12} sm={12} lg={12} xl={12}>
           <CaseCard
             status="Negative"
             number={MetaData.data.negatives}
           ></CaseCard>
         </Grid>
 
-        <Grid item xs={12}>
+        <Grid item xs={12} sm={12} lg={12} xl={12}>
           <CaseCard
             color="blue"
             status="Recovered"
@@ -186,7 +186,7 @@ function Canvas(props) {
     return (
       <React.Fragment>
         <Grid item xs={12}>
-          <InfoCard />
+          <InfoCard recentNews={MetaData.data.scrapedData}/>
         </Grid>
       </React.Fragment>
     );
@@ -229,9 +229,9 @@ function Canvas(props) {
             item
             xs={12}
             sm={12}
-            md={6}
-            lg={5}
-            xl={3}
+            md={4}
+            lg={3}
+            xl={2}
             style={{ padding: "1%" }}
           >
             {/* <UserData/> */}
@@ -242,9 +242,9 @@ function Canvas(props) {
             item
             xs={12}
             sm={12}
-            md={6}
-            lg={7}
-            xl={9}
+            md={8}
+            lg={9}
+            xl={10}
             style={{ padding: "1%" }}
           >
             <div

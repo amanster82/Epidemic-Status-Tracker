@@ -127,7 +127,7 @@ export default function Dashboard() {
   const [location, setLocation] = React.useState("North Vancouver"); //change to empty
   const [APIDown, setApiDown] = React.useState(null);
   const [boundingBox, setboundingBox] = React.useState(null);
-  const [showProfile, setProfile] = React.useState(true);
+  const [showProfile, setProfile] = React.useState(false);
   const {
     Pagechange,
     setPage,

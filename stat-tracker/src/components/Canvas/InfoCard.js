@@ -22,7 +22,7 @@ const useStyles = makeStyles({
 
 
 
-export default function InfoCard() {
+export default function InfoCard(props) {
   const classes = useStyles();
 
   return (
@@ -38,19 +38,18 @@ export default function InfoCard() {
             COVID-19 Watch
           </Typography>
           <Typography variant="body2" color="textSecondary" component="p">
-            Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging
-            across all continents except Antarctica
+            {props.recentNews}
           </Typography>
         </CardContent>
       </CardActionArea>
-      <CardActions>
+      {/* <CardActions>
         <Button size="small" color="primary">
           Share
         </Button>
         <Button size="small" color="primary">
           Learn More
         </Button>
-      </CardActions>
+      </CardActions> */}
     </Card>
   );
 }

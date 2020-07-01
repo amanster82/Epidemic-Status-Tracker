@@ -1,0 +1,17 @@
+const puppeteer = require('puppeteer');
+const { raw } = require('express');
+
+async function scrapeCovid(url){
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.goto(url);
+    
+    const [el] = await page.$x('//*[@id="responsive_main"]/section/div/div/div[2]/div[1]/div[2]/p[7]');
+
+    const txt = await el.getProperty('textContent');
+    const rawTxt = await txt.jsonValue()
+
+    return rawTxt;
+}
+
+module.exports = scrapeCovid;

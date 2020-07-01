@@ -24,7 +24,9 @@ function TabPanel(props) {
     >
       {value === index && (
         <Box p={3}>
-          <Typography>{children}</Typography>
+          <div>
+          <Typography component={'Children'}>{children}</Typography>
+          </div>
         </Box>
       )}
     </div>
@@ -55,7 +57,7 @@ export default function FullWidthTabs() {
   const classes = useStyles();
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
-  const {MetaData} = useContext(MyContext);
+  const {MetaData, getMetaData} = useContext(MyContext);
 
   console.log("MMMMMMMM---->", MetaData);
 
