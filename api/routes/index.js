@@ -10,6 +10,14 @@ const jwt = require("jsonwebtoken");
 const { token } = require("morgan");
 let pCode = "";
 let province = "";
+let covid19 = "";
+
+scrapeCovid('https://www.ctvnews.ca/health/coronavirus/tracking-every-case-of-covid-19-in-canada-1.4852102')
+.then((result)=>{
+  console.log(result);
+  covid19=result;
+})
+
 
 const connectionString =
   "postgressql://postgres:postgres@localhost:5433/TrackerData";
@@ -27,8 +35,28 @@ router.get("/", function (req, res, next) {
   res.render("index", { title: "Express" });
 });
 
-router.post("/api/settings", async (req, res, next) => {
+router.post("/api/verify", async (req, res, next) => {
   console.log(req.body);
+  console.log(process.env.TOKEN_SECRET)
+  const verification = jwt.verify(req.body.token, process.env.TOKEN_SECRET);
+  console.log("verified:");
+  console.log(verification);
+  
+  const hash = await bcrypt.hash(req.body.pass, 10);
+
+  try{
+    let updateUser = await knex("users")
+    .where({ id: verification.id })
+    .update({
+      password: hash,
+    });
+  }catch{
+
+  }
+
+});
+
+router.post("/api/settings", async (req, res, next) => {
 
   let newEmail = req.body.email;
   let newBirth = req.body.birth;
@@ -69,11 +97,10 @@ router.post("/api/email", async (req, res, next) => {
     } else {
       user = user[0];
       console.log("user:", user.id);
-      const token = jwt.sign({ id: user.id }, "SECRET", { expiresIn: "1d" });
+      const token = jwt.sign({ id: user.id }, process.env.TOKEN_SECRET, { expiresIn: "1d" });
       console.log("created a token.", token);
       // const verification = jwt.verify(token, "SECRET");
       // console.log("this is the verification:", verification);
-
       // async..await is not allowed in global scope, must use a wrapper
       async function main() {
         // Generate test SMTP service account from ethereal.email
@@ -97,12 +124,12 @@ router.post("/api/email", async (req, res, next) => {
           text:
             "Please click the following link to reset your password: " +
             req.body.link +
-            ":3000/" +
+            ":3000/Forgot/" +
             token, // plain text body
           html:
             "<b>Please click the following link to reset your password: " +
             req.body.link +
-            ":3000/" +
+            ":3000/Forgot/" +
             token +
             "</b>", // html body
         });
@@ -240,8 +267,6 @@ router.post("/api/metadata", async (req, res, next) => {
       .andWhere({ active: true })
       .limit(1);
 
-    //let covid19 = await scrapeCovid('https://www.ctvnews.ca/health/coronavirus/tracking-every-case-of-covid-19-in-canada-1.4852102');
-
     res.json({
       positives: positiveCount,
       negatives: negativeCount,
@@ -250,7 +275,7 @@ router.post("/api/metadata", async (req, res, next) => {
       locations: coordinates,
       user: userInfo[0],
       report: reportInfo[0],
-      scrapedData: "covid19",
+      scrapedData: covid19,
     });
   } catch (error) {
     if (!req.isAuthenticated()) {

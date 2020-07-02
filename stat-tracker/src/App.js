@@ -6,6 +6,7 @@ import Dashboard from './Dashboard';
 import axios from "axios";
 import { MyContext } from "./MyContext";
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Forgot from './Forgot';
 
 
 async function authenticate (setPage, setMetaData){
@@ -73,6 +74,7 @@ function App() {
             <Route path='/' exact component={External} />
             <Route path='/self-report' exact component={Report} />
             <Route path='/Dashboard' exact component={Dashboard} /> 
+            <Route path='/Forgot/:token' exact component={Forgot} /> 
             {/* <Route path='/Profile' exact component={Profile}/> */}
         </BrowserRouter>
         : <div style={{ 
