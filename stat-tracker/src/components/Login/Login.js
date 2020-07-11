@@ -84,7 +84,6 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     alignItems: "center",
     padding: "1%",
-    width: "65vh",
   },
   avatar: {
     margin: theme.spacing(1),
@@ -99,9 +98,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   flexMe: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
+    padding: "10%",
   },
 
   iconContainer: {
@@ -135,64 +132,61 @@ export default function SignIn(props) {
   }
 
   return (
-    <div
-      className={
-        accessGranted
-          ? classes.flexMe + " animated bounceOutDown"
-          : classes.flexMe
-      }
-      onAnimationEnd={accessGranted ? props.accessGranted(true) : null}
-    >
-      <Paper className={classes.paper} elevation={3}>
-        <div className={classes.iconContainer}>{icon}</div>
-        <Typography component="h1" variant="h5">
-          Sign in
-        </Typography>
-        <form className={classes.form} noValidate>
-          <div>
-            <TextField
-              error={isEmailError}
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label={emailLabel}
-              name="email"
-              autoComplete="email"
-              autoFocus
-              onChange={(e) => {
-                setEmail(e.target.value);
-                setEmailLabel("Email");
-                setEmailError(false);
-              }}
-            />
-            <TextField
-              error={isPassError}
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label={passLabel}
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              onChange={(e) => {
-                setPass(e.target.value);
-                setPassLabel("Password");
-                setPassError(false);
-              }}
-            />
-
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
-
-            <Button
-              onClick={() =>
-                postData(
+    <Paper elevation={3} className={
+      accessGranted
+        ? "animated bounceOutDown"
+        : ""
+    }
+    onAnimationEnd={accessGranted ? props.accessGranted(true) : null}>
+      <Grid
+        container
+        className={classes.flexMe}
+        onAnimationEnd={accessGranted ? props.accessGranted(true) : null}
+      >
+        <Grid item xs={12}>
+          <div className={classes.iconContainer}>{icon}</div>
+          <Typography component="h1" variant="h5" align="center">
+            Sign in
+          </Typography>
+          <form noValidate>
+            <div>
+              <TextField
+                error={isEmailError}
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label={emailLabel}
+                name="email"
+                autoComplete="email"
+                autoFocus
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setEmailLabel("Email");
+                  setEmailError(false);
+                }}
+                //size="small"
+              />
+              <TextField
+                error={isPassError}
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label={passLabel}
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                onChange={(e) => {
+                  setPass(e.target.value);
+                  setPassLabel("Password");
+                  setPassError(false);
+                }}
+                onKeyDown={ 
+                  (e) => (e.key==='Enter') ? 
+                  postData(
                   email,
                   pass,
                   setSpinner,
@@ -201,31 +195,56 @@ export default function SignIn(props) {
                   setEmailLabel,
                   setPassError,
                   setPassLabel
-                )
-              }
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-            >
-              Sign In
-            </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link href="#" onClick={props.ForgotPassClick} variant="body2">
-                  Forgot password?
-                </Link>
+                ) : false } 
+                size={"small"}
+              />
+
+              <FormControlLabel
+                control={<Checkbox value="remember" color="primary" />}
+                label="Remember me"
+              />
+
+              <Button
+                onClick={() =>
+                  postData(
+                    email,
+                    pass,
+                    setSpinner,
+                    setAccessGranted,
+                    setEmailError,
+                    setEmailLabel,
+                    setPassError,
+                    setPassLabel
+                  )
+                }
+                fullWidth
+                variant="contained"
+                color="primary"
+                className={classes.submit}
+              >
+                Sign In
+              </Button>
+              <Grid container   direction="column">
+                <Grid item xs>
+                  <Link
+                    href="#"
+                    onClick={props.ForgotPassClick}
+                    variant="body2"
+                  >
+                    Forgot password?
+                  </Link>
+                </Grid>
+                <Grid item>
+                  <Link href="#" onClick={props.SignUpClick} variant="body2">
+                    {"Don't have an account? Sign Up"}
+                  </Link>
+                </Grid>
               </Grid>
-              <Grid item>
-                <Link href="#" onClick={props.SignUpClick} variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
-              </Grid>
-            </Grid>
-          </div>
-        </form>
-        <Box mt={8}></Box>
-      </Paper>
-    </div>
+            </div>
+          </form>
+          <Box mt={8}></Box>
+        </Grid>
+      </Grid>
+    </Paper>
   );
 }

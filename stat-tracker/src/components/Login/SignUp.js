@@ -55,7 +55,7 @@ function postData(
     email: email,
     pass: pass,
     gender: gender,
-    birthdate: selectedDate 
+    birthdate: selectedDate,
   };
 
   setSpinner(true);
@@ -105,9 +105,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   flexMe: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
+    padding: "10%",
   },
 
   iconContainer: {
@@ -133,9 +131,8 @@ export default function SignUp(props) {
   const [accessGranted, setAccessGranted] = useState(false);
   const [isEmailError, setEmailError] = useState(false);
   const [emailLabel, setEmailLabel] = useState("Email");
-  const [gender, setGender] = React.useState('');
+  const [gender, setGender] = React.useState("");
   const [selectedDate, handleDateChange] = useState(null);
-
 
   let icon;
 
@@ -150,96 +147,113 @@ export default function SignUp(props) {
   }
 
   return (
-    <div
-      className={
-        accessGranted
-          ? classes.flexMe + " animated bounceOutDown"
-          : classes.flexMe
-      }
-      onAnimationEnd={accessGranted ? props.accessGranted(true) : null}
-    >
-      <Paper className={classes.paper + " animated flipInY"} elevation={3}>
-        <div className={classes.iconContainer}>{icon}</div>
-        <Typography component="h1" variant="h5">
-          Sign Up
-        </Typography>
-        <form className={classes.form} noValidate>
-          <TextField
-            error={isEmailError}
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label={emailLabel}
-            name="email"
-            autoComplete="email"
-            autoFocus
-            onChange={(e) => {
-              setEmail(e.target.value);
-              setEmailLabel("Email");
-              setEmailError(false);
-            }}
-          />
-          <TextField
-            error={isPassError}
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label={isPassError ? "Passwords do not match" : "Set a Password"}
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            onChange={(e) => setPass(e.target.value)}
-          />
-          <TextField
-            error={isPassError}
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label={isPassError ? "Passwords do not match" : "Repeat Password"}
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            onChange={(e) =>
-              e.target.value !== pass ? setPassError(true) : setPassError(false)
-            }
-          />
-          <FormControl component="fieldset">
-            <FormLabel component="legend">Gender</FormLabel>
-            <Grid container spacing={3}>
-              <Grid item xs={6}>
-                <RadioGroup
-                  row
-                  aria-label="position"
-                  name="position"
-                  defaultValue="top"
-                  value={gender} 
-                  onChange={(event)=> setGender(event.target.value)}
-                >
-                  <FormControlLabel
-                    value="Male"
-                    control={<Radio color="primary" />}
-                    label="Male"
-                    labelPlacement="start"
-                    className={classes.radioLabel}
-                  />
-                  <FormControlLabel
-                    value="female"
-                    control={<Radio color="primary" />}
-                    label="Female"
-                    labelPlacement="start"
-                    className={classes.radioLabel}
-                  />
-                </RadioGroup>
+    <Paper elevation={3} className={
+      accessGranted
+        ? "animated bounceOutDown"
+        : "animate__animated animate__flipInY"
+    }
+    onAnimationEnd={accessGranted ? props.accessGranted(true) : null}>
+      <Grid
+        container
+        className={classes.flexMe}
+        onAnimationEnd={accessGranted ? props.accessGranted(true) : null}
+      >
+        <Grid item xs={12}>
+          <div className={classes.iconContainer}>{icon}</div>
+          <Typography component="h1" variant="h5" align="center">
+            Sign Up
+          </Typography>
+          <form noValidate>
+            <TextField
+              error={isEmailError}
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label={emailLabel}
+              name="email"
+              autoComplete="email"
+              autoFocus
+              onChange={(e) => {
+                if (e.target.value.indexOf("@") > -1 || e.target.value === "") {
+                  setEmail(e.target.value);
+                  setEmailError(false);
+                  setEmailLabel("Email");
+                } else {
+                  setEmailError(true);
+                  setEmailLabel("Not a valid email");
+                }
+              }}
+            />
+            <TextField
+              error={isPassError}
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label={isPassError ? "Passwords do not match" : "Set a Password"}
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              onChange={(e) => setPass(e.target.value)}
+            />
+            <TextField
+              error={isPassError}
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label={isPassError ? "Passwords do not match" : "Repeat Password"}
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              onChange={(e) =>
+                e.target.value !== pass
+                  ? setPassError(true)
+                  : setPassError(false)
+              }
+            />
+            <FormControl component="fieldset">
+              <Grid container direction="row" justify="center" alignItems="center">
+                <Grid item xs={4}>
+                  <FormLabel component="legend">Gender</FormLabel>
+                  </Grid>
+                  <Grid item xs={8}>
+                  <RadioGroup
+                    row
+                    aria-label="position"
+                    name="position"
+                    defaultValue="top"
+                    value={gender}
+                    onChange={(event) => setGender(event.target.value)}
+                  >
+                    <FormControlLabel
+                      value="Male"
+                      control={<Radio color="primary" />}
+                      label="Male"
+                      labelPlacement="start"
+                      className={classes.radioLabel}
+                    />
+                    <FormControlLabel
+                      value="female"
+                      control={<Radio color="primary" />}
+                      label="Female"
+                      labelPlacement="start"
+                      className={classes.radioLabel}
+                    />
+                  </RadioGroup>
+                </Grid>
               </Grid>
-              <Grid item xs={6}>
-                <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                  {/* <KeyboardDatePicker
+              <Grid container direction="row" justify="center" alignItems="center">
+                <Grid item xs={4}>
+                  <FormLabel component="legend">Birthday</FormLabel>
+                </Grid>
+                <Grid item xs={8}>
+                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                    {/* <KeyboardDatePicker
                   disableToolbar
                   variant="inline"
                   format="MM/dd/yyyy"
@@ -250,54 +264,62 @@ export default function SignUp(props) {
                     "aria-label": "change date",
                   }}
                 /> */}
-                  <KeyboardDatePicker
-                    value={selectedDate}
-                    margin="normal"
-                    id="date-picker-dialog"
-                    label="Birthdate"
-                    format="MM/dd/yyyy"
-                    KeyboardButtonProps={{
-                      "aria-label": "change date",
-                    }}
-                    onChange={handleDateChange}
-                  />
-                </MuiPickersUtilsProvider>
+                    <KeyboardDatePicker
+                      value={selectedDate}
+                      margin="normal"
+                      id="date-picker-dialog"
+                      label="MM/dd/yyyy"
+                      format="MM/dd/yyyy"
+                      KeyboardButtonProps={{
+                        "aria-label": "change date",
+                      }}
+                      onChange={handleDateChange}
+                    />
+                  </MuiPickersUtilsProvider>
+                </Grid>
+              </Grid>
+            </FormControl>
+
+            <Button
+              disabled={
+                isPassError ||
+                isEmailError ||
+                pass == "" ||
+                email == "" ||
+                gender == "" ||
+                selectedDate == null
+              }
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+              onClick={() =>
+                postData(
+                  email,
+                  pass,
+                  gender,
+                  selectedDate,
+                  setEmailError,
+                  setSpinner,
+                  setAccessGranted,
+                  setEmailLabel
+                )
+              }
+            >
+              Get Started
+            </Button>
+            <Grid container>
+              <Grid item xs></Grid>
+              <Grid item>
+                <Link onClick={props.SignInClick} variant="body2">
+                  {"Already have an account? Sign In"}
+                </Link>
               </Grid>
             </Grid>
-          </FormControl>
-
-          <Button
-            disabled={isPassError || pass == ""}
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-            onClick={() =>
-              postData(
-                email,
-                pass,
-                gender,
-                selectedDate,
-                setEmailError,
-                setSpinner,
-                setAccessGranted,
-                setEmailLabel
-              )
-            }
-          >
-            Get Started
-          </Button>
-          <Grid container>
-            <Grid item xs></Grid>
-            <Grid item>
-              <Link onClick={props.SignInClick} variant="body2">
-                {"Already have an account? Sign In"}
-              </Link>
-            </Grid> 
-          </Grid>
-        </form>
-        <Box mt={8}></Box>
-      </Paper>
-    </div>
+          </form>
+          <Box mt={8}></Box>
+        </Grid>
+      </Grid>
+    </Paper>
   );
 }

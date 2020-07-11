@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
+import { BrowserRouter, Route, Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import "./App.css";
@@ -9,18 +10,28 @@ import Dashboard from "./Dashboard";
 import { MyContext } from "./MyContext";
 import Toolbar from "@material-ui/core/Toolbar";
 import Fab from "@material-ui/core/Fab";
-import { AppBar, Grid } from "@material-ui/core";
+import { AppBar, Grid, Paper } from "@material-ui/core";
 import KeyboardArrowDownSharpIcon from "@material-ui/icons/KeyboardArrowDownSharp";
 import { ReactComponent as Corona } from "./static/images/corona.svg";
 import { ReactComponent as Spreading } from "./static/images/spreading.svg";
 import animate from "animate.css/animate.css";
+import Accordion from "./components/Landing/Accordion";
 
 const useStyles = makeStyles({
+  Backdrop: {
+    backgroundColor: "#dfdbe5",
+    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%239C92AC' fill-opacity='0.4' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E")`,
+    display: "flex",
+  },
+  App: {
+    marginLeft: "5%",
+    marginRight: "5%",
+  },
   buttonContainer: {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    height: "50vh",
+    height: "40vh",
   },
 
   buttonStyle: {
@@ -37,6 +48,16 @@ const useStyles = makeStyles({
     margin: 0,
   },
 
+  arrow: {
+    transform: "scale(1)",
+    transition: "0.5s transform",
+    "&:hover": {
+      color: "blue",
+      transform: "scale(1.3)",
+      transition: "0.5s transform",
+    },
+  },
+
   covid: {
     fontSize: "medium",
     background: "#3f51b5",
@@ -51,6 +72,10 @@ const useStyles = makeStyles({
     justifyContent: "center",
     display: "flex",
   },
+
+  textBox: {
+    padding: "5%",
+  },
 });
 
 function External() {
@@ -61,7 +86,7 @@ function External() {
   const [signUp, signUpSwitch] = useState(false);
   const [isAccessGranted, setAccess] = useState(false);
   const [forgotPass, setForgotPass] = useState(false);
-  const [changeScene, setScene] =  useState(false);
+  const [changeScene, setScene] = useState(false);
 
   const { Pagechange, setPage, MetaData, setMetaData } = useContext(MyContext);
 
@@ -74,10 +99,10 @@ function External() {
     setAccess(value);
   }
 
-  function forgotPassAnimation(){
-    if (forgotPass) { 
-      setScene(true); 
-    }else{
+  function forgotPassAnimation() {
+    if (forgotPass) {
+      setScene(true);
+    } else {
       setScene(false);
     }
   }
@@ -97,22 +122,58 @@ function External() {
       </div>
     );
   } else if (!signUp) {
-    (changeScene) ? element = (<div className= {(forgotPass) ? "animate__animated animate__backInLeft" : "animate__animated animate__backOutLeft"} onAnimationEnd={ () => forgotPassAnimation()}> <ForgotPass ForgotPassClick={()=> setForgotPass(false)}></ForgotPass></div>) :
-    element = (
-      <div className={ (forgotPass) ? "animate__animated animate__backOutRight" : "animated zoomIn"} onAnimationEnd={ () => forgotPassAnimation() }>
-        <Login
-          SignUpClick={() => signUpToggle(true)}
-          accessGranted={(value) => accessGranted(value)}
-          ForgotPassClick={()=> setForgotPass(true)}
-        ></Login>
-      </div>
-    );
+    changeScene
+      ? (element = (
+          <div
+            className={
+              forgotPass
+                ? "animate__animated animate__backInLeft"
+                : "animate__animated animate__backOutLeft"
+            }
+            onAnimationEnd={() => forgotPassAnimation()}
+          >
+            {" "}
+            <ForgotPass
+              ForgotPassClick={() => setForgotPass(false)}
+            ></ForgotPass>
+          </div>
+        ))
+      : (element = (
+          <Grid
+            container
+            direction="row"
+            justify="center"
+            alignItems="center"
+            className={
+              forgotPass
+                ? "animate__animated animate__backOutRight"
+                : "animated zoomIn"
+            }
+            onAnimationEnd={() => forgotPassAnimation()}
+          >
+            <Grid item xs={12} sm={8} md={4} lg={4} xl={3}>
+              <Login
+                SignUpClick={() => signUpToggle(true)}
+                accessGranted={(value) => accessGranted(value)}
+                ForgotPassClick={() => setForgotPass(true)}
+              ></Login>
+            </Grid>
+          </Grid>
+        ));
   } else {
     element = (
-      <SignUp
-        SignInClick={() => signUpToggle(false)}
-        accessGranted={(value) => accessGranted(value)}
-      ></SignUp>
+      <Grid 
+      container
+      direction="row"
+      justify="center"
+      alignItems="center">
+        <Grid item xs={12} sm={8} md={6} lg={4} xl={3}>
+          <SignUp
+            SignInClick={() => signUpToggle(false)}
+            accessGranted={(value) => accessGranted(value)}
+          ></SignUp>
+        </Grid>
+      </Grid>
     );
   }
   /**Conditional End**/
@@ -122,18 +183,21 @@ function External() {
     page = <Dashboard></Dashboard>;
   } else {
     page = (
-      <div className="App">
+      <div className={classes.App} id="start">
         <AppBar>
           <Toolbar>
             <Grid container justify="flex-end">
               <Grid item xs={3} sm={3} md={2} lg={2} xl={1}>
-                <div>About COVID-19</div>
+                <a href="#about">About Project</a>
               </Grid>
               <Grid item xs={3} sm={3} md={2} lg={2} xl={1}>
-                <div>About Project</div>
+                <a href="#covid">About COVID-19</a>
               </Grid>
               <Grid item xs={3} sm={3} md={2} lg={2} xl={1}>
-                <div>Live Tracker</div>
+                <a href="#FAQ">FAQ</a>
+              </Grid>
+              <Grid item xs={3} sm={3} md={2} lg={2} xl={1}>
+                <a href="#start">Live Tracker</a>
               </Grid>
             </Grid>
           </Toolbar>
@@ -154,80 +218,105 @@ function External() {
               <div className={classes.covid}>COVID-19</div>
             </div>
             <h1 className={classes.heading}>CORONA VIRUS</h1>
-            <h2 className={classes.heading}>Find out where it is.</h2>
+            <h2 className={classes.heading}>Find out where it's hiding.</h2>
           </div>
           {element}
           <div className={classes.container}>
-            <KeyboardArrowDownSharpIcon
-              style={{ fontSize: 100 }}
-            ></KeyboardArrowDownSharpIcon>
+            <a className={classes.arrow} href="#about">
+              <KeyboardArrowDownSharpIcon
+                style={{ fontSize: 100 }}
+              ></KeyboardArrowDownSharpIcon>
+            </a>
           </div>
         </header>
-        <div style={{ height: 300 }}></div>
-        <Grid container justify="space-evenly">
-          <Grid item xs={3}>
-            <h1>About COVID-19</h1>
-            <div>
-              <p>
-                COVID-19 is the infectious disease caused by the most recently
-                discovered coronavirus. This new virus and disease were unknown
-                before the outbreak began in Wuhan, China, in December 2019.
-                COVID-19 is now a pandemic affecting many countries globally.
-              </p>
-            </div>
-            <div>
-              <p>
-                Coronaviruses are a large family of viruses which may cause
-                illness in animals or humans. In humans, several coronaviruses
-                are known to cause respiratory infections ranging from the
-                common cold to more severe diseases such as Middle East
-                Respiratory Syndrome (MERS) and Severe Acute Respiratory
-                Syndrome (SARS). The most recently discovered coronavirus causes
-                coronavirus disease COVID-19.
-              </p>
-            </div>
-            <div>
-              <p>
-                The most common symptoms of COVID-19 are fever, dry cough, and
-                tiredness. Other symptoms that are less common and may affect
-                some patients include aches and pains, nasal congestion,
-                headache, conjunctivitis, sore throat, diarrhea, loss of taste
-                or smell or a rash on skin or discoloration of fingers or toes.
-                These symptoms are usually mild and begin gradually. Some people
-                become infected but only have very mild symptoms.
-              </p>
-            </div>
-          </Grid>
-          <Grid item xs={3}>
-            <Corona></Corona>
-          </Grid>
-        </Grid>
-        <div style={{ height: 300 }}></div>
-        <Grid container justify="space-evenly">
-          <Grid item xs={3}>
-            <h1>About This Project</h1>
-            <div>
-              <h3>
-                COVID-Tracker is a unique web application that allows users to
-                report and track COVID-19. Much like checking the weather, a
-                user is able to navigate to this app, and check the social
-                climate on whether or not the virus is spreading around their
-                community.  
-              </h3>
+        <div style={{ height: 300 }} id="about"></div>
+        <Paper>
+          <Grid container justify="space-evenly" className={classes.textBox}>
+            <Grid item xs={12} sm={6} md={6}>
+              <h1>About This Project</h1>
               <div>
-                Hey
+                <h3>
+                  Login, report your location, find out where it's hiding.
+                </h3>
+                <div>
+                  COVID-Tracker is a unique web application that allows users to
+                  report and track COVID-19. Much like checking the weather, a
+                  user is able to navigate to this website, and check the social
+                  climate on whether or not the virus is spreading around their
+                  community.
+                </div>
+                <br></br>
+                <div>
+                  The application is based around a crowd sourced model. That
+                  is, users are to report their status daily before viewing
+                  COVID-19 activity in their particular area.
+                </div>
               </div>
-            </div>
+            </Grid>
+            <Grid item xs={12} sm={3} md={3}>
+              <Spreading></Spreading>
+            </Grid>
           </Grid>
-          <Grid item xs={3}>
-            <Spreading></Spreading>
+        </Paper>
+
+        <div style={{ height: 300 }} id="covid"></div>
+
+        <Paper>
+          <Grid container justify="space-evenly" className={classes.textBox}>
+            <Grid item xs={12} sm={6} md={6}>
+              <h1>About COVID-19</h1>
+              <div>
+                <p>
+                  COVID-19 is the infectious disease caused by the most recently
+                  discovered coronavirus. This new virus and disease were
+                  unknown before the outbreak began in Wuhan, China, in December
+                  2019. COVID-19 is now a pandemic affecting many countries
+                  globally.
+                </p>
+              </div>
+              <div>
+                <p>
+                  Coronaviruses are a large family of viruses which may cause
+                  illness in animals or humans. In humans, several coronaviruses
+                  are known to cause respiratory infections ranging from the
+                  common cold to more severe diseases such as Middle East
+                  Respiratory Syndrome (MERS) and Severe Acute Respiratory
+                  Syndrome (SARS). The most recently discovered coronavirus
+                  causes coronavirus disease COVID-19.
+                </p>
+              </div>
+              <div>
+                <p>
+                  The most common symptoms of COVID-19 are fever, dry cough, and
+                  tiredness. Other symptoms that are less common and may affect
+                  some patients include aches and pains, nasal congestion,
+                  headache, conjunctivitis, sore throat, diarrhea, loss of taste
+                  or smell or a rash on skin or discoloration of fingers or
+                  toes. These symptoms are usually mild and begin gradually.
+                  Some people become infected but only have very mild symptoms.
+                </p>
+              </div>
+            </Grid>
+            <Grid item xs={12} sm={3} md={3}>
+              <Corona></Corona>
+            </Grid>
+          </Grid>
+        </Paper>
+
+        <div id="FAQ" style={{ height: 300 }}></div>
+        <Grid container justify="space-evenly">
+          <Grid item xs={12} md={6}>
+            <h1>FAQ</h1>
+            <Accordion></Accordion>
           </Grid>
         </Grid>
+
+        <div style={{ height: 300 }}></div>
       </div>
     );
   }
 
-  return <div>{page}</div>;
+  return <div className={classes.Backdrop}>{page}</div>;
 }
 
 export default External;
