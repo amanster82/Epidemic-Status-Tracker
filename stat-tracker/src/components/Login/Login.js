@@ -14,6 +14,9 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import { useTheme } from '@material-ui/core/styles';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+
 
 function Copyright() {
   return (
@@ -119,6 +122,13 @@ export default function SignIn(props) {
   const [passLabel, setPassLabel] = useState("Password");
   const [showSpinner, setSpinner] = useState(false);
   const [accessGranted, setAccessGranted] = useState(false);
+  const theme = useTheme();
+  const screenSize = useMediaQuery(theme.breakpoints.down('lg'));
+  var w = window.innerWidth;
+  var h = window.innerHeight;
+  console.log("screenSize-->", w, h);
+  //alert("Is your screen size is medium or smaller:" + screenSize)
+
   let icon;
 
   if (showSpinner) {
@@ -166,7 +176,7 @@ export default function SignIn(props) {
                   setEmailLabel("Email");
                   setEmailError(false);
                 }}
-                //size="small"
+                size={screenSize ? "small" : "medium"}
               />
               <TextField
                 error={isPassError}
@@ -196,7 +206,7 @@ export default function SignIn(props) {
                   setPassError,
                   setPassLabel
                 ) : false } 
-                size={"small"}
+                size={screenSize ? "small" : "medium"}
               />
 
               <FormControlLabel
@@ -242,7 +252,7 @@ export default function SignIn(props) {
               </Grid>
             </div>
           </form>
-          <Box mt={8}></Box>
+          {/* <Box mt={8}></Box> */}
         </Grid>
       </Grid>
     </Paper>

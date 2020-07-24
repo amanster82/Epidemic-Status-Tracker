@@ -7,6 +7,7 @@ import Login from "./components/Login/Login";
 import SignUp from "./components/Login/SignUp";
 import ForgotPass from "./components/Login/ForgotPass";
 import Dashboard from "./Dashboard";
+import Footer from "./components/Footer/Footer";
 import { MyContext } from "./MyContext";
 import Toolbar from "@material-ui/core/Toolbar";
 import Fab from "@material-ui/core/Fab";
@@ -16,12 +17,20 @@ import { ReactComponent as Corona } from "./static/images/corona.svg";
 import { ReactComponent as Spreading } from "./static/images/spreading.svg";
 import animate from "animate.css/animate.css";
 import Accordion from "./components/Landing/Accordion";
+import { useTheme } from "@material-ui/core/styles";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+import Container from "@material-ui/core/Container";
+import { ScaleControl } from "react-leaflet";
 
 const useStyles = makeStyles({
   Backdrop: {
     backgroundColor: "#dfdbe5",
     backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%239C92AC' fill-opacity='0.4' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E")`,
-    display: "flex",
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    position: "fixed",
+    zIndex: "-1",
   },
   App: {
     marginLeft: "5%",
@@ -76,6 +85,12 @@ const useStyles = makeStyles({
   textBox: {
     padding: "5%",
   },
+
+  shrink: {
+    transform: "scale(0)",
+    maxHeight: "110px",
+    transition: "0.5s max-height ease-out",
+  },
 });
 
 function External() {
@@ -87,8 +102,29 @@ function External() {
   const [isAccessGranted, setAccess] = useState(false);
   const [forgotPass, setForgotPass] = useState(false);
   const [changeScene, setScene] = useState(false);
+  const [screenW, setScreenW] = useState(window.innerWidth);
+  const [screenH, setScreenH] = useState(window.innerHeight);
+  const [smallLaptopAnimation, setAnimation] = useState("");
+  const theme = useTheme();
+
+  var screenSize = useMediaQuery(theme.breakpoints.down("sm"));
 
   const { Pagechange, setPage, MetaData, setMetaData } = useContext(MyContext);
+
+  //setScreenW(window.innerWidth);
+  //setScreenH(window.innerHeight);
+  console.log("screenW screenH-->", screenW, screenH);
+  console.log("screenSize", screenSize);
+
+  React.useEffect(() => {
+    function handleResize() {
+      console.log("resized to: ", window.innerWidth, "x", window.innerHeight);
+      setScreenH(window.innerHeight);
+      //headline();
+    }
+
+    window.addEventListener("resize", handleResize);
+  });
 
   function signUpToggle(x) {
     console.log("I fireed!!");
@@ -97,6 +133,7 @@ function External() {
 
   function accessGranted(value) {
     setAccess(value);
+    setAnimation(" Spacing animated fadeOutUp");
   }
 
   function forgotPassAnimation() {
@@ -104,6 +141,47 @@ function External() {
       setScene(true);
     } else {
       setScene(false);
+    }
+  }
+
+  function headline() {
+    console.log("I rendered");
+    if (screenH < 760 && !screenSize) {
+      return (
+        <div
+          className={
+            buttonContainer ? classes.shrink + smallLaptopAnimation : "Spacing"
+          }
+          onAnimationEnd={() => {
+            setPage(null);
+            setMetaData(null);
+          }}
+        >
+          <div className={classes.container}>
+            <div className={classes.covid}>COVID-18</div>
+          </div>
+          <h1 className={classes.heading}>CORONA VIRUS</h1>
+          <h2 className={classes.heading}>Find out where it's hiding.</h2>
+        </div>
+      );
+    } else {
+      return (
+        <div
+          className={
+            isAccessGranted ? "Spacing animated fadeOutUp delay-1s" : "Spacing"
+          }
+          onAnimationEnd={() => {
+            setPage(null);
+            setMetaData(null);
+          }}
+        >
+          <div className={classes.container}>
+            <div className={classes.covid}>COVID-19</div>
+          </div>
+          <h1 className={classes.heading}>CORONA VIRUS</h1>
+          <h2 className={classes.heading}>Find out where it's hiding.</h2>
+        </div>
+      );
     }
   }
 
@@ -124,7 +202,11 @@ function External() {
   } else if (!signUp) {
     changeScene
       ? (element = (
-          <div
+          <Grid
+            container
+            direction="row"
+            justify="center"
+            alignItems="center"
             className={
               forgotPass
                 ? "animate__animated animate__backInLeft"
@@ -132,11 +214,12 @@ function External() {
             }
             onAnimationEnd={() => forgotPassAnimation()}
           >
-            {" "}
-            <ForgotPass
-              ForgotPassClick={() => setForgotPass(false)}
-            ></ForgotPass>
-          </div>
+            <Grid item xs={12} sm={8} md={4} lg={4} xl={3}>
+              <ForgotPass
+                ForgotPassClick={() => setForgotPass(false)}
+              ></ForgotPass>
+            </Grid>
+          </Grid>
         ))
       : (element = (
           <Grid
@@ -162,11 +245,7 @@ function External() {
         ));
   } else {
     element = (
-      <Grid 
-      container
-      direction="row"
-      justify="center"
-      alignItems="center">
+      <Grid container direction="row" justify="center" alignItems="center">
         <Grid item xs={12} sm={8} md={6} lg={4} xl={3}>
           <SignUp
             SignInClick={() => signUpToggle(false)}
@@ -180,7 +259,21 @@ function External() {
 
   let page;
   if (Pagechange) {
-    page = <Dashboard></Dashboard>;
+    page = (
+      <Grid
+        container
+        direction="row"
+        justify="center"
+        alignItems="center"
+        style={{ height: "100vh" }}
+      >
+        <Grid item xs={12}>
+          <Dashboard></Dashboard>
+          <Footer></Footer>
+        </Grid>
+      </Grid>
+
+    );
   } else {
     page = (
       <div className={classes.App} id="start">
@@ -203,23 +296,7 @@ function External() {
           </Toolbar>
         </AppBar>
         <header className="App-header">
-          <div
-            className={
-              isAccessGranted
-                ? "Spacing animated fadeOutUp delay-1s"
-                : "Spacing"
-            }
-            onAnimationEnd={() => {
-              setPage(null);
-              setMetaData(null);
-            }}
-          >
-            <div className={classes.container}>
-              <div className={classes.covid}>COVID-19</div>
-            </div>
-            <h1 className={classes.heading}>CORONA VIRUS</h1>
-            <h2 className={classes.heading}>Find out where it's hiding.</h2>
-          </div>
+          {headline()}
           {element}
           <div className={classes.container}>
             <a className={classes.arrow} href="#about">
@@ -310,13 +387,18 @@ function External() {
             <Accordion></Accordion>
           </Grid>
         </Grid>
-
         <div style={{ height: 300 }}></div>
+        <Footer></Footer>
       </div>
     );
   }
 
-  return <div className={classes.Backdrop}>{page}</div>;
+  return (
+    <>
+      <div className={classes.Backdrop}></div>
+      {page}
+    </>
+  );
 }
 
 export default External;

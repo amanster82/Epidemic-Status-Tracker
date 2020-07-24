@@ -50,9 +50,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   flexMe: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
+    padding: "10%",
   },
 
   iconContainer: {
@@ -112,12 +110,14 @@ export default function SignIn(props) {
       }
       onAnimationEnd={accessGranted ? props.accessGranted(true) : null}
     >
-      <Paper className={classes.paper} elevation={3}>
+      <Paper elevation={3}>
+        <Grid container className={classes.flexMe}>
+          <Grid item item xs={12}>
         <div className={classes.iconContainer}>{icon}</div>
-        <Typography component="h1" variant="h5">
+        <Typography component="h1" variant="h5" align="center">
           Forgot Password
         </Typography>
-        <form className={classes.form} noValidate>
+        <form noValidate>
           <TextField
             error={isEmailError}
             variant="outlined"
@@ -149,7 +149,8 @@ export default function SignIn(props) {
             Back
           </Button>
         </form>
-        <Box mt={8}></Box>
+        </Grid>
+        </Grid>
       </Paper>
     </div>
   );

@@ -34,6 +34,7 @@ function Form(props) {
   const [riskValue, setRiskValue] = React.useState("");
   const [sympValue, setSympValue] = React.useState({});
   const [postalCodeValue, setpostalCodeValue] = React.useState("");
+  const [sympYesorNo, setSympYesorNo] =  React.useState("");
   const classes = useStyles();
   
   useEffect(() => {
@@ -44,11 +45,13 @@ function Form(props) {
   function clearValuesWhenBack(){
     if(props.step===0 && props.Ipressed==="Back"){
       setStatusValue("");
+      setSympYesorNo("");
       setSympValue("");
       setRiskValue("");
       setpostalCodeValue("");
       props.setButton("Next");
     }else if(props.step===1 && props.Ipressed==="Back"){
+      setSympYesorNo("");
       setSympValue("");
       setRiskValue("");
       setpostalCodeValue("");
@@ -66,11 +69,26 @@ function Form(props) {
     props.response(event.target.value);
   };
 
+  const handleSympYesOrNoChange = (e) => {
+    setSympYesorNo(e.target.value); 
+    console.log("Yes or No" + e.target.value)
+
+    if(e.target.value === "No" && e.target.value !== ""){
+      setSympValue({});
+      props.response(true);
+    }else{
+      props.response(false);
+    }
+  }
+
   const handleRiskChange = (event) => {
     setRiskValue(event.target.value);
+    console.log("are there symp??? " + !(Object.keys(sympValue).length === 0 && sympValue.constructor === Object))
     if(
-      statusValue === "+" && !(Object.keys(sympValue).length === 0 && sympValue.constructor === Object) || 
-      statusValue === "s" && !(Object.keys(sympValue).length === 0 && sympValue.constructor === Object)
+    //  statusValue === "+" && !(Object.keys(sympValue).length === 0 && sympValue.constructor === Object) || 
+    //  statusValue === "s" && !(Object.keys(sympValue).length === 0 && sympValue.constructor === Object) ||
+      statusValue === "+" && sympYesorNo === "No" && event.target.value !== "" || 
+      statusValue === "+" && sympYesorNo === "Yes" && event.target.value !== "" && !(Object.keys(sympValue).length === 0 && sympValue.constructor === Object)
     ){
       props.response(true);
     }else if( statusValue === "=" || statusValue === "-"){
@@ -79,14 +97,18 @@ function Form(props) {
 
   };
 
-  const handleSympChange = (event) => {
-    
 
+  const handleSympChange = (event) => {
     let obj = {...sympValue, [event.target.name]: event.target.checked }
     obj = Object.entries(obj).filter(([,v]) => v === true).reduce((prev, [k, v]) => ({...prev, [k]: v}), {})
     setSympValue(obj);
     console.log("this is the obj", obj);
-    let showNext =  !(Object.keys(obj).length === 0 && obj.constructor === Object) && riskValue !== ""
+    let showNext;
+    showNext = !(Object.keys(obj).length === 0 && obj.constructor === Object) && riskValue !== "" && sympValue !==
+    
+
+    console.log("showNext", showNext)
+
     let specialCase = !(Object.keys(obj).length === 0 && obj.constructor === Object)
 
     if(statusValue === "=") {
@@ -116,13 +138,92 @@ function Form(props) {
   };
 
   function conditionalRender() {
-      if(statusValue=== "+" && props.step === 1 || statusValue === "s" && props.step === 1 || statusValue === "=" && props.step === 1){
+      if(statusValue=== "+" && props.step === 1 || statusValue === "=" && props.step === 1){
+        
+        return ( 
+              <div className={classes.root}>
+
+                {(statusValue === "=")
+                ?<Typography variant="h6" align="center">Did you have any symptoms?</Typography>
+                :<Typography variant="h6" align="center">Do you have any symptoms?</Typography>}
+                
+                <RadioGroup value={sympYesorNo} onChange={handleSympYesOrNoChange}>
+                  <FormControlLabel value="Yes" control={<Radio color="primary" />} label="Yes" />
+                  <FormControlLabel value="No" control={<Radio color="primary" />} label="No" />
+                </RadioGroup>
+              { 
+                  (sympYesorNo !== "") ?
+                    (sympYesorNo === "Yes") ?
+                  <>
+                  
+                  { (statusValue === "=")
+                      ? <Typography variant="h6" align="center">What symptoms did you encounter during your duration with COVID-19? (Please choose from below)</Typography>
+                      : <Typography variant="h6" align="center">Please choose at least one of the following symptoms from the below list:</Typography>
+                  }
+
+                   <FormControl>
+                   <FormGroup>
+                       <FormControlLabel control={ <Checkbox name="Cough" color="primary" onChange={handleSympChange}/>}  label="Cough"></FormControlLabel>
+                       <FormControlLabel control={ <Checkbox name="Fever" color="primary" onChange={handleSympChange}onChange={handleSympChange}/>} label="Fever"></FormControlLabel>
+                       <FormControlLabel control={ <Checkbox name="Shortness of breath" color="primary" onChange={handleSympChange}/>} label="Shortness of breath"></FormControlLabel>
+                   </FormGroup>
+                 </FormControl>
+
+                 <FormControl>
+                   <FormGroup>
+                   <FormControlLabel control={ <Checkbox name="Fatigue or tiredness" color="primary" onChange={handleSympChange}/>} label="Fatigue or tiredness"></FormControlLabel>
+                     <FormControlLabel control={ <Checkbox name="Loss of smell or taste" color="primary" onChange={handleSympChange}/>} label="Loss sense of smell or taste"></FormControlLabel>
+                     <FormControlLabel control={ <Checkbox name="Trouble breathing" color="primary" onChange={handleSympChange}/>} label="Trouble breathing"></FormControlLabel>
+                   </FormGroup>
+                 </FormControl>
+
+                 <FormControl>
+                   <FormGroup>
+                     <FormControlLabel control={ <Checkbox name="Persistent pain or pressure in the chest" color="primary" onChange={handleSympChange}/>} label="Persistent pain or pressure in the chest"></FormControlLabel>
+                     <FormControlLabel control={ <Checkbox name="Confusion" color="primary" onChange={handleSympChange}/>} label="Confusion"></FormControlLabel>
+                     <FormControlLabel control={ <Checkbox name="Bluish lips or face" color="primary" onChange={handleSympChange}/>} label="Bluish lips or face"></FormControlLabel>
+                   </FormGroup>
+                 </FormControl>
+
+                 <FormControl>
+                   <FormGroup>
+                         <FormControlLabel control={ <Checkbox name="Nausea" color="primary" onChange={handleSympChange}/>} label="Nausea"></FormControlLabel>
+                         <FormControlLabel control={ <Checkbox name="Vomiting" color="primary" onChange={handleSympChange}/>} label="Vomiting"></FormControlLabel>
+                         <FormControlLabel control={ <Checkbox name="Sweating and shaking chills" color="primary" onChange={handleSympChange}/>} label="Sweating and shaking chills"></FormControlLabel>
+                         <FormControlLabel control={ <Checkbox name="Lower than normal temperatures" color="primary" onChange={handleSympChange}/>} label="Lower than normal temperatures"></FormControlLabel>
+                   </FormGroup>
+                 </FormControl>
+                
+                  <Typography variant="h6" align="center">Please indicate if you have left the house today and/or are planning to expose yourself to a public area:</Typography>
+                  <RadioGroup name="risk" value={riskValue} onChange={handleRiskChange}>
+                    <FormControlLabel value="Yes" control={<Radio color="primary" />} label="Yes, I am planning to leave the house today" />
+                    <FormControlLabel value="No" control={<Radio color="primary" />} label="No, I am planning to stay home" />
+                  </RadioGroup>
+                 </>
+                
+                : 
+                  <>
+                  <Typography variant="h6" align="center">Please indicate if you have left the house today and/or are planning to expose yourself to a public area:</Typography>
+                  <RadioGroup name="risk" value={riskValue} onChange={handleRiskChange}>
+                    <FormControlLabel value="Yes" control={<Radio color="primary" />} label="Yes, I am planning to leave the house today" />
+                    <FormControlLabel value="No" control={<Radio color="primary" />} label="No, I am planning to stay home" />
+                  </RadioGroup>
+                </>
+                
+                : <div></div>
+
+              }
+              </div>
+      )
+        
+
+      }
+
+      else if( statusValue === "s" && props.step === 1){
         return(
             <div className={classes.root}>
-                { (statusValue === "=")
-                  ? <Typography variant="h6" align="center">What symptoms did you encounter during your duration with COVID-19? (Please choose from below)</Typography>
-                  : <Typography variant="h6" align="center">Please choose at least one of the following symptoms from the below list:</Typography>
-                }
+                 
+                  <Typography variant="h6" align="center">Please choose at least one of the following symptoms from the below list:</Typography>
 
 
                   <FormControl>

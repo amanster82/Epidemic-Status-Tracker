@@ -17,7 +17,7 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import InboxIcon from "@material-ui/icons/MoveToInbox";
 import AccountCircle from "@material-ui/icons/AccountCircle";
-import DashboardIcon from '@material-ui/icons/Dashboard';
+import DashboardIcon from "@material-ui/icons/Dashboard";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
@@ -245,21 +245,21 @@ export default function Dashboard() {
       return (
         <Grid
           container
-          spacing={3}
           direction="row"
           justify="center"
           alignItems="center"
+          style={{ height: "100vh" }}
         >
-          <Grid item xs={12} className={classes.canvas}>
+          <Grid item xs={12} align="center">
             <h1 className="animated fadeIn">We all have to do our part.</h1>
           </Grid>
-          <Grid item xs={12} className={classes.canvas}>
+          <Grid item xs={12} align="center">
             <h1 className="animated fadeIn delay-2s">
               Report your status to unlock virus tracking, and the affects in
               your area.
             </h1>
           </Grid>
-          <Grid item xs={12} className={classes.canvas}>
+          <Grid item xs={12} align="center">
             <Button
               className={buttonEnterance}
               variant="contained"
@@ -273,21 +273,24 @@ export default function Dashboard() {
             </Button>
           </Grid>
           <Button
-            className={buttonEnterance}
-            variant="contained"
+            className="animated fadeIn delay-3s"
+            variant="outlined"
+            size="small"
             onClick={() => logout(setPage, setMetaData)}
-            onAnimationEnd={() => setButtonEnterance("animated infinite pulse")}
           >
-            Logout
+            Exit
           </Button>
         </Grid>
       );
     } else if (status && !reportCompleted) {
       return (
-        <Report
-          submit={(x) => submittedAnswers(x)}
-          setSpinner={(x) => setSpinner(x)}
-        ></Report>
+
+            <Report
+              submit={(x) => submittedAnswers(x)}
+              setSpinner={(x) => setSpinner(x)}
+              exit={() => logout(setPage, setMetaData)}
+            ></Report>
+
       );
     } else if (reportCompleted && status && MetaData) {
       console.log("this is the user report", usersReport);

@@ -9,11 +9,13 @@ import Form from "./components/Status/Form";
 import Paper from '@material-ui/core/Paper';
 import { BrowserRouter, Route, RouteComponentProps } from "react-router-dom";
 import axios from "axios";
+import Grid from "@material-ui/core/Grid";
 import ReportSound from './static/sounds/Drip_Echo.wav';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
+    heigbt: "100%"
   },
   backButton: {
     marginRight: theme.spacing(1),
@@ -113,7 +115,8 @@ export default function Report(props) {
   };
 
   return (
-    <div className={classes.root+" animated zoomIn"}>
+    <Grid className="animated fadeIn" container justify="center" alignItems="center" >
+      <Grid item xs={12}>
       <Stepper activeStep={activeStep} alternativeLabel>
         {steps.map((label) => (
           <Step key={label}>
@@ -121,7 +124,8 @@ export default function Report(props) {
           </Step>
         ))}
       </Stepper>
-      <div>
+      </Grid>
+      <Grid item xs={12}>
         {activeStep === steps.length ? (
           <div className={classes.flex}>
             <Typography className={classes.instructions}>
@@ -135,13 +139,13 @@ export default function Report(props) {
               <div className={classes.instructions}>
                   {getStepContent(whichButton,setButtonPress, activeStep, getResponse)}
               </div>
-              <div>
+              <div style={{padding: '5%'}}>
                 <Button
-                  disabled={activeStep === 0}
-                  onClick={handleBack}
+                  onClick={activeStep === 0 ? props.exit : handleBack} 
                   className={classes.backButton}
+                  variant="outlined"
                 >
-                  Back
+                  {activeStep === 0 ? "Exit" : "Back"}
                 </Button>
                 <Button disabled={!Response} variant="contained" color="primary" onClick={handleNext}>
                   {activeStep === steps.length - 1 ? "Finish" : "Next"}
@@ -150,7 +154,7 @@ export default function Report(props) {
             </div>
           </Paper>
         )}
-      </div>
-    </div>
+      </Grid>
+    </Grid>
   );
 }
