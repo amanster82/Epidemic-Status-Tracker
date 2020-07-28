@@ -50,6 +50,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: "none",
     width: "100%",
+    height: "100%"
   },
 }));
 

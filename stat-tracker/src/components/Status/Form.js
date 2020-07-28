@@ -83,12 +83,14 @@ function Form(props) {
 
   const handleRiskChange = (event) => {
     setRiskValue(event.target.value);
-    console.log("are there symp??? " + !(Object.keys(sympValue).length === 0 && sympValue.constructor === Object))
+    console.log("are there symp??? " + !(Object.keys(sympValue).length === 0));
+    console.log("if yes, what are the symps?", sympValue);
     if(
     //  statusValue === "+" && !(Object.keys(sympValue).length === 0 && sympValue.constructor === Object) || 
     //  statusValue === "s" && !(Object.keys(sympValue).length === 0 && sympValue.constructor === Object) ||
       statusValue === "+" && sympYesorNo === "No" && event.target.value !== "" || 
-      statusValue === "+" && sympYesorNo === "Yes" && event.target.value !== "" && !(Object.keys(sympValue).length === 0 && sympValue.constructor === Object)
+      statusValue === "+" && sympYesorNo === "Yes" && event.target.value !== "" && !(Object.keys(sympValue).length === 0) ||
+      statusValue === "s" && !(Object.keys(sympValue).length === 0) 
     ){
       props.response(true);
     }else if( statusValue === "=" || statusValue === "-"){

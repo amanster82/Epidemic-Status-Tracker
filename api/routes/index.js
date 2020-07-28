@@ -320,14 +320,20 @@ router.get("/api/dashboard", async (req, res, next) => {
   console.log("this is the postal code:", pCode);
   //pCode = pCode.substring(0,3);
   console.log("this is the first three characters", pCode);
+  let currentDate = new Date();
+  var date = currentDate.getDate();
+  var month = currentDate.getMonth(); 
+  var year = currentDate.getFullYear();
   const objectToSend = {};
   await knex("report")
-    .where({ user_id: req.user })
-    .andWhere({ date_stamp: new Date() })
+    .where({ user_id: req.user, active: true })
+    .andWhere(knex.raw('DATE(date_stamp) = CURRENT_DATE'))
     .then((rows) => {
       console.log("something went right have a look", rows[0]);
       Object.assign(objectToSend, { rows: rows[0] });
       if (rows[0] == undefined) {
+        console.log("Something is undefined");
+        console.log(rows[0]);
         res.json({ rows: rows[0] });
       } else {
         var query =

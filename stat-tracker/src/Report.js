@@ -15,7 +15,7 @@ import ReportSound from './static/sounds/Drip_Echo.wav';
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
-    heigbt: "100%"
+    height: "100%"
   },
   backButton: {
     marginRight: theme.spacing(1),
@@ -115,7 +115,8 @@ export default function Report(props) {
   };
 
   return (
-    <Grid className="animated fadeIn" container justify="center" alignItems="center" >
+    <Paper elevation={0} className={classes.root}>
+    <Grid className={classes.root+ " animated fadeIn"} container justify="center" alignItems="center" >
       <Grid item xs={12}>
       <Stepper activeStep={activeStep} alternativeLabel>
         {steps.map((label) => (
@@ -134,7 +135,6 @@ export default function Report(props) {
             <Button onClick={handleReset}>Reset</Button>
           </div>
         ) : (
-          <Paper elevation={0}>
             <div className={classes.flex}>
               <div className={classes.instructions}>
                   {getStepContent(whichButton,setButtonPress, activeStep, getResponse)}
@@ -152,9 +152,9 @@ export default function Report(props) {
                 </Button>
               </div>
             </div>
-          </Paper>
         )}
       </Grid>
     </Grid>
+    </Paper>
   );
 }

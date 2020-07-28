@@ -157,11 +157,13 @@ function External() {
             setMetaData(null);
           }}
         >
-          <div className={classes.container}>
-            <div className={classes.covid}>COVID-18</div>
+          <div style={{ marginTop: "10vh" }}>
+            <div className={classes.container}>
+              <div className={classes.covid}>COVID-18</div>
+            </div>
+            <h1 className={classes.heading}>CORONA VIRUS</h1>
+            <h2 className={classes.heading}>Find out where it's hiding.</h2>
           </div>
-          <h1 className={classes.heading}>CORONA VIRUS</h1>
-          <h2 className={classes.heading}>Find out where it's hiding.</h2>
         </div>
       );
     } else {
@@ -175,11 +177,13 @@ function External() {
             setMetaData(null);
           }}
         >
-          <div className={classes.container}>
-            <div className={classes.covid}>COVID-19</div>
+          <div style={{ marginTop: "10vh" }}>
+            <div className={classes.container}>
+              <div className={classes.covid}>COVID-19</div>
+            </div>
+            <h1 className={classes.heading}>CORONA VIRUS</h1>
+            <h2 className={classes.heading}>Find out where it's hiding.</h2>
           </div>
-          <h1 className={classes.heading}>CORONA VIRUS</h1>
-          <h2 className={classes.heading}>Find out where it's hiding.</h2>
         </div>
       );
     }
@@ -265,14 +269,13 @@ function External() {
         direction="row"
         justify="center"
         alignItems="center"
-        style={{ height: "100vh" }}
+        style={{ height: "100%" }}
       >
-        <Grid item xs={12}>
+        <Grid item xs={12} style={{ height: "100%" }}>
           <Dashboard></Dashboard>
           <Footer></Footer>
         </Grid>
       </Grid>
-
     );
   } else {
     page = (

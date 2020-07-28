@@ -2,6 +2,7 @@ import React from "react";
 import { Grid, Paper } from "@material-ui/core";
 import { BrowserRouter, Route, Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
+import Dialog from './Dialog'
 const useStyles = makeStyles({
 links: {
     textAlign: 'center'
@@ -25,13 +26,13 @@ const classes = useStyles();
             Copyright © 2020 COVID-Tracker. All rights reserved.
           </Grid>
           <Grid item xs={4} lg={2} xl={1} justify="center" className={classes.links}>
-            <Link>Contact</Link>
+          <Dialog name ="Contact"></Dialog>
           </Grid>
           <Grid item xs={4} lg={2} xl={1} justify="center" className={classes.links}>
-            <Link>Privacy Policy</Link>
+            <Dialog name ="Privacy Policy"></Dialog>
           </Grid>
           <Grid item xs={4} lg={2} xl={1} justify="center" className={classes.links}>
-            <Link>Terms & Conditions</Link>
+            <Dialog name ="Terms & Conditions"></Dialog>
           </Grid>
         </Grid>
       </Paper>

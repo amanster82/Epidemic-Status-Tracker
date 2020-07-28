@@ -1,6 +1,16 @@
 html {
   scroll-behavior: smooth;
+  height: 100%;
 }
+
+body{
+  height: 100%
+}
+
+#root{
+  height: 100%
+}
+
 .App-header {
   font-size: calc(10px + 2vmin);
   color: black;
@@ -19,7 +29,6 @@ html {
 .Spacing{
     padding: 2%;
     text-align: center;
-    margin-top: 10vh;
 }
 
 a {
