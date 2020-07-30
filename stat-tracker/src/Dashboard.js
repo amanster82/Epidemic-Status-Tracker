@@ -27,6 +27,7 @@ import Canvas from "./components/Canvas/Canvas";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Profile from "./Profile";
 import { MyContext } from "./MyContext";
+import Footer from "./components/Footer/Footer";
 
 const drawerWidth = 240;
 
@@ -69,6 +70,11 @@ const useStyles = makeStyles((theme) => ({
     // necessary for content to be below app bar
     ...theme.mixins.toolbar,
     justifyContent: "flex-end",
+  },
+  drawerFooter:{
+    display: "flex",
+    height: '60vh',
+    alignItems: 'flex-end'
   },
   content: {
     flexGrow: 1,
@@ -351,6 +357,8 @@ export default function Dashboard() {
                 </ListItemIcon>
                 <ListItemText primary={"Dashboard"} />
               </ListItem>
+              <div className={classes.drawerFooter}></div>
+              <Divider />
               <ListItem button onClick={() => logout(setPage, setMetaData)}>
                 <ListItemIcon>
                   <ExitToAppIcon></ExitToAppIcon>
@@ -374,6 +382,7 @@ export default function Dashboard() {
           >
             <div className={classes.drawerHeader} />
             {dashboardFocus()}
+            <Footer></Footer>
           </main>
         </div>
       );

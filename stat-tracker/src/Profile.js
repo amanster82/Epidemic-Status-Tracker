@@ -83,7 +83,7 @@ export default function FullWidthTabs() {
         >
           <Tab label="Overview" {...a11yProps(0)} />
           <Tab label="Account Settings" {...a11yProps(1)} />
-          <Tab label="Item Three" {...a11yProps(2)} />
+          {/* <Tab label="Item Three" {...a11yProps(2)} /> */}
         </Tabs>
       </AppBar>
       <SwipeableViews
@@ -115,9 +115,9 @@ export default function FullWidthTabs() {
 
            </Settings>
         </TabPanel>
-        <TabPanel value={value} index={2} dir={theme.direction}>
+        {/* <TabPanel value={value} index={2} dir={theme.direction}>
      
-        </TabPanel>
+        </TabPanel> */}
 
       </SwipeableViews>
     </div>

@@ -56,8 +56,37 @@ router.post("/api/verify", async (req, res, next) => {
 
 });
 
-router.post("/api/settings", async (req, res, next) => {
 
+router.post("/api/updateStatus", async (req, res, next) => {
+console.log("-------------------/api/updateStatus/------------------")
+  try {
+      let updateStatus = await knex("report")
+        .where({ user_id: req.user })
+        .andWhere({ active: true })
+        .update({
+          status: req.body.status,
+          symptoms: req.body.symptoms,
+          risk: req.body.risk,
+          postal: req.body.postal,
+          date_stamp: new Date(),
+          lat: req.body.lat,
+          long: req.body.long,
+          location: req.body.location,
+          province: req.body.province
+        })
+
+        return res.send(200);
+    }
+    catch (err) {
+    console.log(err);
+    return res.send(500);
+  }
+
+});
+
+
+
+router.post("/api/settings", async (req, res, next) => {
   let newEmail = req.body.email;
   let newBirth = req.body.birth;
   let newGender = req.body.gender;

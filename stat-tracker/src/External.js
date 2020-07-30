@@ -273,7 +273,6 @@ function External() {
       >
         <Grid item xs={12} style={{ height: "100%" }}>
           <Dashboard></Dashboard>
-          <Footer></Footer>
         </Grid>
       </Grid>
     );

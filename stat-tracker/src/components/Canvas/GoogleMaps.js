@@ -37,13 +37,62 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+
 export default function FreeSolo(props) {
   const classes = useStyles();
   const [places, setPlaces] = React.useState([]);
   const [chosenOption, setChoice] = React.useState("");
   console.log("chosenOption", chosenOption);
   console.log("THIS IS THE PLACES", places)
-  return (
+
+  function textFieldAndGo(){
+    if(props.mobile){
+      return(
+    <div style={{ width: "100%" }}>
+      <Autocomplete
+        id="free-solo-demo"
+        options={places}
+        value={chosenOption}
+        onChange={(event, newValue) => {
+          setChoice(newValue);
+        }}
+        autoComplete
+        renderInput={(params) => (
+          <>
+            <Grid container item justify="center" style={{marginTop: '3em'}}
+              alignItems="center"
+              xs={12}
+              sm={1}
+              md={1}
+              lg={1}
+              xl={1}>
+                <Button variant="contained" color="primary" onClick={() => props.place(chosenOption)}>Go</Button>
+              </Grid>
+              <Grid item
+              style={{marginRight: '5%'}}
+              xs={12}
+              sm={10}
+              md={10}
+              lg={10}
+              xl={10}>
+                <TextField
+                  onChange={(event) => {
+                    search(event.target.value, setPlaces, places);
+                  }}
+                  {...params}
+                  label="Search Places"
+                  margin="normal"
+                  variant="outlined"
+                  onKeyDown={ (e) => (e.key==='Enter') ? props.place(chosenOption) : false } 
+                />
+              </Grid>
+          </>
+        )}
+      />
+    </div>
+      )
+    }else{
+      return(
     <div style={{ width: "100%" }}>
       <Autocomplete
         id="free-solo-demo"
@@ -59,8 +108,8 @@ export default function FreeSolo(props) {
               <Grid item
               style={{marginRight: '5%'}}
               xs={12}
-              sm={12}
-              md={12}
+              sm={10}
+              md={10}
               lg={10}
               xl={10}>
                 <TextField
@@ -87,6 +136,13 @@ export default function FreeSolo(props) {
         )}
       />
     </div>
+      )
+    }
+  }
+
+
+  return (
+    textFieldAndGo()
   );
 }
 
