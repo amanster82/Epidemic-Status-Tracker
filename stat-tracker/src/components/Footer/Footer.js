@@ -6,14 +6,25 @@ import Dialog from './Dialog'
 const useStyles = makeStyles({
 links: {
     textAlign: 'center'
+},
 
+container: {
+  minHeight: '100%',
+  marginBottom: '-330px',
+  position: 'relative',
+},
+
+footer:{
+  height: '330px',
+  position: 'relative'
 }
 })
 
 function Footer(props) {
 const classes = useStyles();
   return (
-    <div>
+    <div className={classes.container}>
+      <div className={classes.footer}>
       <Paper>
         <Grid
           container
@@ -36,6 +47,7 @@ const classes = useStyles();
           </Grid>
         </Grid>
       </Paper>
+      </div>
     </div>
   );
 }

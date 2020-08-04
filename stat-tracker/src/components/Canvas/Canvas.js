@@ -19,6 +19,7 @@ import UpdateStatus from "../Status/UpdateStatus";
 import DotIcon from '@material-ui/icons/FiberManualRecord';
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import ReportSound from '../../static/sounds/Drip_Echo.wav';
+import Footer from "../Footer/Footer";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -483,7 +484,8 @@ function Canvas(props) {
             </div>
           </Grid>
         </Grid>
-      )}
+      )}    
+      <Footer></Footer>
     </div>
   );
 }

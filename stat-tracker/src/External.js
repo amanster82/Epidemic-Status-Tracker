@@ -162,7 +162,7 @@ function External() {
               <div className={classes.covid}>COVID-18</div>
             </div>
             <h1 className={classes.heading}>CORONA VIRUS</h1>
-            <h2 className={classes.heading}>Find out where it's hiding.</h2>
+            <h2 className={classes.heading}>Where are you?</h2>
           </div>
         </div>
       );
@@ -182,7 +182,7 @@ function External() {
               <div className={classes.covid}>COVID-19</div>
             </div>
             <h1 className={classes.heading}>CORONA VIRUS</h1>
-            <h2 className={classes.heading}>Find out where it's hiding.</h2>
+            <h2 className={classes.heading}>Where are you?</h2>
           </div>
         </div>
       );

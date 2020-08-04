@@ -89,8 +89,6 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use("/testAPI", testAPIRouter);
 
-console.log("Starting the Nodejs server on Port 9000");
-
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

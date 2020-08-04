@@ -10,6 +10,7 @@ import Box from "@material-ui/core/Box";
 import ProfileOverview from "./ProfileOverview";
 import Settings from "./Settings.js";
 import { MyContext } from "./MyContext";
+import Footer from "./components/Footer/Footer";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -120,6 +121,7 @@ export default function FullWidthTabs() {
         </TabPanel> */}
 
       </SwipeableViews>
+      <Footer></Footer>
     </div>
   );
 }

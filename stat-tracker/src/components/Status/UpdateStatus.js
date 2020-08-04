@@ -70,7 +70,7 @@ export default function CustomizedDialogs(props) {
       <Button size="small" variant="outlined" color="primary" onClick={handleClickOpen}>
         {props.name}
       </Button>
-      <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
+      <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}  fullWidth={true} maxWidth={'lg'}>
         <DialogTitle id="customized-dialog-title" onClose={handleClose}>
         {props.name}
         </DialogTitle>

@@ -382,7 +382,6 @@ export default function Dashboard() {
           >
             <div className={classes.drawerHeader} />
             {dashboardFocus()}
-            <Footer></Footer>
           </main>
         </div>
       );

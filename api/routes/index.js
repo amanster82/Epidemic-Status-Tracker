@@ -11,6 +11,8 @@ const { token } = require("morgan");
 let pCode = "";
 let province = "";
 let covid19 = "";
+const isProduction = process.env.NODE_ENV === 'production'
+
 
 scrapeCovid('https://www.ctvnews.ca/health/coronavirus/tracking-every-case-of-covid-19-in-canada-1.4852102')
 .then((result)=>{
@@ -19,12 +21,11 @@ scrapeCovid('https://www.ctvnews.ca/health/coronavirus/tracking-every-case-of-co
 })
 
 
-const connectionString =
-  "postgressql://postgres:postgres@localhost:5433/TrackerData";
+const connectionString = "postgressql://postgres:postgres@localhost:5433/TrackerData";
 
 var knex = require("knex")({
   client: "pg",
-  connection: connectionString,
+  connection: isProduction ? process.env.DATABASE_URL : connectionString,
   debug: true,
 });
 

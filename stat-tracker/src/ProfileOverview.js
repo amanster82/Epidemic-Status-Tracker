@@ -1,5 +1,5 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 import UserInfo from "./components/Profile/UserCard";
 import ReportCard from "./components/Profile/ReportCard";
 import Grid from "@material-ui/core/Grid";
@@ -13,6 +13,7 @@ import Chip from "@material-ui/core/Chip";
 import FaceIcon from "@material-ui/icons/Face";
 import DoneIcon from "@material-ui/icons/Done";
 import Paper from "@material-ui/core/Paper";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -57,6 +58,8 @@ const useStyles = makeStyles((theme) => ({
 
 function Profile(props) {
   const classes = useStyles();
+  const theme = useTheme();
+  const mobileScreen = useMediaQuery(theme.breakpoints.down("xs"));
 
   function calculate_Age(birthday) { // birthday is a date
     var ageDifMs = Date.now() - birthday.getTime();
@@ -77,13 +80,13 @@ function Profile(props) {
   function format_status(status) {
     switch(status){
       case "+":
-        return "Positive";
+        return (mobileScreen ? "Pos." : "Positive");
       case "-":
-        return "Negative";
+        return (mobileScreen ? "Neg." : "Negative");
       case "=":
-        return "Recovered";
+        return (mobileScreen ? "Reco." :"Recovered");
       case "s":
-        return "Symptomatic"
+        return (mobileScreen ? "Symp." : "Symptomatic");
     }
   }
 
@@ -199,7 +202,7 @@ function Profile(props) {
         </Grid>
         <Grid
           item
-          xs={12}
+          xs={6}
           sm={12}
           md={4}
           lg={3}
@@ -213,7 +216,7 @@ function Profile(props) {
             color={props.status}
           ></StatusCard>
         </Grid>
-        <Grid item xs={12} sm={12} md={4} lg={3} xl={2} className={classes.test}>
+        <Grid item xs={6} sm={12} md={4} lg={3} xl={2} className={classes.test}>
           <StatusCard
             title="Last Reported"
             data={format_time(new Date(props.timestamp))}
@@ -223,7 +226,7 @@ function Profile(props) {
         </Grid>
       </Grid>
       <Grid container className={classes.center}>
-        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} className={classes.centerColumn}>
+        <Grid item xs={6} sm={12} md={12} lg={12} xl={12} className={classes.centerColumn}>
           <Paper style={{ padding: "20px"}}>
             <h2>Symptoms</h2>
             {

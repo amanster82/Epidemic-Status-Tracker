@@ -8,6 +8,9 @@ import Typography from '@material-ui/core/Typography';
 import SkipPreviousIcon from '@material-ui/icons/SkipPrevious';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import SkipNextIcon from '@material-ui/icons/SkipNext';
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -66,7 +69,8 @@ const useStyles = makeStyles((theme) => ({
 export default function MediaControlCard(props) {
   const classes = useStyles();
   const theme = useTheme();
-
+  const mobileScreen = useMediaQuery(theme.breakpoints.down("xs"));
+  
   function colorStrip () {
       return <div className={classes[props.color]}></div>
   }
@@ -83,7 +87,7 @@ export default function MediaControlCard(props) {
       </div>
       <div className={classes.icon}>
       <CardContent className={classes.content}>
-      <Typography variant="h4">
+      <Typography variant={"h4"}>
             {props.data}
       </Typography>      
       <Typography component="h" variant="button" color="textSecondary" align="right">
