@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "backend": "nodemon api/bin/www",
-    "frontend": "cd ./stat-tracker/ && npm start",
+    "frontend": "npm run front --prefix stat-tracker",
     "dev": "npm run backend && npm run frontend",
     "test": "echo \"Error: no test specified\" && exit 1",
     "heroku-postbuild": "npm install --prefix stat-tracker && npm run build --prefix stat-tracker"
