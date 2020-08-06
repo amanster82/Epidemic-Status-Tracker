@@ -7,6 +7,8 @@
 var app = require('../app');
 var debug = require('debug')('api:server');
 var http = require('http');
+const path = require('path');
+
 
 /**
  * Get port from environment and store in Express.
@@ -26,10 +28,10 @@ var server = http.createServer(app);
  */
 
 if (process.env.NODE_ENV === 'production'){
-  app.use(express.static('../../stat-tracker/build'))
+  app.use(express.static('stat-tracker/build'))
   app.get('*', (req, res) => {
-    res.sendFile('../../stat-tracker/build/index.html')
-  } )
+    res.sendFile(path.resolve(__dirname, "../stat-tracker", "build", "index.html"));
+  } );
 }
 
 server.listen(port, ()=>{

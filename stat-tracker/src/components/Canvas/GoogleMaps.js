@@ -43,7 +43,7 @@ export default function FreeSolo(props) {
   const [places, setPlaces] = React.useState([]);
   const [chosenOption, setChoice] = React.useState("");
   console.log("chosenOption", chosenOption);
-  console.log("THIS IS THE PLACES", places)
+  console.log("THIS IS THE PLACES", places);
 
   function textFieldAndGo(){
     if(props.mobile){
@@ -52,7 +52,7 @@ export default function FreeSolo(props) {
       <Autocomplete
         id="free-solo-demo"
         options={places}
-        value={chosenOption}
+        getOptionLabel={chosenOption}
         onChange={(event, newValue) => {
           setChoice(newValue);
         }}
@@ -171,6 +171,7 @@ async function search(value, setPlaces, places) {
     }
 
   });
+
 }
 
 // Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top

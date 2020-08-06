@@ -118,6 +118,7 @@ router.post("/api/settings", async (req, res, next) => {
 });
 
 router.post("/api/email", async (req, res, next) => {
+  
   try {
     let user = await knex("users").where({ email: req.body.email }).limit(1);
     console.log("this is the user: ", user);
@@ -136,7 +137,7 @@ router.post("/api/email", async (req, res, next) => {
         // Generate test SMTP service account from ethereal.email
         // Only needed if you don't have a real mail account for testing
         let testAccount = await nodemailer.createTestAccount();
-
+        
         // create reusable transporter object using the default SMTP transport
         let transporter = nodemailer.createTransport({
           service: "Gmail",
@@ -174,9 +175,9 @@ router.post("/api/email", async (req, res, next) => {
         res.sendStatus(200);
       }
 
-      main().catch(() => {
+      main().catch((error) => {
         console.log("an error");
-        console.error;
+        console.log(error);
         res.sendStatus(500);
       });
     }

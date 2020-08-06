@@ -1,0 +1,17 @@
+{
+  "name": "EpidemicApp",
+  "version": "1.0.0",
+  "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./bin/www",
+    "backend": "nodemon api/bin/www",
+    "frontend": "cd ./stat-tracker/ && npm start",
+    "dev": "npm run backend && npm run frontend",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "heroku-postbuild": "npm install --prefix stat-tracker && npm run build --prefix stat-tracker"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
