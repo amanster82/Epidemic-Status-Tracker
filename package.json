@@ -4,7 +4,7 @@
   "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
   "main": "index.js",
   "scripts": {
-    "start": "node ./bin/www",
+    "start": "nodemon api/bin/www",
     "backend": "nodemon api/bin/www",
     "frontend": "npm run front --prefix stat-tracker",
     "dev": "npm run backend && npm run frontend",
