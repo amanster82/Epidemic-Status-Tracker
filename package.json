@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./bin/www",
+    "build": "cd stat-tracker/ && npm install && npm run build",
     "backend": "nodemon api/bin/www",
     "frontend": "cd ./stat-tracker/ && npm start",
     "dev": "npm run backend && npm run frontend",
