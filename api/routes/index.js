@@ -42,7 +42,7 @@ router.post("/api/verify", async (req, res, next) => {
   const verification = jwt.verify(req.body.token, process.env.TOKEN_SECRET);
   console.log("verified:");
   console.log(verification);
-  
+
   const hash = await bcrypt.hash(req.body.pass, 10);
 
   try{
