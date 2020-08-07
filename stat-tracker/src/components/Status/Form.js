@@ -143,8 +143,7 @@ function Form(props) {
       if(statusValue=== "+" && props.step === 1 || statusValue === "=" && props.step === 1){
         
         return ( 
-              <div className={classes.root}>
-
+              <div >
                 {(statusValue === "=")
                 ?<Typography variant="h6" align="center">Did you have any symptoms?</Typography>
                 :<Typography variant="h6" align="center">Do you have any symptoms?</Typography>}

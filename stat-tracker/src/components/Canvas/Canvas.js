@@ -57,8 +57,10 @@ function Canvas(props) {
   const [spinner, setSpinner] = React.useState(false);
   const [coordinates, setCoordinates] = React.useState(props.coordinates);
   const [boundingBox, setBoundingbox] = React.useState(props.boundingBox);
-  const [title, setTitle] = React.useState(props.location);
   const { setMetaData, MetaData, getMetaData } = useContext(MyContext);
+  const [title, setTitle] = React.useState(props.location);
+  const [subtitle, setSubTitle] = React.useState(MetaData.data.report.location);
+
   const theme = useTheme();
 
   const mobileScreen = useMediaQuery(theme.breakpoints.down("xs"));
@@ -118,6 +120,7 @@ function Canvas(props) {
       setMetaData(returned);
       setCoordinates(coordinates);
       setTitle(returned.data.locations[0].postal);
+      setSubTitle(returned.data.locations[0].location)
       setLocation(false);
       setBoundingbox(bounds.data.boundries);
     } else {
@@ -217,7 +220,8 @@ function Canvas(props) {
                 <GoogleMaps mobile={mobileScreen} locationClick={locationClick} place={(e, x) => onStateChange(e, x)}></GoogleMaps>
               ) : (
                 <>
-                <h1>{title}</h1>
+                <h1 style={{marginBottom: 0}}>{title}</h1>
+                <h5 style={{marginTop: 0}}>{subtitle}</h5>
                 </>
               )}
             </Grid>
@@ -281,7 +285,8 @@ function Canvas(props) {
                 <GoogleMaps locationClick={locationClick} place={(e, x) => onStateChange(e, x)}></GoogleMaps>
               ) : (
                 <>
-                <h1>{title}</h1>
+                <h1 style={{marginBottom: 0}}>{title}</h1>
+                <h5 style={{marginTop: 0}}>{subtitle}</h5>
                 </>
               )}
             </Grid>
@@ -320,7 +325,8 @@ function Canvas(props) {
                 <GoogleMaps locationClick={locationClick} place={(e, x) => onStateChange(e, x)}></GoogleMaps>
               ) : (
                 <>
-                <h1>{title}</h1>
+                <h1 style={{marginBottom: 0}}>{title}</h1>
+                <h5 style={{marginTop: 0}}>{subtitle}</h5>
                 </>
               )}
             </Grid>

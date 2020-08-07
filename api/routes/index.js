@@ -193,9 +193,9 @@ router.post("/api/search", (req, res, next) => {
   console.log("------------------/api/Search-----------------------");
   console.log(req.body);
 
-  if (req.body.input.length > 3) {
+  if (req.body.input.length > 2) {
     knex("report")
-      .select("location")
+      .distinct("location")
       .where(knex.raw("UPPER(location) like upper('%" + req.body.input + "%')"))
       .andWhere({ active: true })
       .then((search_results) => {

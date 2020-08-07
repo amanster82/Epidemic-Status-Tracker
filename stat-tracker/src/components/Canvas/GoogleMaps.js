@@ -165,7 +165,7 @@ async function search(value, setPlaces, places) {
       console.log("this is the element: ", element);
       console.log("this is the element of location:", element.location);
       console.log("this is the index: ", index);
-      setPlaces([...places, element.location]);
+      setPlaces(places => [...places, element.location]);
     }
 
   });

@@ -78,7 +78,7 @@ export default function Report(props) {
   const handleNext = async () => {
     if(activeStep === steps.length - 1){
       props.setSpinner(true);
-      let responseA = await axios.get("http://geogratis.gc.ca/services/geolocation/en/locate?q="+(FormReponsesObj[0].postal).toUpperCase())
+      let responseA = await axios.get("https://geogratis.gc.ca/services/geolocation/en/locate?q="+(FormReponsesObj[0].postal).toUpperCase())
       let responseB =  await axios.get("https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=" + responseA.data[0].geometry.coordinates[1] + "&lon=" + responseA.data[0].geometry.coordinates[0]) ;
 
       let restructuredResponse = 
