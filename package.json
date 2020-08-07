@@ -9,7 +9,7 @@
     "frontend": "npm run front --prefix stat-tracker",
     "dev": "npm run backend && npm run frontend",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "heroku-postbuild": "npm install --prefix stat-tracker && npm run build --prefix stat-tracker"
+    "heroku-postbuild": "npm install --prefix api && npm install --prefix stat-tracker && npm run build --prefix stat-tracker"
   },
   "keywords": [],
   "author": "",
