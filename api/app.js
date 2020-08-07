@@ -70,11 +70,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.resolve(__dirname, '../stat-tracker/build')));
+
 //app.use(flash())
 var PostgreSqlStore = require('connect-pg-simple')(session);
+var conString = process.env.DATABASE_URL || "postgres://postgres:postgres@localhost:5433/TrackerData";
 
 app.use(session({
-    store : new PostgreSqlStore({ conString: "postgres://postgres:postgres@localhost:5433/TrackerData"}),
+    store : new PostgreSqlStore({ conString }),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
