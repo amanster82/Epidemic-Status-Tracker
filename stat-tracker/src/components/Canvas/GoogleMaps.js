@@ -6,6 +6,7 @@ import axios from "axios";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
+import { getBackendURL } from "../../util";
 
 
 
@@ -148,12 +149,9 @@ export default function FreeSolo(props) {
 
 async function search(value, setPlaces, places) {
   console.log(value);
-  let url = window.location.href;
-  url = url.split(":");
-  url = url[0] + ":" + url[1];
-
+  
   let response = await axios.post(
-    url + `:9000/api/search`,
+    getBackendURL() + `/api/search`,
     { input: value },
     { withCredentials: true }
   );

@@ -16,6 +16,7 @@ import Paper from "@material-ui/core/Paper";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { useTheme } from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { getBackendURL } from "../../util";
 
 
 function Copyright() {
@@ -50,12 +51,8 @@ function postData(
   };
 
   setSpinner(true);
-  let url = window.location.href;
-  url = url.split(":");
-  url = url[0] + ":" + url[1];
-  console.log(url);
   axios
-    .post(url + `:9000/api/login`, login, { withCredentials: true })
+    .post(getBackendURL() + `/api/login`, login, { withCredentials: true })
     .then(function (res) {
       console.log(res);
       console.log(res.data);
@@ -128,6 +125,7 @@ export default function SignIn(props) {
   var h = window.innerHeight;
   console.log("screenSize-->", w, h);
   //alert("Is your screen size is medium or smaller:" + screenSize)
+  console.log(getBackendURL());
 
   let icon;
 

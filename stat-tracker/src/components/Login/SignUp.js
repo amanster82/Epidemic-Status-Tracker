@@ -24,6 +24,7 @@ import {
   KeyboardTimePicker,
   KeyboardDatePicker,
 } from "@material-ui/pickers";
+import { getBackendURL } from "../../util";
 
 function Copyright() {
   return (
@@ -59,12 +60,8 @@ function postData(
   };
 
   setSpinner(true);
-  let url = window.location.href;
-  url = url.split(":");
-  url = url[0] + ":" + url[1];
-  console.log(url);
   axios
-    .post(url + `:9000/api/register`, register, { withCredentials: true })
+    .post(getBackendURL() + `/api/register`, register, { withCredentials: true })
     .then(function (res) {
       console.log(res);
       console.log(res.data);

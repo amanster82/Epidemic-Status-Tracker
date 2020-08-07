@@ -28,6 +28,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import Profile from "./Profile";
 import { MyContext } from "./MyContext";
 import Footer from "./components/Footer/Footer";
+import { getBackendURL } from "./util";
 
 const drawerWidth = 240;
 
@@ -102,11 +103,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 async function logout(setPage, setMetaData) {
-  let url = window.location.href;
-  url = url.split(":");
-  url = url[0] + ":" + url[1];
-  console.log(url);
-  const logout = await axios.get(url + `:9000/api/logout`, {
+  const logout = await axios.get(getBackendURL() + `/api/logout`, {
     withCredentials: true,
   });
   try {
@@ -157,14 +154,10 @@ export default function Dashboard() {
   );
 
   function submittedAnswers(value) {
-    let url = window.location.href;
-    url = url.split(":");
-    url = url[0] + ":" + url[1];
-    console.log(url);
     console.log("THE SUBMITTED ANSWERS ARE THE FOLLOWING:");
     console.log(value);
     axios
-      .post(url + `:9000/api/report`, value, { withCredentials: true })
+      .post(getBackendURL() + `/api/report`, value, { withCredentials: true })
       .then(async function (response) {
         console.log("A CAll to Get METADATA");
         let metaDataLoaded = await getMetaData(setMetaData);
@@ -206,12 +199,8 @@ export default function Dashboard() {
 
   function onPageLoad() {
     console.log("------------------/api/dashboard-----------------------");
-    let url = window.location.href;
-    url = url.split(":");
-    url = url[0] + ":" + url[1];
-    console.log(url);
     axios
-      .get(url + `:9000/api/dashboard`, { withCredentials: true })
+      .get(getBackendURL() + `/api/dashboard`, { withCredentials: true })
       .then(function (res) {
         console.log(res);
         console.log("THE ROWS THE RWOS!!!!", res.data.rows);

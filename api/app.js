@@ -28,6 +28,7 @@ var createWhitelistValidator = function(whitelist) {
 };
 
 var originWhiteList = [
+  process.env.REACT_APP_API_URL,
   'http://localhost:3000',
   'http://amanster.ddns.net:3000'
 ];

@@ -7,15 +7,12 @@ import axios from "axios";
 import { MyContext } from "./MyContext";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Forgot from './Forgot';
+import { getBackendURL } from './util';
 
 
 async function authenticate (setPage, setMetaData){
-  let url = window.location.href;
-  url = url.split(":");
-  url = url[0] + ":" + url[1];
-  console.log(url);
   try{
-  const results = await axios.get(url + `:9000/api/authentication`, { withCredentials: true })
+  const results = await axios.get(getBackendURL() + `/api/authentication`, { withCredentials: true })
       if(results.data.Auth){
         //alert("setting the page to true and setting the metadata to null")
         setPage(true);
@@ -33,12 +30,8 @@ async function authenticate (setPage, setMetaData){
 };
 
 async function getMetaData(setMetaData, changeLocation){
-  let url = window.location.href;
-  url = url.split(":");
-  url = url[0] + ":" + url[1];
-  console.log(url);  
   try{
-  const results = await axios.post(url + `:9000/api/metadata`, {locationChange: changeLocation}, { withCredentials: true });
+  const results = await axios.post(getBackendURL() + `/api/metadata`, {locationChange: changeLocation}, { withCredentials: true });
   console.log("-------------------THE METADATA HERE---------------------")
     console.log("THEEEEEEEEEEEEE REEEESSSSSUUSUUUULTTTS:", results);
     setMetaData(results);

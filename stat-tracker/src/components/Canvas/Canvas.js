@@ -20,6 +20,7 @@ import DotIcon from '@material-ui/icons/FiberManualRecord';
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import ReportSound from '../../static/sounds/Drip_Echo.wav';
 import Footer from "../Footer/Footer";
+import { getBackendURL } from "../../util";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -100,14 +101,10 @@ function Canvas(props) {
 
   async function onStateChange(val) {
     console.log("DONT FUCK IT UP:", val);
-    let url = window.location.href;
-    url = url.split(":");
-    url = url[0] + ":" + url[1];
-    console.log(url);
     setSpinner(true);
     if (val !== "") {
       let returned = await getMetaData(setMetaData, val);
-      let bounds = await axios.get(url + `:9000/api/dashboard`, {
+      let bounds = await axios.get(getBackendURL() + `/api/dashboard`, {
         withCredentials: true,
       });
       console.log(bounds);
@@ -130,16 +127,12 @@ function Canvas(props) {
 
   async function updateStatus(value) {
     var audio = new Audio(ReportSound);
-    let url = window.location.href;
-    url = url.split(":");
-    url = url[0] + ":" + url[1];
-    console.log(url);
     console.log("THE SUBMITTED ANSWERS ARE THE FOLLOWING:");
     console.log(value);
     try{ 
-      let response = await axios.post(url + `:9000/api/updateStatus`, value, { withCredentials: true })
+      let response = await axios.post(getBackendURL() + `/api/updateStatus`, value, { withCredentials: true })
       let refresh = await getMetaData(setMetaData)
-      let bounds = await axios.get(url + `:9000/api/dashboard`, { withCredentials: true })
+      let bounds = await axios.get(getBackendURL() + `/api/dashboard`, { withCredentials: true })
       
       console.log("response", response);
       console.log("bounds", bounds);

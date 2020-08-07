@@ -14,6 +14,7 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import { getBackendURL } from "../../util";
 
 function Copyright() {
   return (
@@ -83,12 +84,8 @@ export default function SignIn(props) {
 
   function sendEmail(){
     setSpinner(true);
-    let url = window.location.href;
-    url = url.split(":");
-    url = url[0] + ":" + url[1];
-    console.log(url);
     axios
-      .post(url + `:9000/api/email`, {email: email, link: url}, { withCredentials: true })
+      .post(getBackendURL() + `/api/email`, {email: email, link: getBackendURL()}, { withCredentials: true })
       .then(function (res) {
         console.log(res);
         setSpinner(false);

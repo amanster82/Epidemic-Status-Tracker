@@ -16,6 +16,7 @@ import axios from "axios";
 import Snackbar from "@material-ui/core/Snackbar";
 import { MyContext } from "./MyContext";
 import Alert from "@material-ui/lab/Alert";
+import { getBackendURL } from "./util";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -67,10 +68,6 @@ function Settings(props) {
   const { MetaData, getMetaData, setMetaData } = useContext(MyContext);
 
   async function updateData() {
-    let url = window.location.href;
-    url = url.split(":");
-    url = url[0] + ":" + url[1];
-    console.log(url);
     let values = {
       email: email,
       birth: birth,
@@ -78,7 +75,7 @@ function Settings(props) {
       pass: pass,
     };
 
-    let update = await axios.post(url + `:9000/api/settings`, values, {
+    let update = await axios.post(getBackendURL() + `/api/settings`, values, {
       withCredentials: true,
     });
     console.log("UPDATED?", update);
