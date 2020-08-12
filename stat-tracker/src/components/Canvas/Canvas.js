@@ -8,17 +8,17 @@ import NavigationIcon from "@material-ui/icons/Navigation";
 import InfoCard from "./InfoCard";
 import GoogleMaps from "./GoogleMaps";
 import MapArea from "../Map/MapArea.js";
-import ExpansionPanel from './ExpansionPanel';
+import ExpansionPanel from "./ExpansionPanel";
 import { sizing } from "@material-ui/system";
 import { MyContext } from "../../MyContext";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { set } from "date-fns";
-import red from '@material-ui/core/colors/red';
+import red from "@material-ui/core/colors/red";
 import axios from "axios";
 import UpdateStatus from "../Status/UpdateStatus";
-import DotIcon from '@material-ui/icons/FiberManualRecord';
+import DotIcon from "@material-ui/icons/FiberManualRecord";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import ReportSound from '../../static/sounds/Drip_Echo.wav';
+import ReportSound from "../../static/sounds/Drip_Echo.wav";
 import Footer from "../Footer/Footer";
 import { getBackendURL } from "../../util";
 
@@ -66,8 +66,6 @@ function Canvas(props) {
   const mobileScreen = useMediaQuery(theme.breakpoints.down("xs"));
   const smallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
-  
-
   console.log("WTF!!@@##", coordinates);
 
   useEffect(() => {
@@ -89,16 +87,17 @@ function Canvas(props) {
     setLocation(!value);
   }
 
-  function statusColor(){
-
-    if(MetaData.data.report.status === "-" || MetaData.data.report.status === "="){
-      return {color: 'green'};
-    }else if(MetaData.data.report.status === "s"){
-      return {color: 'yellow'};
-    }else{
-      return {color: 'red'};
+  function statusColor() {
+    if (
+      MetaData.data.report.status === "-" ||
+      MetaData.data.report.status === "="
+    ) {
+      return { color: "green" };
+    } else if (MetaData.data.report.status === "s") {
+      return { color: "yellow" };
+    } else {
+      return { color: "red" };
     }
-
   }
 
   async function onStateChange(val) {
@@ -120,7 +119,7 @@ function Canvas(props) {
       setMetaData(returned);
       setCoordinates(coordinates);
       setTitle(returned.data.locations[0].postal);
-      setSubTitle(returned.data.locations[0].location)
+      setSubTitle(returned.data.locations[0].location);
       setLocation(false);
       setBoundingbox(bounds.data.boundries);
     } else {
@@ -132,11 +131,17 @@ function Canvas(props) {
     var audio = new Audio(ReportSound);
     console.log("THE SUBMITTED ANSWERS ARE THE FOLLOWING:");
     console.log(value);
-    try{ 
-      let response = await axios.post(getBackendURL() + `/api/updateStatus`, value, { withCredentials: true })
-      let refresh = await getMetaData(setMetaData)
-      let bounds = await axios.get(getBackendURL() + `/api/dashboard`, { withCredentials: true })
-      
+    try {
+      let response = await axios.post(
+        getBackendURL() + `/api/updateStatus`,
+        value,
+        { withCredentials: true }
+      );
+      let refresh = await getMetaData(setMetaData);
+      let bounds = await axios.get(getBackendURL() + `/api/dashboard`, {
+        withCredentials: true,
+      });
+
       console.log("response", response);
       console.log("bounds", bounds);
       console.log("resfresh", refresh);
@@ -152,41 +157,39 @@ function Canvas(props) {
       setBoundingbox(bounds.data.boundries);
       setSpinner(false);
       audio.play();
-    }catch(error) {
-        console.log("-------We have a problem------");
-        console.log(error);
-      };
+    } catch (error) {
+      console.log("-------We have a problem------");
+      console.log(error);
+    }
   }
 
-
-  function searchAndStatus(){
-    if(mobileScreen){
-      return(
+  function searchAndStatus() {
+    if (mobileScreen) {
+      return (
         <>
-        <Grid
-              container
-              item
-              xs={12}
-              sm={6}
-              md={locationClick ? 6 : 2}
-              lg={locationClick ? 2 : 3}
-              xl={2}
-              justify="center"
-              alignItems="center"
-              style={{marginBottom: '4em'}}
-            >
-              <Grid item
-                container
-                justify="center"
-                alignItems="center"
-                xl={12}
-              >
-                <h3>Status:</h3>
-                <DotIcon style={statusColor()}/>
-              </Grid>
-              <UpdateStatus name="Update Status" submit={ (e) => updateStatus(e) } setSpinner={(e)=> setSpinner(e)}></UpdateStatus>
+          <Grid
+            container
+            item
+            xs={12}
+            sm={6}
+            md={locationClick ? 6 : 2}
+            lg={locationClick ? 2 : 3}
+            xl={2}
+            justify="center"
+            alignItems="center"
+            style={{ marginBottom: "4em"}}
+          >
+            <Grid item container justify="center" alignItems="center" xl={12}>
+              <h3>Status:</h3>
+              <DotIcon style={statusColor()} />
             </Grid>
-      <Grid
+            <UpdateStatus
+              name="Update Status"
+              submit={(e) => updateStatus(e)}
+              setSpinner={(e) => setSpinner(e)}
+            ></UpdateStatus>
+          </Grid>
+          <Grid
             item
             xs={locationClick ? 12 : 12}
             sm={locationClick ? 6 : 6}
@@ -203,36 +206,46 @@ function Canvas(props) {
               <NavigationIcon />
               Explore Locations
             </Fab>
-            </Grid>
-            <Grid
+          </Grid>
+          <Grid
             container
             justify="center"
             alignItems="center"
-              item
-              xs={12}
-              sm={locationClick ? 12 : 12}
-              md={locationClick ? 7 : 6}
-              lg={locationClick ? 7 : 6}
-              xl={8}
-            >
-              {locationClick ? (<><br></br><br></br></>) : <> </>}
-              {locationClick ? (
-                <GoogleMaps mobile={mobileScreen} locationClick={locationClick} place={(e, x) => onStateChange(e, x)}></GoogleMaps>
-              ) : (
-                <>
-                <h1 style={{marginBottom: 0}}>{title}</h1>
-                <h5 style={{marginTop: 0}}>{subtitle}</h5>
-                </>
-              )}
-            </Grid>
-          </>
-      )
-
+            item
+            xs={12}
+            sm={locationClick ? 12 : 12}
+            md={locationClick ? 7 : 6}
+            lg={locationClick ? 7 : 6}
+            xl={8}
+          >
+            {locationClick ? (
+              <>
+                <br></br>
+                <br></br>
+              </>
+            ) : (
+              <> </>
+            )}
+            {locationClick ? (
+              <GoogleMaps
+                mobile={mobileScreen}
+                locationClick={locationClick}
+                place={(e, x) => onStateChange(e, x)}
+              ></GoogleMaps>
+            ) : (
+              <>
+                <h1 style={{ marginBottom: 0 }}>{title}</h1>
+                <h5 style={{ marginTop: 0 }}>{subtitle}</h5>
+              </>
+            )}
+          </Grid>
+        </>
+      );
     }
-    if(smallScreen){
-      return(
+    if (smallScreen) {
+      return (
         <>
-      <Grid
+          <Grid
             item
             xs={locationClick ? 12 : 12}
             sm={locationClick ? 6 : 6}
@@ -249,53 +262,62 @@ function Canvas(props) {
               <NavigationIcon />
               Explore Locations
             </Fab>
+          </Grid>
+          <Grid
+            container
+            item
+            xs={2}
+            sm={6}
+            md={locationClick ? 6 : 2}
+            lg={locationClick ? 2 : 3}
+            xl={2}
+            justify="center"
+            alignItems="center"
+          >
+            <Grid item container justify="center" alignItems="center" xl={12}>
+              <h3>Status:</h3>
+              <DotIcon style={statusColor()} />
             </Grid>
-            <Grid
-              container
-              item
-              xs={2}
-              sm={6}
-              md={locationClick ? 6 : 2}
-              lg={locationClick ? 2 : 3}
-              xl={2}
-              justify="center"
-              alignItems="center"
-            >
-              <Grid item
-                container
-                justify="center"
-                alignItems="center"
-                xl={12}
-              >
-                <h3>Status:</h3>
-                <DotIcon style={statusColor()}/>
-              </Grid>
-              <UpdateStatus name="Update Status" submit={ (e) => updateStatus(e) } setSpinner={(e)=> setSpinner(e)}></UpdateStatus>
-            </Grid>
-            <Grid
-              item
-              xs={locationClick ? 12 : 6}
-              sm={locationClick ? 12 : 12}
-              md={locationClick ? 7 : 6}
-              lg={locationClick ? 7 : 6}
-              xl={8}
-            >
-              {locationClick ? (<><br></br><br></br></>) : <> </>}
-              {locationClick ? (
-                <GoogleMaps locationClick={locationClick} place={(e, x) => onStateChange(e, x)}></GoogleMaps>
-              ) : (
-                <>
-                <h1 style={{marginBottom: 0}}>{title}</h1>
-                <h5 style={{marginTop: 0}}>{subtitle}</h5>
-                </>
-              )}
-            </Grid>
-          </>
-      )
-    }else{
-      return(
+            <UpdateStatus
+              name="Update Status"
+              submit={(e) => updateStatus(e)}
+              setSpinner={(e) => setSpinner(e)}
+            ></UpdateStatus>
+          </Grid>
+          <Grid
+            item
+            xs={locationClick ? 12 : 6}
+            sm={locationClick ? 12 : 12}
+            md={locationClick ? 7 : 6}
+            lg={locationClick ? 7 : 6}
+            xl={8}
+          >
+            {locationClick ? (
+              <>
+                <br></br>
+                <br></br>
+              </>
+            ) : (
+              <> </>
+            )}
+            {locationClick ? (
+              <GoogleMaps
+                locationClick={locationClick}
+                place={(e, x) => onStateChange(e, x)}
+              ></GoogleMaps>
+            ) : (
+              <>
+                <h1 style={{ marginBottom: 0 }}>{title}</h1>
+                <h5 style={{ marginTop: 0 }}>{subtitle}</h5>
+              </>
+            )}
+          </Grid>
+        </>
+      );
+    } else {
+      return (
         <>
-      <Grid
+          <Grid
             item
             xs={locationClick ? 12 : 12}
             sm={locationClick ? 6 : 6}
@@ -312,56 +334,57 @@ function Canvas(props) {
               <NavigationIcon />
               Explore Locations
             </Fab>
+          </Grid>
+          <Grid
+            item
+            xs={locationClick ? 12 : 6}
+            sm={locationClick ? 12 : 12}
+            md={locationClick ? 7 : 6}
+            lg={locationClick ? 7 : 6}
+            xl={8}
+          >
+            {locationClick ? (
+              <GoogleMaps
+                locationClick={locationClick}
+                place={(e, x) => onStateChange(e, x)}
+              ></GoogleMaps>
+            ) : (
+              <>
+                <h1 style={{ marginBottom: 0 }}>{title}</h1>
+                <h5 style={{ marginTop: 0 }}>{subtitle}</h5>
+              </>
+            )}
+          </Grid>
+          <Grid
+            container
+            item
+            xs={2}
+            sm={2}
+            md={2}
+            lg={locationClick ? 2 : 3}
+            xl={2}
+            justify="flex-end"
+            alignItems="center"
+          >
+            <Grid item container justify="flex-end" alignItems="center" xl={12}>
+              <h3>Status:</h3>
+              <DotIcon style={statusColor()} />
             </Grid>
-            <Grid
-              item
-              xs={locationClick ? 12 : 6}
-              sm={locationClick ? 12 : 12}
-              md={locationClick ? 7 : 6}
-              lg={locationClick ? 7 : 6}
-              xl={8}
-            >
-              {locationClick ? (
-                <GoogleMaps locationClick={locationClick} place={(e, x) => onStateChange(e, x)}></GoogleMaps>
-              ) : (
-                <>
-                <h1 style={{marginBottom: 0}}>{title}</h1>
-                <h5 style={{marginTop: 0}}>{subtitle}</h5>
-                </>
-              )}
-            </Grid>
-            <Grid
-              container
-              item
-              xs={2}
-              sm={2}
-              md={2}
-              lg={locationClick ? 2 : 3}
-              xl={2}
-              justify="flex-end"
-              alignItems="center"
-            >
-              <Grid item
-                container
-                justify="flex-end"
-                alignItems="center"
-                xl={12}
-              >
-                <h3>Status:</h3>
-                <DotIcon style={statusColor()}/>
-              </Grid>
-              <UpdateStatus name="Update Status" submit={ (e) => updateStatus(e) } setSpinner={(e)=> setSpinner(e)}></UpdateStatus>
-            </Grid>
-          </>
-      )
+            <UpdateStatus
+              name="Update Status"
+              submit={(e) => updateStatus(e)}
+              setSpinner={(e) => setSpinner(e)}
+            ></UpdateStatus>
+          </Grid>
+        </>
+      );
     }
   }
-
 
   function Headline() {
     return (
       <React.Fragment>
-        <Grid container style={{padding: '1%'}}>
+        <Grid container style={{ padding: "1%" }}>
           {searchAndStatus()}
         </Grid>
       </React.Fragment>
@@ -407,13 +430,13 @@ function Canvas(props) {
     return (
       <React.Fragment>
         <Grid item xs={12}>
-          <InfoCard recentNews={MetaData.data.scrapedData}/>
+          <InfoCard recentNews={MetaData.data.scrapedData} />
         </Grid>
       </React.Fragment>
     );
   }
 
-  function UserData(){
+  function UserData() {
     return (
       <React.Fragment>
         <Grid item xs={12}>
@@ -441,8 +464,13 @@ function Canvas(props) {
       {spinner ? (
         SpinnerElement
       ) : (
-        <Grid container justify="center">
-          <Grid item xs={12} className={classes.perfectCenter} style={{marginBottom: '2%'}}>
+        <Grid container justify="center" style={{ height: '100%'}}>
+          <Grid
+            item
+            xs={12}
+            className={classes.perfectCenter}
+            style={{ marginBottom: "2%" }}
+          >
             <Headline />
           </Grid>
           <Grid
@@ -483,8 +511,7 @@ function Canvas(props) {
             </div>
           </Grid>
         </Grid>
-      )}    
-      <Footer></Footer>
+      )}
     </div>
   );
 }

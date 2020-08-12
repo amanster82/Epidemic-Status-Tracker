@@ -9,13 +9,12 @@ links: {
 },
 
 container: {
-  minHeight: '100%',
+  //minHeight: '100%',
   marginBottom: '-330px',
   position: 'relative',
 },
 
 footer:{
-  height: '330px',
   position: 'relative'
 }
 })

@@ -269,7 +269,7 @@ function External() {
         direction="row"
         justify="center"
         alignItems="center"
-        style={{ height: "100%" }}
+        style={{ height: "auto" }}
       >
         <Grid item xs={12} style={{ height: "100%" }}>
           <Dashboard></Dashboard>
@@ -390,7 +390,6 @@ function External() {
           </Grid>
         </Grid>
         <div style={{ height: 300 }}></div>
-        <Footer></Footer>
       </div>
     );
   }
@@ -399,6 +398,7 @@ function External() {
     <>
       <div className={classes.Backdrop}></div>
       {page}
+      <Footer></Footer>
     </>
   );
 }
