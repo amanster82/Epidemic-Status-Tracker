@@ -3,6 +3,7 @@ import { BrowserRouter, Route } from "react-router-dom";
 import External from './External';
 import Report from './Report';
 import Dashboard from './Dashboard';
+import About from './About';
 import axios from "axios";
 import { MyContext } from "./MyContext";
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -65,7 +66,7 @@ function App() {
         ?
         <BrowserRouter>
             <Route path='/' exact component={External} />
-            <Route path='/self-report' exact component={Report} />
+            <Route path='/About' exact component={About} />
             <Route path='/Dashboard' exact component={Dashboard} /> 
             <Route path='/Forgot/:token' exact component={Forgot} /> 
             {/* <Route path='/Profile' exact component={Profile}/> */}

@@ -27,8 +27,10 @@ import Canvas from "./components/Canvas/Canvas";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Profile from "./Profile";
 import { MyContext } from "./MyContext";
+import Verify from "./components/Verification/Verify";
 import Footer from "./components/Footer/Footer";
 import { getBackendURL } from "./util";
+
 
 const drawerWidth = 240;
 
@@ -132,6 +134,8 @@ export default function Dashboard() {
   const [APIDown, setApiDown] = React.useState(null);
   const [boundingBox, setboundingBox] = React.useState(null);
   const [showProfile, setProfile] = React.useState(false);
+  const [verification, setVerification] = React.useState(false);
+
   const {
     Pagechange,
     setPage,
@@ -225,7 +229,7 @@ export default function Dashboard() {
   function dashboardFocus() {
     if (showProfile) {
       return <Profile></Profile>;
-    } else {
+    }else {
       return (
         <Canvas
           location={location}
@@ -251,7 +255,7 @@ export default function Dashboard() {
           </Grid>
           <Grid item xs={12} align="center">
             <h1 className="animated fadeIn delay-2s">
-              Report your status to unlock virus tracking, and the affects in
+              Report your status to unlock virus tracking, and the effects in
               your area.
             </h1>
           </Grid>

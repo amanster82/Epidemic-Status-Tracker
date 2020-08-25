@@ -86,7 +86,7 @@ function Profile(props) {
       case "=":
         return (mobileScreen ? "Reco." :"Recovered");
       case "s":
-        return (mobileScreen ? "Symp." : "Symptomatic");
+        return (mobileScreen ? "Poss." : "Possible");
     }
   }
 
