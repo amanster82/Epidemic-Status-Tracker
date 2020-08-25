@@ -43,6 +43,7 @@ export default function FreeSolo(props) {
   const classes = useStyles();
   const [places, setPlaces] = React.useState([]);
   const [chosenOption, setChoice] = React.useState("");
+  const uniquePlaces = new Set;
   console.log("chosenOption", chosenOption);
   console.log("THIS IS THE PLACES", places);
 
@@ -78,7 +79,7 @@ export default function FreeSolo(props) {
               xl={10}>
                 <TextField
                   onChange={(event) => {
-                    search(event.target.value, setPlaces, places);
+                    search(event.target.value, setPlaces, places, uniquePlaces);
                   }}
                   {...params}
                   label="Search Places"
@@ -115,7 +116,7 @@ export default function FreeSolo(props) {
               xl={10}>
                 <TextField
                   onChange={(event) => {
-                    search(event.target.value, setPlaces, places);
+                    search(event.target.value, setPlaces, places, uniquePlaces);
                   }}
                   {...params}
                   label="Search Places"
@@ -147,7 +148,7 @@ export default function FreeSolo(props) {
   );
 }
 
-async function search(value, setPlaces, places) {
+async function search(value, setPlaces, places, uniquePlaces) {
   console.log(value);
   
   let response = await axios.post(
@@ -165,9 +166,9 @@ async function search(value, setPlaces, places) {
       console.log("this is the element: ", element);
       console.log("this is the element of location:", element.location);
       console.log("this is the index: ", index);
-      setPlaces(places => [...places, element.location]);
+      uniquePlaces.add(element.location);
+      setPlaces(Array.from(uniquePlaces));
     }
-
   });
 
 }
