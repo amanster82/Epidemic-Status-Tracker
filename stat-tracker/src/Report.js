@@ -11,11 +11,13 @@ import { BrowserRouter, Route, RouteComponentProps } from "react-router-dom";
 import axios from "axios";
 import Grid from "@material-ui/core/Grid";
 import ReportSound from './static/sounds/Drip_Echo.wav';
+import { getBackendURL } from "./util";
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
-    height: "100%"
+    //height: "100%"
   },
   backButton: {
     marginRight: theme.spacing(1),
@@ -34,10 +36,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function getSteps() {
-  return ["Status", "Risk", "Location"];
+  return ["Status", "Risk", "Location", "Unlock"];
 }
 
-function getStepContent(whichButton, setButtonPress, stepIndex, getResponse, value) {
+function getStepContent(whichButton, setButtonPress, stepIndex, getResponse, codeVerify) {
   console.log("is this called twice?")
   switch (stepIndex) {
     case 0:
@@ -46,6 +48,8 @@ function getStepContent(whichButton, setButtonPress, stepIndex, getResponse, val
       return <Form Ipressed={whichButton} setButton={(value) => setButtonPress(value)} step={stepIndex} response={(value)=> getResponse(value, stepIndex)}></Form>;
     case 2:
       return <Form Ipressed={whichButton} setButton={(value) => setButtonPress(value)} step={stepIndex} response={(value)=> getResponse(value, stepIndex)} ></Form>;
+    case 3:
+        return <Form Ipressed={whichButton} setButton={(value) => setButtonPress(value)} step={stepIndex} response={(value)=> getResponse(value, stepIndex)} codeCorrect={codeVerify}></Form>;
     default: 
       return "Unknown stepIndex";
   }
@@ -58,18 +62,33 @@ export default function Report(props) {
   const [Response, setResponse] = React.useState(false);
   const [FormReponsesObj, setFormResponseObj] = React.useState({});
   const [whichButton, setButtonPress] = React.useState("Next");
+  const [codeVerify, setCodeVerify] = React.useState(null);
   const steps = getSteps();
 
-//   useEffect(() => {
-//     setButtonPress("Next");   
-// });
+  useEffect(() => {
+    sendCode();
+},[activeStep === steps.length - 1]);
  
 
-  function getResponse(value, stepIndex){
+  async function getResponse(value, stepIndex){
       console.log("got response", value)
-      setResponse(value);
+      console.log(stepIndex);
+
+      if(stepIndex === 3 ){
+        if(value.length === 6){
+            let codeCheck = await axios.post(getBackendURL() + `/api/codeCheck`, {code: value}, { withCredentials: true })
+            console.log(codeCheck);
+            setResponse(codeCheck.data.verify);
+            setCodeVerify(codeCheck.data.verify)
+        }else{
+          setCodeVerify(null)
+        }
+
+      }else{
+        setResponse(value)
+      }
+
       setFormResponseObj(value);
-      
       // if(stepIndex>1){
       //   FormReponsesObj = value;
       // }
@@ -114,6 +133,12 @@ export default function Report(props) {
     setActiveStep(0);
   };
 
+async function sendCode(){
+  if(activeStep === steps.length - 1){
+    let code = await axios.get(getBackendURL() + `/api/sendCode`, { withCredentials: true })
+  }
+}
+
   return (
     <Paper elevation={0} className={classes.root}>
     <Grid className={classes.root+ " animated fadeIn"} container justify="center" alignItems="center" >
@@ -137,9 +162,9 @@ export default function Report(props) {
         ) : (
             <div className={classes.flex}>
               <div className={classes.instructions}>
-                  {getStepContent(whichButton,setButtonPress, activeStep, getResponse)}
+                  {getStepContent(whichButton,setButtonPress, activeStep, getResponse, codeVerify)}
               </div>
-              <div style={{padding: '5%'}}>
+              <div>
                 <Button
                   onClick={activeStep === 0 ? props.exit : handleBack} 
                   className={classes.backButton}

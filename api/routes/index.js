@@ -36,6 +36,91 @@ router.get("/", function (req, res, next) {
   res.render("index", { title: "Express" });
 });
 
+router.post("/api/codeCheck", async (req, res, next) => {
+ 
+  console.log("hello?"+ req.user)
+  console.log(req.user)
+try{
+  let user = await knex("users")
+  .select('code')
+  .where({ id: req.user })
+  .limit(1);
+
+  console.log(user);
+  if(user[0].code === req.body.code){
+    res.json({verify: true})
+  }else{
+    res.json({verify: false})
+  }
+
+}catch(err){
+  console.log(err)
+}
+
+
+});
+
+router.get("/api/sendCode", async (req, res, next) => {
+  console.log("HEY BITCH");
+  console.log(req.user);
+  console.log(req.body);
+
+  async function main() {
+    // Generate test SMTP service account from ethereal.email
+    // Only needed if you don't have a real mail account for testing
+    let testAccount = await nodemailer.createTestAccount();
+
+    let r = Math.random().toString(36).substring(7);
+
+    const user_code = await knex("users")
+    .where({ id: req.user })
+    .update({ code:  r})
+
+
+    let user = await knex("users")
+    .select('email', 'code')
+    .where({ id: req.user })
+    .limit(1);
+
+    console.log(user[0].email);
+    
+    // create reusable transporter object using the default SMTP transport
+    let transporter = nodemailer.createTransport({
+      service: "Gmail",
+      auth: {
+        user: process.env.GMAIL_USER, // generated ethereal user
+        pass: process.env.GMAIL_PASS, // generated ethereal password
+      },
+    });
+
+    // send mail with defined transport object
+    let info = await transporter.sendMail({
+      from: '"COVID-19 Tracker 😷" <foo@example.com>', // sender address
+      to: user[0].email, // list of receivers
+      subject: "UNLOCK CODE", // Subject line
+      text:"Please enter the following code: "+ user[0].code +" to start viral tracking. We will never contact you for this code. Do not reveal it to anyone else.",
+      html:"<b>Please enter the following code: "+ user[0].code +" to start viral tracking. We will never contact you for this code. Do not reveal it to anyone else.</b>", // html body
+    });
+
+    console.log("Message sent: %s", info.messageId);
+    // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+
+    // Preview only available when sending through an Ethereal account
+    console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+    // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+
+    res.sendStatus(200);
+  }
+
+  main().catch((error) => {
+    console.log("an error");
+    console.log(error);
+    res.sendStatus(500);
+  });
+
+
+});
+
 router.post("/api/verify", async (req, res, next) => {
   console.log(req.body);
   console.log(process.env.TOKEN_SECRET)
@@ -56,6 +141,7 @@ router.post("/api/verify", async (req, res, next) => {
   }
 
 });
+
 
 
 router.post("/api/updateStatus", async (req, res, next) => {

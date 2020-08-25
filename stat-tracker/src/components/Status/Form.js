@@ -24,6 +24,18 @@ function Form(props) {
     input:{
       textTransform: 'uppercase',
       textAlign: 'center'
+    },
+
+    input2:{
+      textAlign: 'center'
+    },
+
+    description: {
+      marginLeft: '30px'
+    },
+
+    status:{
+      fontWeight: 'bold !important'
     }
   
   
@@ -75,7 +87,7 @@ function Form(props) {
 
     if(e.target.value === "No" && e.target.value !== ""){
       setSympValue({});
-      props.response(true);
+      props.response(false);
     }else{
       props.response(false);
     }
@@ -90,7 +102,8 @@ function Form(props) {
     //  statusValue === "s" && !(Object.keys(sympValue).length === 0 && sympValue.constructor === Object) ||
       statusValue === "+" && sympYesorNo === "No" && event.target.value !== "" || 
       statusValue === "+" && sympYesorNo === "Yes" && event.target.value !== "" && !(Object.keys(sympValue).length === 0) ||
-      statusValue === "s" && !(Object.keys(sympValue).length === 0) 
+      statusValue === "s" && sympYesorNo === "No" && event.target.value !== "" || 
+      statusValue === "s" && sympYesorNo === "Yes" && event.target.value !== "" && !(Object.keys(sympValue).length === 0)
     ){
       props.response(true);
     }else if( statusValue === "=" || statusValue === "-"){
@@ -139,9 +152,13 @@ function Form(props) {
     }
   };
 
+
+  const handleCodeChange = (event) => {
+      props.response(event.target.value)
+  }
+
   function conditionalRender() {
-      if(statusValue=== "+" && props.step === 1 || statusValue === "=" && props.step === 1){
-        
+      if(statusValue=== "+" && props.step === 1 || statusValue === "=" && props.step === 1 || statusValue=== "s" && props.step === 1){
         return ( 
               <div >
                 {(statusValue === "=")
@@ -218,61 +235,6 @@ function Form(props) {
       )
         
 
-      }
-
-      else if( statusValue === "s" && props.step === 1){
-        return(
-            <div className={classes.root}>
-                 
-                  <Typography variant="h6" align="center">Please choose at least one of the following symptoms from the below list:</Typography>
-
-
-                  <FormControl>
-                    <FormGroup>
-                        <FormControlLabel control={ <Checkbox name="Cough" color="primary" onChange={handleSympChange}/>}  label="Cough"></FormControlLabel>
-                        <FormControlLabel control={ <Checkbox name="Fever" color="primary" onChange={handleSympChange}onChange={handleSympChange}/>} label="Fever"></FormControlLabel>
-                        <FormControlLabel control={ <Checkbox name="Shortness of breath" color="primary" onChange={handleSympChange}/>} label="Shortness of breath"></FormControlLabel>
-                    </FormGroup>
-                  </FormControl>
-
-                  <FormControl>
-                    <FormGroup>
-                    <FormControlLabel control={ <Checkbox name="Fatigue or tiredness" color="primary" onChange={handleSympChange}/>} label="Fatigue or tiredness"></FormControlLabel>
-                      <FormControlLabel control={ <Checkbox name="Loss of smell or taste" color="primary" onChange={handleSympChange}/>} label="Loss sense of smell or taste"></FormControlLabel>
-                      <FormControlLabel control={ <Checkbox name="Trouble breathing" color="primary" onChange={handleSympChange}/>} label="Trouble breathing"></FormControlLabel>
-                    </FormGroup>
-                  </FormControl>
-
-                  <FormControl>
-                    <FormGroup>
-                      <FormControlLabel control={ <Checkbox name="Persistent pain or pressure in the chest" color="primary" onChange={handleSympChange}/>} label="Persistent pain or pressure in the chest"></FormControlLabel>
-                      <FormControlLabel control={ <Checkbox name="Confusion" color="primary" onChange={handleSympChange}/>} label="Confusion"></FormControlLabel>
-                      <FormControlLabel control={ <Checkbox name="Bluish lips or face" color="primary" onChange={handleSympChange}/>} label="Bluish lips or face"></FormControlLabel>
-                    </FormGroup>
-                  </FormControl>
-
-                  <FormControl>
-                    <FormGroup>
-                          <FormControlLabel control={ <Checkbox name="Nausea" color="primary" onChange={handleSympChange}/>} label="Nausea"></FormControlLabel>
-                          <FormControlLabel control={ <Checkbox name="Vomiting" color="primary" onChange={handleSympChange}/>} label="Vomiting"></FormControlLabel>
-                          <FormControlLabel control={ <Checkbox name="Sweating and shaking chills" color="primary" onChange={handleSympChange}/>} label="Sweating and shaking chills"></FormControlLabel>
-                          <FormControlLabel control={ <Checkbox name="Lower than normal temperatures" color="primary" onChange={handleSympChange}/>} label="Lower than normal temperatures"></FormControlLabel>
-                    </FormGroup>
-                  </FormControl>
-                <br></br>
-                { (statusValue !== "=")
-                  ?<div>
-                  <Typography variant="h6" align="center">Please indicate if you have left the house today and/or are planning to expose yourself to a public area:</Typography>
-                  <RadioGroup name="risk" value={riskValue} onChange={handleRiskChange}>
-                    <FormControlLabel value="Yes" control={<Radio color="primary" />} label="Yes, I am planning to leave the house today" />
-                    <FormControlLabel value="No" control={<Radio color="primary" />} label="No, I am planning to stay home" />
-                  </RadioGroup>
-                  </div>
-                  : <div></div>
-                }
-
-            </div>
-        )
       }else if(statusValue === "-" && props.step === 1){
         return(
         <>
@@ -288,15 +250,37 @@ function Form(props) {
         return(
             <>
                 <Typography variant="h6" align="center">Please select a status that best suites you</Typography>
+                <Typography style={{ fontStyle: 'italic'}} variant="subtitle1" align="center">*Note: read the description carefully before making a selection!</Typography>
                 <RadioGroup name="status" value={statusValue} onChange={handleStatusChange}>
-                <FormControlLabel value="+" control={<Radio color="primary" />} label="Positive - I have been tested, and I am currently confirmed positive" />
-                <FormControlLabel value="s" control={<Radio color="primary"/>} label="Symptomatic - I have familiarized myself with viral symptoms and I think I am showing possible signs" />
-                <FormControlLabel value="-" control={<Radio color="primary"/>} label="Negative - I have been tested and am currently negative/I am confident I am COVID-19 free" />
-                <FormControlLabel value="=" control={<Radio color="primary"/>} label="Recovered - I tested positive for COVID-19 and now I have recovered" />
-                </RadioGroup>
+                <FormControlLabel value="+" control={<Radio color="primary" />} label="Positive" className={classes.status}/>
+                <div className={classes.description}>I have been tested, and I am currently confirmed positive</div>
+                <br></br>
+                <br></br>
+                <br></br>
+                <FormControlLabel value="s" control={<Radio color="primary"/>} label="Possible" />
+                <div className={classes.description}>One or more of the below apply to me:</div>
+                <ul className={classes.description}>
+                <li>I have familiarized myself with viral symptoms and I think I am showing possible signs.</li>
+                <li>I have been traveling, and I am currently self-isolating.</li>
+                <li>I have been exposed to a confirmed COVID-19 case and I am currently self-isolating.</li>
+                </ul>
+                <br></br>
+                <br></br> 
+                <FormControlLabel value="-" control={<Radio color="primary"/>} label="Negative" />
+                <div className={classes.description}>One or more of the below apply to me:</div>
+                <ul className={classes.description}>
+                <li>I have been tested and I am currently negative.</li>
+                <li>I have not been tested, but I am confident I am COVID-19 free.</li>
+                </ul>
+                <br></br>
+                <br></br>
+                <FormControlLabel value="=" control={<Radio color="primary"/>} label="Recovered" />
+                <div className={classes.description}>I tested positive for COVID-19, and I now test negative for COVID-19</div>
+                <br></br>
+                <br></br>                </RadioGroup>
             </>
         )
-      }else{
+      }else if(props.step === 2){
         return(
           <>
               <Typography variant="h6" align="center">Please enter the first three letters of your postal code</Typography>
@@ -315,6 +299,29 @@ function Form(props) {
                 </Grid>
             </Grid>
           </>
+        ) 
+      }else{
+        return(
+          <div className="animated zoomInUp">
+              <Typography variant="h6" align="center">A code has been sent to your email.</Typography>
+              <Typography variant="h6" align="center">Please enter the code below</Typography>
+              {/* <GoogleMaps response={props.response}></GoogleMaps> */}
+              <Grid container alignItems='center' justify="center">
+                <Grid item xs={6}>
+                <TextField 
+              variant="outlined"
+              onChange={handleCodeChange}
+              inputProps={{
+                maxLength: 6,
+                className: classes.input2
+              }}
+              error={!props.codeCorrect && props.codeCorrect !== null && props.codeCorrect !== ""}
+              label={(!props.codeCorrect && props.codeCorrect !== null) ? "Code incorrect" : ""}
+              >
+                </TextField>
+              </Grid>
+            </Grid>
+          </div>
         ) 
       }
   }
