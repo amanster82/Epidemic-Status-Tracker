@@ -36,6 +36,20 @@ router.get("/", function (req, res, next) {
   res.render("index", { title: "Express" });
 });
 
+router.get("/api/verifiedUser", async (req, res, next) => {
+  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>hello?");
+  let user = await knex("users")
+  .select('verified')
+  .where({ id: req.user })
+  .limit(1);
+
+  console.log(user[0])
+
+  res.json({verification: user[0].verified})
+
+
+});
+
 router.post("/api/codeCheck", async (req, res, next) => {
  
   console.log("hello?"+ req.user)
@@ -70,7 +84,7 @@ router.get("/api/sendCode", async (req, res, next) => {
     // Only needed if you don't have a real mail account for testing
     let testAccount = await nodemailer.createTestAccount();
 
-    let r = Math.random().toString(36).substring(7);
+    let r = Math.random().toString(36).substring(7,13);
 
     const user_code = await knex("users")
     .where({ id: req.user })
@@ -109,7 +123,7 @@ router.get("/api/sendCode", async (req, res, next) => {
     console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
     // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
 
-    res.sendStatus(200);
+    res.json({email: user[0].email});
   }
 
   main().catch((error) => {
@@ -407,6 +421,11 @@ router.post("/api/metadata", async (req, res, next) => {
 
 router.post("/api/report", async (req, res, next) => {
   console.log("------------------/api/report-----------------------");
+  
+  let user = await knex("users")
+  .where({ id: req.user })
+  .update({verified: true})
+  .limit(1);
 
   let obj = Object.assign(req.body, {
     user_id: req.user,

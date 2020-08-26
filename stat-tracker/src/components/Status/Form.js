@@ -154,7 +154,14 @@ function Form(props) {
 
 
   const handleCodeChange = (event) => {
-      props.response(event.target.value)
+    const formResponses = [{
+      status: statusValue,
+      symptoms: Object.entries(sympValue).filter(([,v]) => v === true).reduce((prev, [k, v]) => ({...prev, [k]: v}), {}),
+      risk: (riskValue=='Yes' ? true: false),
+      postal: postalCodeValue,
+      code: event.target.value
+    }]
+    props.response(formResponses);
   }
 
   function conditionalRender() {
@@ -303,7 +310,7 @@ function Form(props) {
       }else{
         return(
           <div className="animated zoomInUp">
-              <Typography variant="h6" align="center">A code has been sent to your email.</Typography>
+              <Typography variant="h6" align="center">{'A code has been sent to ' + props.user_email}</Typography>
               <Typography variant="h6" align="center">Please enter the code below</Typography>
               {/* <GoogleMaps response={props.response}></GoogleMaps> */}
               <Grid container alignItems='center' justify="center">

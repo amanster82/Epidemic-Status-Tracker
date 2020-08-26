@@ -12,6 +12,7 @@ import axios from "axios";
 import Grid from "@material-ui/core/Grid";
 import ReportSound from './static/sounds/Drip_Echo.wav';
 import { getBackendURL } from "./util";
+import { set } from "date-fns";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -35,11 +36,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function getSteps() {
-  return ["Status", "Risk", "Location", "Unlock"];
+function getSteps(accountVerified) {
+
+  console.log("VERIFIED ACCOUNT???? "+accountVerified)
+  if(accountVerified){
+    return ["Status", "Risk", "Location"];
+  }else{
+    return ["Status", "Risk", "Location", "Unlock"];
+  }
+  
 }
 
-function getStepContent(whichButton, setButtonPress, stepIndex, getResponse, codeVerify) {
+function getStepContent(whichButton, setButtonPress, stepIndex, getResponse, codeVerify, email) {
   console.log("is this called twice?")
   switch (stepIndex) {
     case 0:
@@ -49,7 +57,7 @@ function getStepContent(whichButton, setButtonPress, stepIndex, getResponse, cod
     case 2:
       return <Form Ipressed={whichButton} setButton={(value) => setButtonPress(value)} step={stepIndex} response={(value)=> getResponse(value, stepIndex)} ></Form>;
     case 3:
-        return <Form Ipressed={whichButton} setButton={(value) => setButtonPress(value)} step={stepIndex} response={(value)=> getResponse(value, stepIndex)} codeCorrect={codeVerify}></Form>;
+        return <Form Ipressed={whichButton} setButton={(value) => setButtonPress(value)} step={stepIndex} response={(value)=> getResponse(value, stepIndex)} codeCorrect={codeVerify} user_email={email}></Form>;
     default: 
       return "Unknown stepIndex";
   }
@@ -63,11 +71,20 @@ export default function Report(props) {
   const [FormReponsesObj, setFormResponseObj] = React.useState({});
   const [whichButton, setButtonPress] = React.useState("Next");
   const [codeVerify, setCodeVerify] = React.useState(null);
-  const steps = getSteps();
+  const [email, setEmail] = React.useState("");
+  const [accountVerified, setAccountVerified] = React.useState(false);
+
+  console.log(">>>>>>>>>>>"+accountVerified);
+  const steps = getSteps(accountVerified);
 
   useEffect(() => {
     sendCode();
-},[activeStep === steps.length - 1]);
+},[activeStep === 3]);
+
+useEffect(() => {
+  checkUser();
+});
+
  
 
   async function getResponse(value, stepIndex){
@@ -75,8 +92,8 @@ export default function Report(props) {
       console.log(stepIndex);
 
       if(stepIndex === 3 ){
-        if(value.length === 6){
-            let codeCheck = await axios.post(getBackendURL() + `/api/codeCheck`, {code: value}, { withCredentials: true })
+        if(value[0].code.length === 6){
+            let codeCheck = await axios.post(getBackendURL() + `/api/codeCheck`, {code: value[0].code}, { withCredentials: true })
             console.log(codeCheck);
             setResponse(codeCheck.data.verify);
             setCodeVerify(codeCheck.data.verify)
@@ -136,7 +153,14 @@ export default function Report(props) {
 async function sendCode(){
   if(activeStep === steps.length - 1){
     let code = await axios.get(getBackendURL() + `/api/sendCode`, { withCredentials: true })
+    setEmail(code.data.email);
   }
+}
+
+async function checkUser(){
+  console.log("CHECKING THE USER")
+  let checkUser = await axios.get(getBackendURL() + `/api/verifiedUser`, { withCredentials: true })
+  setAccountVerified(checkUser.data.verification);
 }
 
   return (
@@ -162,7 +186,7 @@ async function sendCode(){
         ) : (
             <div className={classes.flex}>
               <div className={classes.instructions}>
-                  {getStepContent(whichButton,setButtonPress, activeStep, getResponse, codeVerify)}
+                  {getStepContent(whichButton, setButtonPress, activeStep, getResponse, codeVerify, email)}
               </div>
               <div>
                 <Button
