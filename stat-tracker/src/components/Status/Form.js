@@ -9,9 +9,11 @@ import Typography from "@material-ui/core/Typography";
 import Checkbox from '@material-ui/core/Checkbox';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
+import Link from "@material-ui/core/Link";
 import GoogleMaps from '../Canvas/GoogleMaps';
+import Button from "@material-ui/core/Button";
 import { makeStyles } from '@material-ui/core/styles';
-
+import { CircularProgress, Snackbar } from "@material-ui/core";
 
 
 function Form(props) {
@@ -47,11 +49,25 @@ function Form(props) {
   const [sympValue, setSympValue] = React.useState({});
   const [postalCodeValue, setpostalCodeValue] = React.useState("");
   const [sympYesorNo, setSympYesorNo] =  React.useState("");
+  const [spinner, setSpinner] = React.useState(false);
+  const [newEmail, setNewEmail] = React.useState(props.user_email);
+  const [changedEmail, setChangedEmail] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
   const classes = useStyles();
   
   useEffect(() => {
    clearValuesWhenBack(); 
   });
+
+  useEffect(()=>{
+
+    console.log("--------------USE EFFECT RAN----------")
+
+    setSpinner(false);
+    codeCheckConditions();
+    setChangedEmail(false);
+    setNewEmail(false);
+  },[props.user_email]);
   
 
   function clearValuesWhenBack(){
@@ -92,6 +108,19 @@ function Form(props) {
       props.response(false);
     }
   }
+
+
+  const handleClick = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+  };
 
   const handleRiskChange = (event) => {
     setRiskValue(event.target.value);
@@ -163,6 +192,69 @@ function Form(props) {
     }]
     props.response(formResponses);
   }
+
+  function codeCheckConditions(){
+    console.log("IN THE FORM")
+    console.log("the new email: " + newEmail)
+    console.log(props.user_email || spinner)
+    if(!props.user_email || spinner){
+      return (
+        <div>
+        <Grid container align="center">
+        <Typography variant="h6" align="center" justify="center">Please wait...</Typography>
+        </Grid>
+        <Grid container align="center" justify="center">
+        <CircularProgress/>
+        </Grid>
+        </div>
+      )
+    }else if(newEmail){
+      return <div className="animated zoomInUp">
+      <Typography variant="h6" align="center">Please enter a new email</Typography>
+      {/* <GoogleMaps response={props.response}></GoogleMaps> */}
+      <Grid container alignItems='center' justify="center">
+        <Grid item xs={12}>
+        <TextField variant="outlined" onChange={ (event) => { setNewEmail(event.target.value) } }>
+        </TextField>
+      </Grid>
+      </Grid>
+      <Button variant="contained" onClick={ ()=> {  props.emailChange(newEmail); setSpinner(true); setChangedEmail(true)}}> Submit</Button>
+      </div>
+    }
+    
+    else{
+      return <div className="animated zoomInUp">
+      <Typography variant="h6" align="center">{'A code has been sent to ' + props.user_email}</Typography>
+      <Typography variant="h6" align="center">Please enter the code below</Typography>
+      {/* <GoogleMaps response={props.response}></GoogleMaps> */}
+      <Grid container alignItems='center' justify="center">
+        <Grid item xs={6}>
+        <TextField 
+      variant="outlined"
+      onChange={handleCodeChange}
+      inputProps={{
+        maxLength: 6,
+        className: classes.input2
+      }}
+      error={!props.codeCorrect && props.codeCorrect !== null && props.codeCorrect !== ""}
+      label={(!props.codeCorrect && props.codeCorrect !== null) ? "Code incorrect" : ""}
+      >
+        </TextField>
+      </Grid>
+      </Grid>
+      <div style={{cursor: 'pointer'}}><Link onClick={() => {props.emailChange(props.user_email); setOpen(true)}}>Send Again</Link></div>
+      <div style={{cursor: 'pointer'}}><Link onClick={() => setNewEmail(true)}>Email incorrect?</Link></div>
+      <Snackbar
+        anchorOrigin={{  vertical: 'top', horizontal: 'center' }}
+        autoHideDuration={6000}
+        open={open}
+        onClose={handleClose}
+        message="Email Sent"
+        // style={{position: 'absolute', background: 'green'}}
+      />      
+      </div>
+  }
+}
 
   function conditionalRender() {
       if(statusValue=== "+" && props.step === 1 || statusValue === "=" && props.step === 1 || statusValue=== "s" && props.step === 1){
@@ -308,28 +400,7 @@ function Form(props) {
           </>
         ) 
       }else{
-        return(
-          <div className="animated zoomInUp">
-              <Typography variant="h6" align="center">{'A code has been sent to ' + props.user_email}</Typography>
-              <Typography variant="h6" align="center">Please enter the code below</Typography>
-              {/* <GoogleMaps response={props.response}></GoogleMaps> */}
-              <Grid container alignItems='center' justify="center">
-                <Grid item xs={6}>
-                <TextField 
-              variant="outlined"
-              onChange={handleCodeChange}
-              inputProps={{
-                maxLength: 6,
-                className: classes.input2
-              }}
-              error={!props.codeCorrect && props.codeCorrect !== null && props.codeCorrect !== ""}
-              label={(!props.codeCorrect && props.codeCorrect !== null) ? "Code incorrect" : ""}
-              >
-                </TextField>
-              </Grid>
-            </Grid>
-          </div>
-        ) 
+        return codeCheckConditions()
       }
   }
 

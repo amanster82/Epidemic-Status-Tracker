@@ -54,7 +54,7 @@ export default function FreeSolo(props) {
       <Autocomplete
         id="free-solo-demo"
         options={places}
-        getOptionLabel={chosenOption}
+        value={chosenOption}
         onChange={(event, newValue) => {
           setChoice(newValue);
         }}

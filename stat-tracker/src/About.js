@@ -1,8 +1,8 @@
 import React from 'react';
-import { AppBar, Grid, Paper } from "@material-ui/core";
+import { AppBar, Grid, Paper, Button } from "@material-ui/core";
 import Toolbar from "@material-ui/core/Toolbar";
 import { makeStyles } from "@material-ui/core/styles";
-
+import InternalComponent from "./InternalComponent";
 
 const useStyles = makeStyles({
     Backdrop: {
@@ -16,8 +16,28 @@ const useStyles = makeStyles({
       }
 })
 
+let count = 0;
+
 function About(props) {
     const classes = useStyles();
+    
+
+    console.log("and the component is refreshed")
+    const [x, setX] = React.useState("??")
+    const words = ['hey', 'you', 'this', 'is', 'cool'];
+
+ 
+    function a (){
+      console.log(words.length);
+      console.log("action ran ", count)
+      if(count >= words.length-1){
+        count = 0;
+      }else{
+        count++;
+      }
+      setX(words[count])
+    }
+
     return (
         <>
         <div className={classes.Backdrop}></div>
@@ -39,7 +59,8 @@ function About(props) {
             </Grid>
           </Toolbar>
         </AppBar>
-        
+
+        <InternalComponent title={x} action={()=>a()} ></InternalComponent>
         </>
     );
 }

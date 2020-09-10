@@ -163,7 +163,7 @@ function External() {
         >
           <div style={{ marginTop: "10vh" }}>
             <div className={classes.container}>
-              <div className={classes.covid}>COVID-18</div>
+              <div className={classes.covid}>COVID-19</div>
             </div>
             <h1 className={classes.heading}>CORONA VIRUS</h1>
             <h2 className={classes.heading}>Where are you?</h2>

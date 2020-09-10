@@ -51,6 +51,19 @@ router.get("/api/verifiedUser", async (req, res, next) => {
 });
 
 router.post("/api/codeCheck", async (req, res, next) => {
+
+  console.log("----------------/api/codeCheck------------------")
+  console.log(req.body)
+
+
+  if(req.body.changeEmail !== undefined){
+    console.log("is the email changing?" )
+    await knex("users")
+    .where({ id: req.user })
+    .update({ email:  req.body.changeEmail})
+
+    res.json({email: req.body.changeEmail});
+  }
  
   console.log("hello?"+ req.user)
   console.log(req.user)

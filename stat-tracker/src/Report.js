@@ -33,6 +33,7 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "column",
+    minHeight: '80vh'
   },
 }));
 
@@ -47,7 +48,7 @@ function getSteps(accountVerified) {
   
 }
 
-function getStepContent(whichButton, setButtonPress, stepIndex, getResponse, codeVerify, email) {
+function getStepContent(whichButton, setButtonPress, stepIndex, getResponse, codeVerify, email, changeEmail) {
   console.log("is this called twice?")
   switch (stepIndex) {
     case 0:
@@ -57,7 +58,8 @@ function getStepContent(whichButton, setButtonPress, stepIndex, getResponse, cod
     case 2:
       return <Form Ipressed={whichButton} setButton={(value) => setButtonPress(value)} step={stepIndex} response={(value)=> getResponse(value, stepIndex)} ></Form>;
     case 3:
-        return <Form Ipressed={whichButton} setButton={(value) => setButtonPress(value)} step={stepIndex} response={(value)=> getResponse(value, stepIndex)} codeCorrect={codeVerify} user_email={email}></Form>;
+      return <Form Ipressed={whichButton} setButton={(value) => setButtonPress(value)} step={stepIndex} response={(value)=> getResponse(value, stepIndex)} 
+                codeCorrect={codeVerify} emailChange={(email_change) => changeEmail(email_change)} user_email={email}></Form>;
     default: 
       return "Unknown stepIndex";
   }
@@ -110,6 +112,14 @@ useEffect(() => {
       //   FormReponsesObj = value;
       // }
   }
+
+
+  async function changeEmail(email_change) {
+    let response = await axios.post(getBackendURL() + `/api/codeCheck`, {changeEmail: email_change}, { withCredentials: true })
+    console.log("Trying to change the email> ", response)
+    sendCode();
+  }
+
 
   const handleNext = async () => {
     if(activeStep === steps.length - 1){
@@ -186,7 +196,7 @@ async function checkUser(){
         ) : (
             <div className={classes.flex}>
               <div className={classes.instructions}>
-                  {getStepContent(whichButton, setButtonPress, activeStep, getResponse, codeVerify, email)}
+                  {getStepContent(whichButton, setButtonPress, activeStep, getResponse, codeVerify, email, changeEmail)}
               </div>
               <div>
                 <Button
