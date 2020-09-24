@@ -35,7 +35,7 @@ export default function InfoCard(props) {
         />
         <CardContent>
           <Typography gutterBottom variant="h5" component="h2">
-            COVID-19 Watch
+            {props.province} COVID-19 Watch
           </Typography>
           <Typography variant="body2" color="textSecondary" component="p">
             {props.recentNews}

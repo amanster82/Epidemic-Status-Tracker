@@ -21,6 +21,7 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 import ReportSound from "../../static/sounds/Drip_Echo.wav";
 import Footer from "../Footer/Footer";
 import { getBackendURL } from "../../util";
+import { CloudOutlined } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -60,11 +61,13 @@ function Canvas(props) {
   const { setMetaData, MetaData, getMetaData } = useContext(MyContext);
   const [title, setTitle] = React.useState(props.location);
   const [subtitle, setSubTitle] = React.useState(MetaData.data.report.location);
+  const [news, setNews] = React.useState("");
 
   const theme = useTheme();
 
   const mobileScreen = useMediaQuery(theme.breakpoints.down("xs"));
   const smallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const province = MetaData.data.locations[0].province
 
   console.log("WTF!!@@##", coordinates);
 
@@ -77,6 +80,10 @@ function Canvas(props) {
       console.log("TURNED ON");
     }
   }, [boundingBox]);
+
+  useEffect( () => {
+    setNews(MetaData.data.scrapedData[province])
+  })
 
   console.log("-----------------in the Canvas---------------");
   console.log(MetaData);
@@ -98,6 +105,26 @@ function Canvas(props) {
     } else {
       return { color: "red" };
     }
+  }
+
+
+  function province_shortHand(province){
+    const keys = {
+      "Newfoundland and Labrador": "NL", 
+      "Prince Edward Island":"PE", 
+      "Nova Scotia": "NS",
+      "New Brunswick": "NB",
+      "Quebec": "QC",
+      "Ontario": "ON",
+      "Manitoba": "MB",
+      "Saskatchewan": "SK",
+      "Alberta": "AB",
+     "British Columbia": "BC",
+     "Yukon": "YT",
+     "Northwest Territories": "NT",
+     "Nunavut": "NU"
+    }
+    return keys[province];
   }
 
   async function onStateChange(val) {
@@ -398,6 +425,7 @@ function Canvas(props) {
           <CaseCard
             status="Positive"
             number={MetaData.data.positives}
+            color='red'
           ></CaseCard>
         </Grid>
 
@@ -405,6 +433,7 @@ function Canvas(props) {
           <CaseCard
             status="Possible"
             number={MetaData.data.possibilities}
+            color='yellow'
           ></CaseCard>
         </Grid>
 
@@ -412,14 +441,15 @@ function Canvas(props) {
           <CaseCard
             status="Negative"
             number={MetaData.data.negatives}
+            color='green'
           ></CaseCard>
         </Grid>
 
         <Grid item xs={12} sm={12} lg={12} xl={12}>
           <CaseCard
-            color="blue"
             status="Recovered"
             number={MetaData.data.recoveries}
+            color='blue'
           ></CaseCard>
         </Grid>
       </React.Fragment>
@@ -430,7 +460,7 @@ function Canvas(props) {
     return (
       <React.Fragment>
         <Grid item xs={12}>
-          <InfoCard recentNews={MetaData.data.scrapedData} />
+          <InfoCard recentNews={news} province={province_shortHand(province)} />
         </Grid>
       </React.Fragment>
     );

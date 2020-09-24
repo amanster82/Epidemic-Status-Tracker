@@ -133,7 +133,7 @@ export default function Dashboard() {
   const [location, setLocation] = React.useState("North Vancouver"); //change to empty
   const [APIDown, setApiDown] = React.useState(null);
   const [boundingBox, setboundingBox] = React.useState(null);
-  const [showProfile, setProfile] = React.useState(false);
+  const [showProfile, setProfile] = React.useState("Dashboard");
   const [verification, setVerification] = React.useState(false);
 
   const {
@@ -227,7 +227,7 @@ export default function Dashboard() {
   }
 
   function dashboardFocus() {
-    if (showProfile) {
+    if (showProfile === "Profile") {
       return <Profile></Profile>;
     }else {
       return (
@@ -314,7 +314,7 @@ export default function Dashboard() {
                 <MenuIcon />
               </IconButton>
               <Typography variant="h6" noWrap>
-                Home
+                {showProfile}
               </Typography>
             </Toolbar>
           </AppBar>
@@ -338,13 +338,13 @@ export default function Dashboard() {
             </div>
             <Divider />
             <List>
-              <ListItem button onClick={() => setProfile(true)}>
+              <ListItem button onClick={() => setProfile("Profile")}>
                 <ListItemIcon>
                   <AccountCircle></AccountCircle>
                 </ListItemIcon>
                 <ListItemText primary={"Profile"} />
               </ListItem>
-              <ListItem button onClick={() => setProfile(false)}>
+              <ListItem button onClick={() => setProfile("Dashboard")}>
                 <ListItemIcon>
                   <DashboardIcon></DashboardIcon>
                 </ListItemIcon>

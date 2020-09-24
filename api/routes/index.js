@@ -230,6 +230,7 @@ router.post("/api/settings", async (req, res, next) => {
   }
 });
 
+//PASSWORD RESET EMAIL
 router.post("/api/email", async (req, res, next) => {
   
   try {
@@ -311,6 +312,7 @@ router.post("/api/search", (req, res, next) => {
       .distinct("location")
       .where(knex.raw("UPPER(location) like upper('%" + req.body.input + "%')"))
       .andWhere({ active: true })
+      .limit(10)
       .then((search_results) => {
         console.log(search_results);
         res.json({ results: search_results });

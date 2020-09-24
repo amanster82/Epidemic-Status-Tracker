@@ -70,18 +70,18 @@ export default function CustomizedDialogs(props) {
       <Button size="small" variant="outlined" color="primary" onClick={handleClickOpen}>
         {props.name}
       </Button>
-      <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}  fullWidth={true} maxWidth={'lg'}>
+      <Dialog fullScreen onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}  fullWidth={true} maxWidth={'lg'}>
         <DialogTitle id="customized-dialog-title" onClose={handleClose}>
         {props.name}
         </DialogTitle>
         <DialogContent dividers>
           <Report submit={(x) => props.submit(x)} setSpinner={(x) => props.setSpinner(x)} exit={ handleClose }></Report>
         </DialogContent>
-        <DialogActions>
+        {/* <DialogActions>
           <Button autoFocus onClick={handleClose} color="primary">
             Close
           </Button>
-        </DialogActions>
+        </DialogActions> */}
       </Dialog>
     </div>
   );
