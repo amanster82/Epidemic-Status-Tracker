@@ -19,12 +19,12 @@ import animate from "animate.css/animate.css";
 import Accordion from "./components/Landing/Accordion";
 import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import ProfilePic from './static/images/profilepic.jpg';
+import ProfilePic from "./static/images/profilepic.jpg";
 import Container from "@material-ui/core/Container";
 import { ScaleControl } from "react-leaflet";
 import Verify from "./components/Verification/Verify";
 import FullScreenDialog from "./FullScreenDialog";
-
+import FreeBreakfastOutlinedIcon from '@material-ui/icons/FreeBreakfastOutlined';
 
 const useStyles = makeStyles({
   Backdrop: {
@@ -276,10 +276,8 @@ function External() {
         // style={{ maxHeight: "100%" }}
       >
         <Grid item xs={12} style={{ minHeight: "100%" }}>
-          
           {/* <Verify></Verify> */}
           <Dashboard></Dashboard>
-        
         </Grid>
       </Grid>
     );
@@ -288,17 +286,29 @@ function External() {
       <div className={classes.App} id="start">
         <AppBar>
           <Toolbar>
-            <Grid container justify="flex-end">
-              <Grid item xs={3} sm={3} md={2} lg={2} xl={1}>
+            <Grid container justify="flex-start" align="center">
+            <Grid item xs={12} sm={7} md={5} lg={4} xl={3}>
+                  <Button
+                    size="small"
+                    variant="contained"
+                    color="secondary"
+                    endIcon={<FreeBreakfastOutlinedIcon />}
+                  >
+                    Buy Me A Coffee
+                  </Button>
+                </Grid>
+            </Grid>
+            <Grid container justify="flex-end" align="center">
+              <Grid item xs={3} sm={3} md={2} lg={2} xl={2}>
                 <a href="#about">About Project</a>
               </Grid>
-              <Grid item xs={3} sm={3} md={2} lg={2} xl={1}>
+              <Grid item xs={3} sm={3} md={2} lg={2} xl={2}>
                 <a href="#covid">About COVID-19</a>
               </Grid>
               <Grid item xs={3} sm={3} md={2} lg={2} xl={1}>
                 <a href="#FAQ">FAQ</a>
               </Grid>
-              <Grid item xs={3} sm={3} md={2} lg={2} xl={1}>
+              <Grid item xs={3} sm={3} md={2} lg={2} xl={2}>
                 <a href="#start">Live Tracker</a>
               </Grid>
             </Grid>
@@ -346,33 +356,34 @@ function External() {
         </Paper>
 
         <div style={{ height: 50 }}></div>
-       
+
         <Paper>
           <Grid container justify="center" className={classes.textBox}>
-          <Grid item xs={12} sm={3} md={3}>
-              <img src={ProfilePic} style={{borderRadius:'50%', border:'solid', width: '50%'}}/>
-          </Grid>
-          <Grid item xs={12} sm={6} md={6}>
+            <Grid item xs={12} sm={3} md={3}>
+              <img
+                src={ProfilePic}
+                style={{ borderRadius: "50%", border: "solid", width: "50%" }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={6}>
               <h1>Who made it.</h1>
               <div>
-                <h3>
-                  The guy who invented the platform
-                </h3>
+                <h3>The guy who invented the platform</h3>
                 <div>
-                  Aman Bhayani wanted to help bend the curve of COVID-19. 
-                  With his ability to write software, he decided to put his skills to good use.
+                  Aman Bhayani wanted to help bend the curve of COVID-19. With
+                  his ability to write software, he decided to put his skills to
+                  good use.
                 </div>
                 <br></br>
                 <div>
-                  <FullScreenDialog name="Read More" title="The Full Story">Read more</FullScreenDialog>
+                  <FullScreenDialog name="Read More" title="The Full Story">
+                    Read more
+                  </FullScreenDialog>
                 </div>
               </div>
             </Grid>
-
           </Grid>
         </Paper>
-
-
 
         <div style={{ height: 300 }} id="covid"></div>
 

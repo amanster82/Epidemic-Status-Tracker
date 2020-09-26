@@ -30,14 +30,14 @@ import { MyContext } from "./MyContext";
 import Verify from "./components/Verification/Verify";
 import Footer from "./components/Footer/Footer";
 import { getBackendURL } from "./util";
-
+import FreeBreakfastOutlinedIcon from "@material-ui/icons/FreeBreakfastOutlined";
 
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
-    height: '100%'
+    height: "100%",
   },
   appBar: {
     transition: theme.transitions.create(["margin", "width"], {
@@ -74,10 +74,10 @@ const useStyles = makeStyles((theme) => ({
     ...theme.mixins.toolbar,
     justifyContent: "flex-end",
   },
-  drawerFooter:{
+  drawerFooter: {
     display: "flex",
-    height: '60vh',
-    alignItems: 'flex-end'
+    height: "60vh",
+    alignItems: "flex-end",
   },
   content: {
     flexGrow: 1,
@@ -229,7 +229,7 @@ export default function Dashboard() {
   function dashboardFocus() {
     if (showProfile === "Profile") {
       return <Profile></Profile>;
-    }else {
+    } else {
       return (
         <Canvas
           location={location}
@@ -284,13 +284,11 @@ export default function Dashboard() {
       );
     } else if (status && !reportCompleted) {
       return (
-
-            <Report
-              submit={(x) => submittedAnswers(x)}
-              setSpinner={(x) => setSpinner(x)}
-              exit={() => logout(setPage, setMetaData)}
-            ></Report>
-
+        <Report
+          submit={(x) => submittedAnswers(x)}
+          setSpinner={(x) => setSpinner(x)}
+          exit={() => logout(setPage, setMetaData)}
+        ></Report>
       );
     } else if (reportCompleted && status && MetaData) {
       console.log("this is the user report", usersReport);
@@ -313,9 +311,25 @@ export default function Dashboard() {
               >
                 <MenuIcon />
               </IconButton>
+              <Grid container justify="flex-start" align="left" style={{width: 'auto'}}>
+              <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
               <Typography variant="h6" noWrap>
                 {showProfile}
               </Typography>
+              </Grid>
+              </Grid>
+              <Grid container justify="flex-end" align="right">
+                <Grid item xs={12} sm={7} md={5} lg={4} xl={3}>
+                  <Button
+                    size="small"
+                    variant="contained"
+                    color="secondary"
+                    endIcon={<FreeBreakfastOutlinedIcon />}
+                  >
+                    Buy Me A Coffee
+                  </Button>
+                </Grid>
+              </Grid>
             </Toolbar>
           </AppBar>
           <Drawer
