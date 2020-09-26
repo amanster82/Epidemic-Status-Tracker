@@ -14,10 +14,17 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { useTheme } from '@material-ui/core/styles';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { useTheme } from "@material-ui/core/styles";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { getBackendURL } from "../../util";
-
+import {
+  FormControl,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  OutlinedInput,
+} from "@material-ui/core";
+import { Visibility, VisibilityOff } from "@material-ui/icons";
 
 function Copyright() {
   return (
@@ -117,10 +124,11 @@ export default function SignIn(props) {
   const [isPassError, setPassError] = useState(false);
   const [emailLabel, setEmailLabel] = useState("Email");
   const [passLabel, setPassLabel] = useState("Password");
+  const [showPassword, setShowPassword] = useState(false);
   const [showSpinner, setSpinner] = useState(false);
   const [accessGranted, setAccessGranted] = useState(false);
   const theme = useTheme();
-  const screenSize = useMediaQuery(theme.breakpoints.down('lg'));
+  const screenSize = useMediaQuery(theme.breakpoints.down("lg"));
   var w = window.innerWidth;
   var h = window.innerHeight;
   console.log("screenSize-->", w, h);
@@ -140,12 +148,11 @@ export default function SignIn(props) {
   }
 
   return (
-    <Paper elevation={3} className={
-      accessGranted
-        ? "animated bounceOutDown"
-        : ""
-    }
-    onAnimationEnd={accessGranted ? props.accessGranted(true) : null}>
+    <Paper
+      elevation={3}
+      className={accessGranted ? "animated bounceOutDown" : ""}
+      onAnimationEnd={accessGranted ? props.accessGranted(true) : null}
+    >
       <Grid
         container
         className={classes.flexMe}
@@ -176,37 +183,53 @@ export default function SignIn(props) {
                 }}
                 size={screenSize ? "small" : "medium"}
               />
-              <TextField
-                error={isPassError}
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label={passLabel}
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                onChange={(e) => {
-                  setPass(e.target.value);
-                  setPassLabel("Password");
-                  setPassError(false);
-                }}
-                onKeyDown={ 
-                  (e) => (e.key==='Enter') ? 
-                  postData(
-                  email,
-                  pass,
-                  setSpinner,
-                  setAccessGranted,
-                  setEmailError,
-                  setEmailLabel,
-                  setPassError,
-                  setPassLabel
-                ) : false } 
-                size={screenSize ? "small" : "medium"}
-              />
-
+              <FormControl fullWidth variant="outlined">
+                <InputLabel htmlFor="outlined-adornment-password" required>{passLabel}</InputLabel>
+                <OutlinedInput
+                  error={isPassError}
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  name="password"
+                  //label={passLabel}
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  autoComplete="current-password"
+                  onChange={(e) => {
+                    setPass(e.target.value);
+                    setPassLabel("Password");
+                    setPassError(false);
+                  }}
+                  onKeyDown={(e) =>
+                    e.key === "Enter"
+                      ? postData(
+                          email,
+                          pass,
+                          setSpinner,
+                          setAccessGranted,
+                          setEmailError,
+                          setEmailLabel,
+                          setPassError,
+                          setPassLabel
+                        )
+                      : false
+                  }
+                  size={screenSize ? "small" : "medium"}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={() => setShowPassword(!showPassword)}
+                        // onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  labelWidth={80}
+                />
+              </FormControl>
               <FormControlLabel
                 control={<Checkbox value="remember" color="primary" />}
                 label="Remember me"
@@ -232,7 +255,7 @@ export default function SignIn(props) {
               >
                 Sign In
               </Button>
-              <Grid container   direction="column">
+              <Grid container direction="column">
                 <Grid item xs>
                   <Link
                     href="#"

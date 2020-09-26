@@ -324,6 +324,7 @@ export default function Dashboard() {
                     size="small"
                     variant="contained"
                     color="secondary"
+                    href="https://www.buymeacoffee.com/wherescovid"
                     endIcon={<FreeBreakfastOutlinedIcon />}
                   >
                     Buy Me A Coffee

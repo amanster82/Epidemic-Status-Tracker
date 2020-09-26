@@ -25,6 +25,7 @@ import { ScaleControl } from "react-leaflet";
 import Verify from "./components/Verification/Verify";
 import FullScreenDialog from "./FullScreenDialog";
 import FreeBreakfastOutlinedIcon from '@material-ui/icons/FreeBreakfastOutlined';
+import MenuBar from "./MenuBar";
 
 const useStyles = makeStyles({
   Backdrop: {
@@ -284,36 +285,7 @@ function External() {
   } else {
     page = (
       <div className={classes.App} id="start">
-        <AppBar>
-          <Toolbar>
-            <Grid container justify="flex-start" align="center">
-            <Grid item xs={12} sm={7} md={5} lg={4} xl={3}>
-                  <Button
-                    size="small"
-                    variant="contained"
-                    color="secondary"
-                    endIcon={<FreeBreakfastOutlinedIcon />}
-                  >
-                    Buy Me A Coffee
-                  </Button>
-                </Grid>
-            </Grid>
-            <Grid container justify="flex-end" align="center">
-              <Grid item xs={3} sm={3} md={2} lg={2} xl={2}>
-                <a href="#about">About Project</a>
-              </Grid>
-              <Grid item xs={3} sm={3} md={2} lg={2} xl={2}>
-                <a href="#covid">About COVID-19</a>
-              </Grid>
-              <Grid item xs={3} sm={3} md={2} lg={2} xl={1}>
-                <a href="#FAQ">FAQ</a>
-              </Grid>
-              <Grid item xs={3} sm={3} md={2} lg={2} xl={2}>
-                <a href="#start">Live Tracker</a>
-              </Grid>
-            </Grid>
-          </Toolbar>
-        </AppBar>
+        <MenuBar isMobile={screenSize}></MenuBar>
         <header className="App-header">
           {headline()}
           {element}
@@ -370,9 +342,7 @@ function External() {
               <div>
                 <h3>The guy who invented the platform</h3>
                 <div>
-                  Aman Bhayani wanted to help bend the curve of COVID-19. With
-                  his ability to write software, he decided to put his skills to
-                  good use.
+                  "There was a serious need to know where COVID-19 is lurking."
                 </div>
                 <br></br>
                 <div>
