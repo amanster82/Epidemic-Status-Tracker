@@ -61,7 +61,9 @@ function postData(
 
   setSpinner(true);
   axios
-    .post(getBackendURL() + `/api/register`, register, { withCredentials: true })
+    .post(getBackendURL() + `/api/register`, register, {
+      withCredentials: true,
+    })
     .then(function (res) {
       console.log(res);
       console.log(res.data);
@@ -144,12 +146,15 @@ export default function SignUp(props) {
   }
 
   return (
-    <Paper elevation={3} className={
-      accessGranted
-        ? "animated bounceOutDown"
-        : "animate__animated animate__flipInY"
-    }
-    onAnimationEnd={accessGranted ? props.accessGranted(true) : null}>
+    <Paper
+      elevation={3}
+      className={
+        accessGranted
+          ? "animated bounceOutDown"
+          : "animate__animated animate__flipInY"
+      }
+      onAnimationEnd={accessGranted ? props.accessGranted(true) : null}
+    >
       <Grid
         container
         className={classes.flexMe}
@@ -213,12 +218,17 @@ export default function SignUp(props) {
                   : setPassError(false)
               }
             />
-            <FormControl component="fieldset">
-              <Grid container direction="row" justify="center" alignItems="center">
+            <FormControl component="fieldset" style={{width: "100%"}}>
+              <Grid
+                container
+                direction="row"
+                justify="center"
+                alignItems="center"
+              >
                 <Grid item xs={4}>
                   <FormLabel component="legend">Gender</FormLabel>
-                  </Grid>
-                  <Grid item xs={8}>
+                </Grid>
+                <Grid item xs={8}>
                   <RadioGroup
                     row
                     aria-label="position"
@@ -244,35 +254,26 @@ export default function SignUp(props) {
                   </RadioGroup>
                 </Grid>
               </Grid>
-              <Grid container direction="row" justify="center" alignItems="center">
+              <Grid
+                container
+                direction="row"
+                justify="center"
+                alignItems="center"
+              >
                 <Grid item xs={4}>
                   <FormLabel component="legend">Birthday</FormLabel>
                 </Grid>
                 <Grid item xs={8}>
-                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                    {/* <KeyboardDatePicker
-                  disableToolbar
-                  variant="inline"
-                  format="MM/dd/yyyy"
-                  margin="normal"
-                  id="date-picker-inline"
-                  label="Date picker inline"
-                  KeyboardButtonProps={{
-                    "aria-label": "change date",
-                  }}
-                /> */}
-                    <KeyboardDatePicker
-                      value={selectedDate}
-                      margin="normal"
-                      id="date-picker-dialog"
-                      label="MM/dd/yyyy"
-                      format="MM/dd/yyyy"
-                      KeyboardButtonProps={{
-                        "aria-label": "change date",
-                      }}
-                      onChange={handleDateChange}
-                    />
-                  </MuiPickersUtilsProvider>
+                  <TextField
+                    id="date"
+                    label="Birthday"
+                    type="date"
+                    defaultValue=""
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    onChange={(e)=>handleDateChange(e.target.value)}
+                  />
                 </Grid>
               </Grid>
             </FormControl>
