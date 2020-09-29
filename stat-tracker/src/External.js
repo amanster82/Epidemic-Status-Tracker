@@ -24,7 +24,7 @@ import Container from "@material-ui/core/Container";
 import { ScaleControl } from "react-leaflet";
 import Verify from "./components/Verification/Verify";
 import FullScreenDialog from "./FullScreenDialog";
-import FreeBreakfastOutlinedIcon from '@material-ui/icons/FreeBreakfastOutlined';
+import FreeBreakfastOutlinedIcon from "@material-ui/icons/FreeBreakfastOutlined";
 import MenuBar from "./MenuBar";
 
 const useStyles = makeStyles({
@@ -93,7 +93,7 @@ const useStyles = makeStyles({
 
   shrink: {
     transform: "scale(0)",
-    maxHeight: "110px",
+    maxHeight: "45px",
     transition: "0.5s max-height ease-out",
   },
 });
@@ -127,9 +127,18 @@ function External() {
       setScreenH(window.innerHeight);
       //headline();
     }
-
     window.addEventListener("resize", handleResize);
   });
+
+  React.useEffect(  () => {
+    if(smallLaptopAnimation !== ""){
+      setTimeout(() => {
+        setMetaData(null);
+        setPage(null);
+      }, 1000);
+    }
+
+  }, [smallLaptopAnimation]);
 
   function signUpToggle(x) {
     console.log("I fireed!!");
@@ -137,8 +146,11 @@ function External() {
   }
 
   function accessGranted(value) {
-    setAccess(value);
-    setAnimation(" Spacing animated fadeOutUp");
+      setAccess(value);
+    if (screenH < 760 && !screenSize){
+      setAnimation(" animated fadeOut delay-0.5s");
+    }
+
   }
 
   function forgotPassAnimation() {
@@ -153,15 +165,7 @@ function External() {
     console.log("I rendered");
     if (screenH < 760 && !screenSize) {
       return (
-        <div
-          className={
-            buttonContainer ? classes.shrink + smallLaptopAnimation : "Spacing"
-          }
-          onAnimationEnd={() => {
-            setPage(null);
-            setMetaData(null);
-          }}
-        >
+        <div className={buttonContainer ? classes.shrink : "Spacing"}>
           <div style={{ marginTop: "10vh" }}>
             <div className={classes.container}>
               <div className={classes.covid}>COVID-19</div>
@@ -175,11 +179,12 @@ function External() {
       return (
         <div
           className={
-            isAccessGranted ? "Spacing animated fadeOutUp delay-1s" : "Spacing"
+            isAccessGranted
+              ? "Spacing animated fadeOutUp delay-0.5s"
+              : "Spacing"
           }
           onAnimationEnd={() => {
-            setPage(null);
-            setMetaData(null);
+            setAnimation(" animated fadeOut");
           }}
         >
           <div style={{ marginTop: "10vh" }}>
@@ -284,7 +289,7 @@ function External() {
     );
   } else {
     page = (
-      <div className={classes.App} id="start">
+      <div className={classes.App + smallLaptopAnimation} id="start">
         <MenuBar isMobile={screenSize}></MenuBar>
         <header className="App-header">
           {headline()}

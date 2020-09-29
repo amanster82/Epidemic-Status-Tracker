@@ -10,6 +10,7 @@ import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
@@ -72,9 +73,15 @@ export default function SignIn(props) {
 
   let icon;
 
-  if (showSpinner) {
+  if (showSpinner===true) {
     icon = <CircularProgress />;
-  } else {
+  } else if(showSpinner==="complete") {
+    icon = (
+      <Avatar style={{backgroundColor: "green"}}>
+        <CheckCircleIcon />
+      </Avatar>
+    );
+  }else{
     icon = (
       <Avatar className={classes.avatar}>
         <LockOutlinedIcon />
@@ -88,13 +95,14 @@ export default function SignIn(props) {
       .post(getBackendURL() + `/api/email`, {email: email, link: getBackendURL()}, { withCredentials: true })
       .then(function (res) {
         console.log(res);
-        setSpinner(false);
+        setSpinner("complete");
       })
       .catch(function (error) {
         console.log(error.response);
         setEmailError(true);
         setEmailLabel(error.response.data);
-        setSpinner(false);
+        setSpinner(false)
+
       });
   }
 

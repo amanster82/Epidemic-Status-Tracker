@@ -80,7 +80,7 @@ function postData(
         setEmailError(true);
       }
 
-      setSpinner(false);
+        setSpinner(false);
     });
 }
 
@@ -127,6 +127,7 @@ export default function SignIn(props) {
   const [showPassword, setShowPassword] = useState(false);
   const [showSpinner, setSpinner] = useState(false);
   const [accessGranted, setAccessGranted] = useState(false);
+  const [animationDone, setAnimationDone] = useState(false);
   const theme = useTheme();
   const screenSize = useMediaQuery(theme.breakpoints.down("lg"));
   var w = window.innerWidth;
@@ -147,16 +148,24 @@ export default function SignIn(props) {
     );
   }
 
+  function grantAccess(){
+    
+    if(accessGranted){
+      props.accessGranted(accessGranted);
+    }
+
+  }
+  
+
   return (
     <Paper
       elevation={3}
       className={accessGranted ? "animated bounceOutDown" : ""}
-      onAnimationEnd={accessGranted ? props.accessGranted(true) : null}
+      onAnimationEnd={ () => grantAccess() }
     >
       <Grid
         container
         className={classes.flexMe}
-        onAnimationEnd={accessGranted ? props.accessGranted(true) : null}
       >
         <Grid item xs={12}>
           <div className={classes.iconContainer}>{icon}</div>
@@ -181,7 +190,7 @@ export default function SignIn(props) {
                   setEmailLabel("Email");
                   setEmailError(false);
                 }}
-                size={screenSize ? "small" : "medium"}
+                // size={screenSize ? "small" : "medium"}
               />
               <FormControl fullWidth variant="outlined">
                 <InputLabel htmlFor="outlined-adornment-password" required>{passLabel}</InputLabel>
@@ -214,7 +223,7 @@ export default function SignIn(props) {
                         )
                       : false
                   }
-                  size={screenSize ? "small" : "medium"}
+                  // size={screenSize ? "small" : "medium"}
                   endAdornment={
                     <InputAdornment position="end">
                       <IconButton

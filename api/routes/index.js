@@ -269,12 +269,12 @@ router.post("/api/email", async (req, res, next) => {
           text:
             "Please click the following link to reset your password: " +
             req.body.link +
-            ":3000/Forgot/" +
+            "/Forgot/" +
             token, // plain text body
           html:
             "<b>Please click the following link to reset your password: " +
             req.body.link +
-            ":3000/Forgot/" +
+            "/Forgot/" +
             token +
             "</b>", // html body
         });
