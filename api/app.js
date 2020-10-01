@@ -73,10 +73,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.resolve(__dirname, '../stat-tracker/build') ));
 
-// PATH CONFIGURATION TO RESPOND TO A REQUEST TO STATIC ROUTE REQUEST BY SERVING index.html
-// app.get('/**', function (req, res) {
-//   res.sendFile(path.resolve(__dirname, '../stat-tracker/build/index.html'));
-// }); 
+//PATH CONFIGURATION TO RESPOND TO A REQUEST TO STATIC ROUTE REQUEST BY SERVING index.html
+app.get('/Forgot/**', function (req, res) {
+  res.sendFile(path.resolve(__dirname, '../stat-tracker/build/index.html'));
+}); 
 
 //app.use(flash())
 var PostgreSqlStore = require('connect-pg-simple')(session);
