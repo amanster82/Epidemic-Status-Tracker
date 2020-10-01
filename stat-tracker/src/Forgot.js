@@ -3,6 +3,7 @@ import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
 import { TextField, Button } from "@material-ui/core";
 import axios from "axios";
+import Dialog from "./components/Dialog/Dialog.js";
 import { getBackendURL } from "./util";
 
 const useStyles = makeStyles((theme) => ({
@@ -20,18 +21,23 @@ function Forgot(props) {
   const [pass, setPass] = React.useState("");
   const [passRepeat, setPassRepeat] = React.useState("");
   const [isPassError, setPassError] = React.useState(false);
+  const [openDialoge, triggerDialog] = React.useState(false)
 
   async function sendToken() {
     let token = window.location.href;
     token = token.split("/");
     token = token[4];
     console.log(token);
-
     let x = await axios.post(
       getBackendURL() + `/api/verify`,
       { token: token, pass: pass },
       { withCredentials: true }
     );
+      triggerDialog(true);
+      setTimeout(()=>{
+        let x = window.location.hostname;
+        window.location.replace(x);
+      },3000)
   }
 
   function checkPasswordMatch(value) {
@@ -82,6 +88,7 @@ function Forgot(props) {
             >
               Change Password
             </Button>
+            <Dialog open={openDialoge} content={"Password Changed Successfully! You will now be redirected to login."}></Dialog>
           </Grid>
         </Grid>
       </div>

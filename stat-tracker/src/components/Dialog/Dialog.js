@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -9,6 +9,7 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import { BrowserRouter, Route, Link } from "react-router-dom";
+import { ContactMailSharp } from '@material-ui/icons';
 
 
 const styles = (theme) => ({
@@ -54,6 +55,7 @@ const DialogActions = withStyles((theme) => ({
 export default function CustomizedDialogs(props) {
   const [open, setOpen] = React.useState(false);
 
+  //setOpen(props.open);
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -61,24 +63,52 @@ export default function CustomizedDialogs(props) {
     setOpen(false);
   };
 
-  return (
-    <div>
-      <Link variant="outlined" color="primary" onClick={handleClickOpen}>
-        {props.name}
-      </Link>
-      <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
-        <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-        {props.name}
-        </DialogTitle>
-        <DialogContent dividers>
-        {props.content}
-        </DialogContent>
-        <DialogActions>
-          <Button autoFocus onClick={handleClose} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </div>
-  );
+  React.useEffect(()=>{
+    if(props.open){
+      handleClickOpen();
+    }
+  }, [props.open])
+
+
+
+  function condition(){
+    if(!props.open){
+      return(
+      <>      
+        <Link variant="outlined" color="primary" onClick={handleClickOpen}>
+          {props.name}
+        </Link>
+        <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
+          <DialogTitle id="customized-dialog-title" onClose={handleClose}>
+          {props.name}
+          </DialogTitle>
+          <DialogContent dividers>
+          {props.content}
+          </DialogContent>
+          <DialogActions>
+            <Button autoFocus onClick={handleClose} color="primary">
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
+    </>)
+    }else{
+      return(
+        <>      
+          <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
+            <DialogContent dividers>
+            {props.content}
+            </DialogContent>
+            <DialogActions>
+              <Button autoFocus onClick={handleClose} color="primary">
+                Close
+              </Button>
+          </DialogActions>
+          </Dialog>
+      </>)
+    }
+  }
+
+return condition();
+
 }

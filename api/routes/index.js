@@ -163,6 +163,7 @@ router.post("/api/verify", async (req, res, next) => {
     .update({
       password: hash,
     });
+    res.sendStatus(200);
   }catch{
 
   }

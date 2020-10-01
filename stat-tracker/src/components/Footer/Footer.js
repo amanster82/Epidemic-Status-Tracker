@@ -2,7 +2,7 @@ import React from "react";
 import { Grid, Paper } from "@material-ui/core";
 import { BrowserRouter, Route, Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
-import Dialog from "./Dialog";
+import Dialog from "../Dialog/Dialog.js";
 const useStyles = makeStyles({
   links: {
     textAlign: "center",
