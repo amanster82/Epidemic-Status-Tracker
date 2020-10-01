@@ -5,6 +5,9 @@ import { TextField, Button } from "@material-ui/core";
 import axios from "axios";
 import Dialog from "./components/Dialog/Dialog.js";
 import { getBackendURL } from "./util";
+import { useHistory } from 'react-router-dom';
+
+
 
 const useStyles = makeStyles((theme) => ({
   centered: {
@@ -22,6 +25,7 @@ function Forgot(props) {
   const [passRepeat, setPassRepeat] = React.useState("");
   const [isPassError, setPassError] = React.useState(false);
   const [openDialoge, triggerDialog] = React.useState(false)
+  const history = useHistory();
 
   async function sendToken() {
     let token = window.location.href;
@@ -35,8 +39,7 @@ function Forgot(props) {
     );
       triggerDialog(true);
       setTimeout(()=>{
-        let x = window.location.hostname;
-        window.location.replace(x);
+        history.push("/")
       },3000)
   }
 
