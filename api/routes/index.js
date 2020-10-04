@@ -469,6 +469,9 @@ router.post("/api/report", async (req, res, next) => {
 router.get("/api/dashboard", async (req, res, next) => {
   console.log("------------------/api/dashboard-----------------------");
   console.log(req.user);
+  if(req.user === undefined){
+    res.send("Not Logged In.")
+  }
   console.log("this is the postal code:", pCode);
   //pCode = pCode.substring(0,3);
   console.log("this is the first three characters", pCode);

@@ -67,7 +67,9 @@ function App() {
         <BrowserRouter>
             <Route path='/' exact component={External} />
             <Route path='/About' exact component={About} />
+            { Pagechange && 
             <Route path='/Dashboard' exact component={Dashboard} /> 
+            }
             <Route path='/Forgot/:token' exact component={Forgot} /> 
             {/* <Route path='/Profile' exact component={Profile}/> */}
         </BrowserRouter>

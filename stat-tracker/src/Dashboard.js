@@ -206,6 +206,9 @@ export default function Dashboard() {
     axios
       .get(getBackendURL() + `/api/dashboard`, { withCredentials: true })
       .then(function (res) {
+        if(res.data === 'Not Logged In.'){
+          setApiDown(true);
+        }
         console.log(res);
         console.log("THE ROWS THE RWOS!!!!", res.data.rows);
         console.log("the boundries", res.data.boundries);
@@ -407,7 +410,7 @@ export default function Dashboard() {
             height: "50vh",
           }}
         >
-          Network is down at the moment. Please try again later.
+          Network is down or something went wrong. Please try again later.
         </h1>
       );
     else {
