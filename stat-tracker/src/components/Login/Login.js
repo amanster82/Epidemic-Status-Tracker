@@ -118,8 +118,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignIn(props) {
   const classes = useStyles();
-  const [email, setEmail] = useState("");
-  const [pass, setPass] = useState("");
+  const [email, setEmail] = useState(window.localStorage.getItem("covid_email"));
+  const [pass, setPass] = useState(window.localStorage.getItem("covid_pass"));
   const [isEmailError, setEmailError] = useState(false);
   const [isPassError, setPassError] = useState(false);
   const [emailLabel, setEmailLabel] = useState("Email");
@@ -128,6 +128,7 @@ export default function SignIn(props) {
   const [showSpinner, setSpinner] = useState(false);
   const [accessGranted, setAccessGranted] = useState(false);
   const [animationDone, setAnimationDone] = useState(false);
+  const [rememberMe, setRemember] = useState( (window.localStorage.getItem("covid_email") !== null) ? true : false );
   const theme = useTheme();
   const screenSize = useMediaQuery(theme.breakpoints.down("lg"));
   var w = window.innerWidth;
@@ -155,6 +156,17 @@ export default function SignIn(props) {
     }
 
   }
+
+  function remember(value){
+    setRemember(value);
+    if(value){
+      window.localStorage.setItem("covid_email", email);
+      window.localStorage.setItem("covid_pass", pass);
+    }else{
+      window.localStorage.removeItem("covid_email");
+      window.localStorage.removeItem("covid_pass");
+    }
+  }
   
 
   return (
@@ -175,6 +187,7 @@ export default function SignIn(props) {
           <form noValidate>
             <div>
               <TextField
+                defaultValue = {email}
                 error={isEmailError}
                 variant="outlined"
                 margin="normal"
@@ -190,11 +203,26 @@ export default function SignIn(props) {
                   setEmailLabel("Email");
                   setEmailError(false);
                 }}
+                onKeyDown={(e) =>
+                  e.key === "Enter"
+                    ? postData(
+                        email,
+                        pass,
+                        setSpinner,
+                        setAccessGranted,
+                        setEmailError,
+                        setEmailLabel,
+                        setPassError,
+                        setPassLabel
+                      )
+                    : false
+                }
                 // size={screenSize ? "small" : "medium"}
               />
               <FormControl fullWidth variant="outlined">
                 <InputLabel htmlFor="outlined-adornment-password" required>{passLabel}</InputLabel>
                 <OutlinedInput
+                  defaultValue={pass}
                   error={isPassError}
                   variant="outlined"
                   margin="normal"
@@ -236,12 +264,13 @@ export default function SignIn(props) {
                       </IconButton>
                     </InputAdornment>
                   }
-                  labelWidth={80}
+                  labelWidth={isPassError ? 150 : 80}
                 />
               </FormControl>
               <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
+                control={<Checkbox checked={rememberMe} color="primary" disabled={ (pass && email) ? false : true  }/>}
                 label="Remember me"
+                onClick={(event)=>remember(event.target.checked)}
               />
 
               <Button
