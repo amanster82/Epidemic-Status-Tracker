@@ -26,6 +26,7 @@ import Verify from "./components/Verification/Verify";
 import FullScreenDialog from "./FullScreenDialog";
 import FreeBreakfastOutlinedIcon from "@material-ui/icons/FreeBreakfastOutlined";
 import MenuBar from "./MenuBar";
+import ReactGA from 'react-ga';
 
 const useStyles = makeStyles({
   Backdrop: {
@@ -122,6 +123,8 @@ function External() {
   console.log("screenSize", screenSize);
 
   React.useEffect(() => {
+    ReactGA.initialize('UA-179553011-1');
+    ReactGA.pageview("External");
     function handleResize() {
       console.log("resized to: ", window.innerWidth, "x", window.innerHeight);
       setScreenH(window.innerHeight);

@@ -13,6 +13,7 @@ import Grid from "@material-ui/core/Grid";
 import ReportSound from './static/sounds/Drip_Echo.wav';
 import { getBackendURL } from "./util";
 import { set } from "date-fns";
+import ReactGA from 'react-ga';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -84,6 +85,8 @@ export default function Report(props) {
 },[activeStep === 3]);
 
 useEffect(() => {
+  ReactGA.initialize('UA-179553011-1');
+  ReactGA.pageview("Report");
   checkUser();
 });
 

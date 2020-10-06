@@ -123,7 +123,7 @@ function Profile(props) {
 
     return hour+":"+min
   }
-  
+
   return (
     <div>
       <div className={classes.center}>

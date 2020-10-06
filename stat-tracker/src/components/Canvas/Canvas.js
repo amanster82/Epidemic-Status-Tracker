@@ -22,6 +22,7 @@ import ReportSound from "../../static/sounds/Drip_Echo.wav";
 import Footer from "../Footer/Footer";
 import { getBackendURL } from "../../util";
 import { CloudOutlined } from "@material-ui/icons";
+import ReactGA from 'react-ga';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -61,6 +62,7 @@ function Canvas(props) {
   const { setMetaData, MetaData, getMetaData } = useContext(MyContext);
   const [title, setTitle] = React.useState(props.location);
   const [subtitle, setSubTitle] = React.useState(MetaData.data.report.location);
+  const [googleAnalytics, setGoogleAnalytics] = React.useState(false)
   const [news, setNews] = React.useState("");
 
   const theme = useTheme();
@@ -82,8 +84,16 @@ function Canvas(props) {
   }, [boundingBox]);
 
   useEffect( () => {
+    ReactGA.initialize('UA-179553011-1');
+    ReactGA.pageview("Dashboard");
     setNews(MetaData.data.scrapedData[province])
   })
+
+  useEffect(()=>{
+    ReactGA.initialize('UA-179553011-1');
+    ReactGA.pageview("Dashboard");
+    setGoogleAnalytics(false);
+  },[googleAnalytics])
 
   console.log("-----------------in the Canvas---------------");
   console.log(MetaData);
@@ -214,6 +224,7 @@ function Canvas(props) {
               name="Update Status"
               submit={(e) => updateStatus(e)}
               setSpinner={(e) => setSpinner(e)}
+              analytics={(e)=> setGoogleAnalytics(e)}
             ></UpdateStatus>
           </Grid>
           <Grid
@@ -309,6 +320,7 @@ function Canvas(props) {
               name="Update Status"
               submit={(e) => updateStatus(e)}
               setSpinner={(e) => setSpinner(e)}
+              analytics={(e)=> setGoogleAnalytics(e)}
             ></UpdateStatus>
           </Grid>
           <Grid
@@ -401,6 +413,7 @@ function Canvas(props) {
               name="Update Status"
               submit={(e) => updateStatus(e)}
               setSpinner={(e) => setSpinner(e)}
+              analytics={(e)=> setGoogleAnalytics(e)}
             ></UpdateStatus>
           </Grid>
         </>

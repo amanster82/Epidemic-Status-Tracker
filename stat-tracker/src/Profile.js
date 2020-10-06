@@ -11,6 +11,7 @@ import ProfileOverview from "./ProfileOverview";
 import Settings from "./Settings.js";
 import { MyContext } from "./MyContext";
 import Footer from "./components/Footer/Footer";
+import ReactGA from 'react-ga';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -64,6 +65,11 @@ export default function FullWidthTabs() {
 
   console.log("MMMMMMMM---->", MetaData);
 
+  React.useEffect(()=>{
+    ReactGA.initialize('UA-179553011-1');
+    ReactGA.pageview("Profile");    
+  })
+  
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };

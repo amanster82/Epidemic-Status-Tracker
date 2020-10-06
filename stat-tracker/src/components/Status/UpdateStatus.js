@@ -63,6 +63,7 @@ export default function CustomizedDialogs(props) {
   };
   const handleClose = () => {
     setOpen(false);
+    props.analytics(true);
   };
 
   return (
