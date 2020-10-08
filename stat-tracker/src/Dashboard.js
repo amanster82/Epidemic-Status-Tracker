@@ -31,6 +31,7 @@ import Verify from "./components/Verification/Verify";
 import Footer from "./components/Footer/Footer";
 import { getBackendURL } from "./util";
 import FreeBreakfastOutlinedIcon from "@material-ui/icons/FreeBreakfastOutlined";
+import ReportSound from './static/sounds/Drip_Echo.wav';
 
 const drawerWidth = 240;
 
@@ -166,7 +167,7 @@ export default function Dashboard() {
         console.log("A CAll to Get METADATA");
         let metaDataLoaded = await getMetaData(setMetaData);
         if (metaDataLoaded) {
-          onPageLoad();
+          onPageLoad(value);
         }
       })
 
@@ -201,7 +202,7 @@ export default function Dashboard() {
       : console.log("Dashboard.js Effect Done");
   }, []);
 
-  function onPageLoad() {
+  function onPageLoad(submittedAnswers) {
     console.log("------------------/api/dashboard-----------------------");
     axios
       .get(getBackendURL() + `/api/dashboard`, { withCredentials: true })
@@ -225,6 +226,10 @@ export default function Dashboard() {
           setLocation(res.data.rows.postal);
           setCoordinates([res.data.rows.lat, res.data.rows.long]);
           setSpinner(false);
+          if(submittedAnswers){
+            var audio = new Audio(ReportSound);
+            audio.play();
+          }
         }
       });
   }

@@ -167,7 +167,26 @@ function MapArea(props) {
                 </GeoJSON>
               </>
             );
-          } else if(Number(b.neg_count !== null)) {
+          } else if(Number(b.recov_count > 0)) {
+            return (
+              <>
+                <GeoJSON
+                  data={JSON.parse(b.geojson)}
+                  style={{ color: "blue", weight: 5, opacity: 0.65 }}
+                >
+                  <Tooltip>
+                    <strong>Positive Cases</strong>:{b.pos_count}
+                    <br></br>
+                    <strong>Possible Cases</strong>:{b.symp_count}
+                    <br></br>
+                    <strong>Negative Cases</strong>:{b.neg_count}
+                    <br></br>
+                    <strong>Recovered Cases</strong>:{b.recov_count}
+                  </Tooltip>
+                </GeoJSON>
+              </>
+            );
+          }else if(Number(b.neg_count > 0)) {
             return (
               <>
                 <GeoJSON
@@ -188,7 +207,6 @@ function MapArea(props) {
             );
           }
         })}
-      ;
       {/* {MetaData.data.locations.map((pinpoint, index) => {
         console.log("this is the pinpoint", pinpoint);
         console.log("and the index", index);

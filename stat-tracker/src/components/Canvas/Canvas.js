@@ -105,13 +105,12 @@ function Canvas(props) {
   }
 
   function statusColor() {
-    if (
-      MetaData.data.report.status === "-" ||
-      MetaData.data.report.status === "="
-    ) {
+    if (MetaData.data.report.status === "-") {
       return { color: "green" };
     } else if (MetaData.data.report.status === "s") {
       return { color: "yellow" };
+    } else if (MetaData.data.report.status === "="){
+      return { color: "blue" };
     } else {
       return { color: "red" };
     }
@@ -140,7 +139,7 @@ function Canvas(props) {
   async function onStateChange(val) {
     console.log("DONT FUCK IT UP:", val);
     setSpinner(true);
-    if (val !== "") {
+    if (val !== "" && val !== null) {
       let returned = await getMetaData(setMetaData, val);
       let bounds = await axios.get(getBackendURL() + `/api/dashboard`, {
         withCredentials: true,
