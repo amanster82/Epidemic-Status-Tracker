@@ -235,7 +235,7 @@ router.post("/api/settings", async (req, res, next) => {
 router.post("/api/email", async (req, res, next) => {
   
   try {
-    let user = await knex("users").where({ email: req.body.email }).limit(1);
+    let user = await knex("users").where({ email: req.body.email.toLowerCase() }).limit(1);
     console.log("this is the user: ", user);
     if (user.length === 0) {
       console.log("No records found");
@@ -597,7 +597,7 @@ router.post("/api/login", (req, res, next) => {
 router.post("/api/register", async (req, res, next) => {
   console.log("------------------/api/register-----------------------");
   let obj = req.body;
-  let email = obj.email;
+  let email = obj.email.toLowerCase();
   let pass = obj.pass;
   let gender = obj.gender;
   let birthdate = obj.birthdate;
