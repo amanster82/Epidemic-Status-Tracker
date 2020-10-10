@@ -57,7 +57,7 @@ function Settings(props) {
 
   const [state, setState] = React.useState({ switch: false });
   const [email, setEmail] = React.useState(props.email);
-  const [birth, setBirth] = React.useState(
+  const [birth, setBirth] = React.useState(c
     format_birthday(new Date(props.birthdate))
   );
   const [gender, setGender] = React.useState(props.gender);
@@ -74,6 +74,8 @@ function Settings(props) {
       gender: gender,
       pass: pass,
     };
+
+    console.log("TELL ME THE VALUES:", values);
 
     let update = await axios.post(getBackendURL() + `/api/settings`, values, {
       withCredentials: true,
@@ -146,9 +148,9 @@ function Settings(props) {
 
   function format_birthday(birthday) {
     console.log("WHAT IS THE BIRTHDAY:", birthday);
-    var year = birthday.getFullYear();
+    var year = birthday.getUTCFullYear();
     var month = birthday.getMonth() + 1;
-    var date = birthday.getDate();
+    var date = birthday.birthday.getUTCDate();
     console.log("Year", year);
     console.log("Month", month);
     console.log("date", date);
