@@ -78,6 +78,7 @@ export default function FullWidthTabs() {
     setValue(index);
   };
 
+  const birthdate = new Date(MetaData.data.user.birthdate).toDateString();
   return (
     <div className={classes.root}>
       <AppBar position="static" color="default">
@@ -102,7 +103,7 @@ export default function FullWidthTabs() {
         <TabPanel value={value} index={0} dir={theme.direction}>
         <ProfileOverview 
           id={MetaData.data.user.id}
-          birthdate={MetaData.data.user.birthdate}
+          birthdate={birthdate}
           email={MetaData.data.user.email}
           gender={MetaData.data.user.gender}
           province={MetaData.data.report.province}
@@ -116,7 +117,7 @@ export default function FullWidthTabs() {
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>          
            <Settings
-            birthdate={MetaData.data.user.birthdate}
+            birthdate={birthdate}
             email={MetaData.data.user.email}
             gender={MetaData.data.user.gender}
            >
