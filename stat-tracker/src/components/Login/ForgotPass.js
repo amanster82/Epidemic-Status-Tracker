@@ -94,11 +94,9 @@ export default function SignIn(props) {
     axios
       .post(getBackendURL() + `/api/email`, {email: email, link: getBackendURL()}, { withCredentials: true })
       .then(function (res) {
-        console.log(res);
         setSpinner("complete");
       })
       .catch(function (error) {
-        console.log(error.response);
         setEmailError(true);
         setEmailLabel(error.response.data);
         setSpinner(false)
@@ -120,7 +118,7 @@ export default function SignIn(props) {
           <Grid item item xs={12}>
         <div className={classes.iconContainer}>{icon}</div>
         <Typography component="h1" variant="h5" align="center">
-          Forgot Password
+          {(showSpinner==="complete") ? "Email Sent" : "Forgot Password"}
         </Typography>
         <form noValidate>
           <TextField
@@ -136,6 +134,9 @@ export default function SignIn(props) {
               setEmailLabel("Email");
               setEmailError(false);
             }}
+            onKeyDown={(e) =>
+              (e.key === "Enter") ? sendEmail() : false
+            }
           ></TextField>
           <Button
             fullWidth

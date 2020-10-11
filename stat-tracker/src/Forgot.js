@@ -31,7 +31,6 @@ function Forgot(props) {
     let token = window.location.href;
     token = token.split("/");
     token = token[4];
-    console.log(token);
     let x = await axios.post(
       getBackendURL() + `/api/verify`,
       { token: token, pass: pass },
@@ -91,7 +90,16 @@ function Forgot(props) {
             >
               Change Password
             </Button>
-            <Dialog open={openDialoge} content={"Password Changed Successfully! You will now be redirected to login."}></Dialog>
+            <Dialog open={openDialoge} content={
+            <>
+            <div>
+              <h3>Password Changed Successfully!</h3>
+            </div>
+            <div>
+              <h3>You will now be redirected to login.</h3>
+              </div>
+            </>
+          }></Dialog>
           </Grid>
         </Grid>
       </div>

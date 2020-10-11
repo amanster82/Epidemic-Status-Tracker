@@ -95,15 +95,10 @@ export default function CustomizedDialogs(props) {
     }else{
       return(
         <>      
-          <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
+          <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open} disableBackdropClick>
             <DialogContent dividers>
             {props.content}
             </DialogContent>
-            <DialogActions>
-              <Button autoFocus onClick={handleClose} color="primary">
-                Close
-              </Button>
-          </DialogActions>
           </Dialog>
       </>)
     }
