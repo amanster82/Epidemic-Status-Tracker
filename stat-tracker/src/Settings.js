@@ -57,7 +57,7 @@ function Settings(props) {
 
   const [state, setState] = React.useState({ switch: false });
   const [email, setEmail] = React.useState(props.email);
-  const [birth, setBirth] = React.useState(c
+  const [birth, setBirth] = React.useState(
     format_birthday(new Date(props.birthdate))
   );
   const [gender, setGender] = React.useState(props.gender);
@@ -150,7 +150,7 @@ function Settings(props) {
     console.log("WHAT IS THE BIRTHDAY:", birthday);
     var year = birthday.getUTCFullYear();
     var month = birthday.getMonth() + 1;
-    var date = birthday.birthday.getUTCDate();
+    var date = birthday.getUTCDate();
     console.log("Year", year);
     console.log("Month", month);
     console.log("date", date);
