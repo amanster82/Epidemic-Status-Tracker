@@ -119,14 +119,11 @@ function External() {
 
   //setScreenW(window.innerWidth);
   //setScreenH(window.innerHeight);
-  console.log("screenW screenH-->", screenW, screenH);
-  console.log("screenSize", screenSize);
 
   React.useEffect(() => {
     ReactGA.initialize('UA-179553011-1');
     ReactGA.pageview("External");
     function handleResize() {
-      console.log("resized to: ", window.innerWidth, "x", window.innerHeight);
       setScreenH(window.innerHeight);
       //headline();
     }
@@ -144,7 +141,6 @@ function External() {
   }, [smallLaptopAnimation]);
 
   function signUpToggle(x) {
-    console.log("I fireed!!");
     signUpSwitch(x);
   }
 
@@ -165,7 +161,6 @@ function External() {
   }
 
   function headline() {
-    console.log("I rendered");
     if (screenH < 760 && !screenSize) {
       return (
         <div className={buttonContainer ? classes.shrink : "Spacing"}>

@@ -28,11 +28,9 @@ export default function CaseCard(props) {
   const classes = useStyles();
 
   async function test() {
-    console.log("hey");
     let coordinates = await axios.get(
       "http://geogratis.gc.ca/services/geolocation/en/locate?q=v7n"
     );
-    console.log("coordinates:", coordinates);
   }
 
   return (

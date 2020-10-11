@@ -33,28 +33,22 @@ async function authenticate (setPage, setMetaData){
 async function getMetaData(setMetaData, changeLocation){
   try{
   const results = await axios.post(getBackendURL() + `/api/metadata`, {locationChange: changeLocation}, { withCredentials: true });
-  console.log("-------------------THE METADATA HERE---------------------")
-    console.log("THEEEEEEEEEEEEE REEEESSSSSUUSUUUULTTTS:", results);
     setMetaData(results);
     return(results);
   }catch{
-    console.log("@@@@@@NO METADATA TO SHOW@@@@@@@@@");
     setMetaData(false); 
   }
 }
 
 function App() {
     const [Pagechange, setPage] = useState(null);
-    console.log("what is the page", Pagechange);
     const [MetaData, setMetaData] = useState(null);
-    console.log("what is the metadata", MetaData);
 
     useEffect(() =>{
       
       if(Pagechange==null && MetaData==null) {
         authenticate(setPage, setMetaData);
       }else{
-        console.log("App.js Effect Done")
       } 
 
     });

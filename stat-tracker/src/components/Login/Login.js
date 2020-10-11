@@ -49,8 +49,6 @@ function postData(
   setPassError,
   setPassLabel
 ) {
-  console.log("email:", email);
-  console.log("pass:", pass);
 
   const login = {
     email: email,
@@ -61,17 +59,11 @@ function postData(
   axios
     .post(getBackendURL() + `/api/login`, login, { withCredentials: true })
     .then(function (res) {
-      console.log(res);
-      console.log(res.data);
-      console.log("setting the error to false");
       setEmailError(false);
       setSpinner(false);
       setAccessGranted(true);
     })
     .catch(function (error) {
-      console.log("setting the error to true");
-      console.log(error.response.data);
-      console.log(error.response);
       if (error.response.data.message.indexOf("Password") > -1) {
         setPassLabel(error.response.data.message);
         setPassError(true);
@@ -133,9 +125,7 @@ export default function SignIn(props) {
   const screenSize = useMediaQuery(theme.breakpoints.down("lg"));
   var w = window.innerWidth;
   var h = window.innerHeight;
-  console.log("screenSize-->", w, h);
   //alert("Is your screen size is medium or smaller:" + screenSize)
-  console.log(getBackendURL());
 
   let icon;
 

@@ -63,7 +63,6 @@ export default function FullWidthTabs() {
   const [value, setValue] = React.useState(0);
   const {MetaData, getMetaData} = useContext(MyContext);
 
-  console.log("MMMMMMMM---->", MetaData);
 
   React.useEffect(()=>{
     ReactGA.initialize('UA-179553011-1');
@@ -80,7 +79,6 @@ export default function FullWidthTabs() {
 
   
   let birthdate = MetaData.data.user.birthdate.replace(/-/g, '\/').replace(/T.+/, '');
-  console.log("THE NEW BIRTHDATE WITH TIMEZONE REMOVED:", birthdate)
 
   return (
     <div className={classes.root}>

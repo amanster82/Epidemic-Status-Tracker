@@ -75,14 +75,11 @@ function Settings(props) {
       pass: pass,
     };
 
-    console.log("TELL ME THE VALUES:", values);
 
     let update = await axios.post(getBackendURL() + `/api/settings`, values, {
       withCredentials: true,
     });
-    console.log("UPDATED?", update);
     setAlert(update);
-    alert("Updated");
 
     let reloadMetaData = await getMetaData(setMetaData);
   }
@@ -147,13 +144,9 @@ function Settings(props) {
   }
 
   function format_birthday(birthday) {
-    console.log("WHAT IS THE BIRTHDAY:", birthday);
     var year = birthday.getFullYear();
     var month = birthday.getMonth() + 1;
     var date = birthday.getDate();
-    console.log("Year", year);
-    console.log("Month", month);
-    console.log("date", date);
 
     if (String(month).length < 2) {
       month = "0" + month;

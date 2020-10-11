@@ -49,8 +49,6 @@ function postData(
   setAccessGranted,
   setEmailLabel
 ) {
-  console.log("email:", email);
-  console.log("pass:", pass);
 
   const register = {
     email: email,
@@ -65,17 +63,11 @@ function postData(
       withCredentials: true,
     })
     .then(function (res) {
-      console.log(res);
-      console.log(res.data);
-      console.log("setting the error to false");
       setEmailError(false);
       setSpinner(false);
       setAccessGranted(true);
     })
     .catch(function (error) {
-      console.log("setting the error to true");
-      console.log("error", error);
-      console.log(error.response.data);
       setEmailError(true);
       setSpinner(false);
       setEmailLabel(error.response.data);

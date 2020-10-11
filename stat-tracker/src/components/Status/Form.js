@@ -60,9 +60,6 @@ function Form(props) {
   });
 
   useEffect(()=>{
-
-    console.log("--------------USE EFFECT RAN----------")
-
     setSpinner(false);
     codeCheckConditions();
     setChangedEmail(false);
@@ -91,7 +88,6 @@ function Form(props) {
 
   }
 
-  console.log(sympValue);
   const handleStatusChange = (event) => {
     setStatusValue(event.target.value);
     props.response(event.target.value);
@@ -99,7 +95,7 @@ function Form(props) {
 
   const handleSympYesOrNoChange = (e) => {
     setSympYesorNo(e.target.value); 
-    console.log("Yes or No" + e.target.value)
+    setRiskValue("");
 
     if(e.target.value === "No" && e.target.value !== ""){
       setSympValue({});
@@ -124,8 +120,6 @@ function Form(props) {
 
   const handleRiskChange = (event) => {
     setRiskValue(event.target.value);
-    console.log("are there symp??? " + !(Object.keys(sympValue).length === 0));
-    console.log("if yes, what are the symps?", sympValue);
     if(
     //  statusValue === "+" && !(Object.keys(sympValue).length === 0 && sympValue.constructor === Object) || 
     //  statusValue === "s" && !(Object.keys(sympValue).length === 0 && sympValue.constructor === Object) ||
@@ -146,13 +140,9 @@ function Form(props) {
     let obj = {...sympValue, [event.target.name]: event.target.checked }
     obj = Object.entries(obj).filter(([,v]) => v === true).reduce((prev, [k, v]) => ({...prev, [k]: v}), {})
     setSympValue(obj);
-    console.log("this is the obj", obj);
     let showNext;
-    showNext = !(Object.keys(obj).length === 0 && obj.constructor === Object) && riskValue !== "" && sympValue !==
+    showNext = !(Object.keys(obj).length === 0 && obj.constructor === Object) && riskValue !== "" && sympValue !=="" && sympYesorNo == "Yes";
     
-
-    console.log("showNext", showNext)
-
     let specialCase = !(Object.keys(obj).length === 0 && obj.constructor === Object)
 
     if(statusValue === "=") {
@@ -176,7 +166,6 @@ function Form(props) {
       }]
       props.response(formResponses);
     }else{
-      console.log("error");
       props.response(false);
     }
   };
@@ -194,9 +183,6 @@ function Form(props) {
   }
 
   function codeCheckConditions(){
-    console.log("IN THE FORM")
-    console.log("the new email: " + newEmail)
-    console.log(props.user_email || spinner)
     if(!props.user_email || spinner){
       return (
         <div>

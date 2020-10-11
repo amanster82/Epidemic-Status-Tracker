@@ -22,14 +22,11 @@ function About(props) {
     const classes = useStyles();
     
 
-    console.log("and the component is refreshed")
     const [x, setX] = React.useState("??")
     const words = ['hey', 'you', 'this', 'is', 'cool'];
 
  
     function a (){
-      console.log(words.length);
-      console.log("action ran ", count)
       if(count >= words.length-1){
         count = 0;
       }else{

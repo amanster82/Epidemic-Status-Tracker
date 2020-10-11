@@ -16,9 +16,6 @@ import Grid from "@material-ui/core/Grid";
 function MapArea(props) {
   const [coordinates, setCoordinates] = React.useState(props.coordinates);
   const [boundries, setBoundries] = React.useState(props.boundingBox);
-  console.log("-----------------in the Map---------------");
-  console.log("BOUNDRIES IN MAP", boundries);
-  console.log("COORDINTATES IN THE MAP", coordinates);
   const { MetaData } = useContext(MyContext);
   const greenIcon = new Icon({
     iconUrl:
@@ -64,7 +61,6 @@ function MapArea(props) {
     shadowSize: [41, 41],
   });
 
-  console.log(MetaData);
 
   function iconCheck(status) {
     if (status == "-") return greenIcon;
@@ -128,7 +124,6 @@ function MapArea(props) {
       {boundries
         .filter((bound) => bound.location !== null)
         .map((b, index) => {
-          console.log(index);
           if (Number(b.pos_count) > 0) {
             return (
               <>

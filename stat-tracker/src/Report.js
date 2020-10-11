@@ -40,7 +40,6 @@ const useStyles = makeStyles((theme) => ({
 
 function getSteps(accountVerified) {
 
-  console.log("VERIFIED ACCOUNT???? "+accountVerified)
   if(accountVerified){
     return ["Status", "Risk", "Location"];
   }else{
@@ -50,7 +49,6 @@ function getSteps(accountVerified) {
 }
 
 function getStepContent(whichButton, setButtonPress, stepIndex, getResponse, codeVerify, email, changeEmail) {
-  console.log("is this called twice?")
   switch (stepIndex) {
     case 0:
       return <Form Ipressed={whichButton} setButton={(value) => setButtonPress(value)} step={stepIndex} response={(value)=> getResponse(value, stepIndex)}></Form>;
@@ -77,7 +75,6 @@ export default function Report(props) {
   const [email, setEmail] = React.useState("");
   const [accountVerified, setAccountVerified] = React.useState(false);
 
-  console.log(">>>>>>>>>>>"+accountVerified);
   const steps = getSteps(accountVerified);
 
   useEffect(() => {
@@ -93,13 +90,10 @@ useEffect(() => {
  
 
   async function getResponse(value, stepIndex){
-      console.log("got response", value)
-      console.log(stepIndex);
 
       if(stepIndex === 3 ){
         if(value[0].code.length === 6){
             let codeCheck = await axios.post(getBackendURL() + `/api/codeCheck`, {code: value[0].code}, { withCredentials: true })
-            console.log(codeCheck);
             setResponse(codeCheck.data.verify);
             setCodeVerify(codeCheck.data.verify)
         }else{
@@ -119,7 +113,6 @@ useEffect(() => {
 
   async function changeEmail(email_change) {
     let response = await axios.post(getBackendURL() + `/api/codeCheck`, {changeEmail: email_change}, { withCredentials: true })
-    console.log("Trying to change the email> ", response)
     sendCode();
   }
 
@@ -142,11 +135,9 @@ useEffect(() => {
         province: responseB.data.address.state
       }
        
-      console.log("this is restructured", restructuredResponse);
       props.submit(restructuredResponse);
       //audio.play();
     }else {
-      console.log("getting here??")
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
       setResponse(false);
     }
@@ -171,7 +162,6 @@ async function sendCode(){
 }
 
 async function checkUser(){
-  console.log("CHECKING THE USER")
   let checkUser = await axios.get(getBackendURL() + `/api/verifiedUser`, { withCredentials: true })
   setAccountVerified(checkUser.data.verification);
 }

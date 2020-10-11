@@ -71,15 +71,11 @@ function Canvas(props) {
   const smallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const province = MetaData.data.locations[0].province
 
-  console.log("WTF!!@@##", coordinates);
 
   useEffect(() => {
     if (spinner) {
-      console.log("TURNED OFF");
-      console.log("THESE ARE THE COORDINATES", coordinates);
       setSpinner(false);
     } else {
-      console.log("TURNED ON");
     }
   }, [boundingBox]);
 
@@ -95,12 +91,7 @@ function Canvas(props) {
     setGoogleAnalytics(false);
   },[googleAnalytics])
 
-  console.log("-----------------in the Canvas---------------");
-  console.log(MetaData);
-
   function onLocationChange(value) {
-    // alert(!value);
-    // console.log('value', !value);
     setLocation(!value);
   }
 
@@ -137,17 +128,12 @@ function Canvas(props) {
   }
 
   async function onStateChange(val) {
-    console.log("DONT FUCK IT UP:", val);
     setSpinner(true);
     if (val !== "" && val !== null) {
       let returned = await getMetaData(setMetaData, val);
       let bounds = await axios.get(getBackendURL() + `/api/dashboard`, {
         withCredentials: true,
       });
-      console.log(bounds);
-      console.log("THE ROWS THE RWOS!!!!", bounds.data.rows);
-      console.log("the boundries", bounds.data.boundries);
-      console.log("RETURNEDDDDDDD:", returned);
       let coordinates = [
         returned.data.locations[0].lat,
         returned.data.locations[0].long,
@@ -165,8 +151,6 @@ function Canvas(props) {
 
   async function updateStatus(value) {
     var audio = new Audio(ReportSound);
-    console.log("THE SUBMITTED ANSWERS ARE THE FOLLOWING:");
-    console.log(value);
     try {
       let response = await axios.post(
         getBackendURL() + `/api/updateStatus`,
@@ -177,10 +161,6 @@ function Canvas(props) {
       let bounds = await axios.get(getBackendURL() + `/api/dashboard`, {
         withCredentials: true,
       });
-
-      console.log("response", response);
-      console.log("bounds", bounds);
-      console.log("resfresh", refresh);
 
       let coordinates = [
         refresh.data.locations[0].lat,
@@ -194,8 +174,6 @@ function Canvas(props) {
       setSpinner(false);
       audio.play();
     } catch (error) {
-      console.log("-------We have a problem------");
-      console.log(error);
     }
   }
 

@@ -159,12 +159,9 @@ export default function Dashboard() {
   );
 
   function submittedAnswers(value) {
-    console.log("THE SUBMITTED ANSWERS ARE THE FOLLOWING:");
-    console.log(value);
     axios
       .post(getBackendURL() + `/api/report`, value, { withCredentials: true })
       .then(async function (response) {
-        console.log("A CAll to Get METADATA");
         let metaDataLoaded = await getMetaData(setMetaData);
         if (metaDataLoaded) {
           onPageLoad(value);
@@ -172,8 +169,6 @@ export default function Dashboard() {
       })
 
       .catch(function (error) {
-        console.log("-------THERE ARE NO ROWS------");
-        console.log(error);
       });
   }
 
@@ -194,25 +189,21 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    status == null &&
+    if(status == null &&
     reportCompleted == null &&
     Pagechange != null &&
-    MetaData != null
-      ? onPageLoad()
-      : console.log("Dashboard.js Effect Done");
+    MetaData != null){
+      onPageLoad()
+    }
   }, []);
 
   function onPageLoad(submittedAnswers) {
-    console.log("------------------/api/dashboard-----------------------");
     axios
       .get(getBackendURL() + `/api/dashboard`, { withCredentials: true })
       .then(function (res) {
         if(res.data === 'Not Logged In.'){
           setApiDown(true);
         }
-        console.log(res);
-        console.log("THE ROWS THE RWOS!!!!", res.data.rows);
-        console.log("the boundries", res.data.boundries);
         setboundingBox(res.data.boundries);
         if (res.data.rows == undefined) {
           setStatus(false);
@@ -221,7 +212,6 @@ export default function Dashboard() {
         } else {
           setStatus(true);
           setReport(true);
-          console.log("res.data.rows**************************");
           setUserReport(res.data.rows);
           setLocation(res.data.rows.postal);
           setCoordinates([res.data.rows.lat, res.data.rows.long]);
@@ -299,7 +289,6 @@ export default function Dashboard() {
         ></Report>
       );
     } else if (reportCompleted && status && MetaData) {
-      console.log("this is the user report", usersReport);
       return (
         <div className={classes.root}>
           <CssBaseline />

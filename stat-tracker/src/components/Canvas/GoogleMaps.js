@@ -44,8 +44,6 @@ export default function FreeSolo(props) {
   const [places, setPlaces] = React.useState([]);
   const [chosenOption, setChoice] = React.useState("");
   const uniquePlaces = new Set;
-  console.log("chosenOption", chosenOption);
-  console.log("THIS IS THE PLACES", places);
 
   function textFieldAndGo(){
     if(props.mobile){
@@ -148,24 +146,17 @@ export default function FreeSolo(props) {
   );
 }
 
-async function search(value, setPlaces, places, uniquePlaces) {
-  console.log(value);
-  
+async function search(value, setPlaces, places, uniquePlaces) {  
   let response = await axios.post(
     getBackendURL() + `/api/search`,
     { input: value },
     { withCredentials: true }
   );
-  console.log("respons", response);
   if (response.data === "No results") {
     return;
   }
-  console.log(response.data.results);
   response.data.results.map((element, index) => {
     if (places.indexOf(element.location) === -1) {
-      console.log("this is the element: ", element);
-      console.log("this is the element of location:", element.location);
-      console.log("this is the index: ", index);
       uniquePlaces.add(element.location);
       setPlaces(Array.from(uniquePlaces));
     }
