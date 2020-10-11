@@ -148,9 +148,9 @@ function Settings(props) {
 
   function format_birthday(birthday) {
     console.log("WHAT IS THE BIRTHDAY:", birthday);
-    var year = birthday.getUTCFullYear();
+    var year = birthday.getFullYear();
     var month = birthday.getMonth() + 1;
-    var date = birthday.getUTCDate();
+    var date = birthday.getDate();
     console.log("Year", year);
     console.log("Month", month);
     console.log("date", date);

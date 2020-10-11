@@ -78,7 +78,10 @@ export default function FullWidthTabs() {
     setValue(index);
   };
 
-  const birthdate = new Date(MetaData.data.user.birthdate).toDateString();
+  
+  let birthdate = MetaData.data.user.birthdate.replace(/-/g, '\/').replace(/T.+/, '');
+  console.log("THE NEW BIRTHDATE WITH TIMEZONE REMOVED:", birthdate)
+
   return (
     <div className={classes.root}>
       <AppBar position="static" color="default">

@@ -407,7 +407,8 @@ router.post("/api/metadata", async (req, res, next) => {
     console.log("these are the coordinates:", coordinates);
 
     var userInfo = await knex("users").where({ id: req.user });
-    console.log("this is the user info:", coordinates);
+    
+    console.log("this is the user info:", userInfo);
 
     var reportInfo = await knex("report")
       .where({ user_id: req.user })
