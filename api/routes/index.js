@@ -57,33 +57,36 @@ router.post("/api/codeCheck", async (req, res, next) => {
 
 
   if(req.body.changeEmail !== undefined){
-    console.log("is the email changing?" )
-    await knex("users")
+    const rows = await knex("users").where({email: req.body.changeEmail}).whereNot('id', req.user);
+      if (rows.length > 0) {
+        console.log("sending it!");
+        res.status(404).send("Email already in use");
+      }else{
+        console.log("is the email changing?" )
+        await knex("users")
+        .where({ id: req.user })
+        .update({ email:  req.body.changeEmail})
+        res.json({email: req.body.changeEmail});
+      }
+  }
+
+
+  try{
+    let user = await knex("users")
+    .select('code')
     .where({ id: req.user })
-    .update({ email:  req.body.changeEmail})
-
-    res.json({email: req.body.changeEmail});
+    .limit(1);
+  
+    console.log(user);
+    if(user[0].code === req.body.code){
+      res.json({verify: true})
+    }else{
+      res.json({verify: false})
+    }
+  
+  }catch(err){
+    console.log(err)
   }
- 
-  console.log("hello?"+ req.user)
-  console.log(req.user)
-try{
-  let user = await knex("users")
-  .select('code')
-  .where({ id: req.user })
-  .limit(1);
-
-  console.log(user);
-  if(user[0].code === req.body.code){
-    res.json({verify: true})
-  }else{
-    res.json({verify: false})
-  }
-
-}catch(err){
-  console.log(err)
-}
-
 
 });
 
@@ -219,12 +222,21 @@ router.post("/api/settings", async (req, res, next) => {
           gender: newGender,
           password: hash,
         });
+    }else{
+      const rows = await knex("users").where({
+        email: newEmail,
+      }).whereNot('id', req.user);
+        if (rows.length > 0) {
+          console.log("sending it!");
+          res.status(404).send("Email already in use");
+        }else{
+          let updateUser = await knex("users")
+          .where({ id: req.user })
+          .update({ email: newEmail, birthdate: newBirth, gender: newGender });
+          return res.send(200);
+        }
     }
 
-    let updateUser = await knex("users")
-      .where({ id: req.user })
-      .update({ email: newEmail, birthdate: newBirth, gender: newGender });
-    return res.send(200);
   } catch (err) {
     console.log(err);
     return res.send(500);

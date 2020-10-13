@@ -48,7 +48,7 @@ function getSteps(accountVerified) {
   
 }
 
-function getStepContent(whichButton, setButtonPress, stepIndex, getResponse, codeVerify, email, changeEmail, checkPostalCode, isPostalValid) {
+function getStepContent(whichButton, setButtonPress, stepIndex, getResponse, codeVerify, email, changeEmail, checkPostalCode, isPostalValid, emailError, setEmailError, spinner) {
   switch (stepIndex) {
     case 0:
       return <Form Ipressed={whichButton} setButton={(value) => setButtonPress(value)} step={stepIndex} response={(value)=> getResponse(value, stepIndex)}></Form>;
@@ -57,8 +57,8 @@ function getStepContent(whichButton, setButtonPress, stepIndex, getResponse, cod
     case 2:
       return <Form Ipressed={whichButton} setButton={(value) => setButtonPress(value)} step={stepIndex} response={(value)=> getResponse(value, stepIndex)} validPostal={(value) => checkPostalCode(value)} isPostalValid={isPostalValid}></Form>;
     case 3:
-      return <Form Ipressed={whichButton} setButton={(value) => setButtonPress(value)} step={stepIndex} response={(value)=> getResponse(value, stepIndex)} 
-                codeCorrect={codeVerify} emailChange={(email_change) => changeEmail(email_change)} user_email={email}></Form>;
+      return <Form emailError={emailError} Ipressed={whichButton} setButton={(value) => setButtonPress(value)} step={stepIndex} response={(value)=> getResponse(value, stepIndex)} 
+                codeCorrect={codeVerify} emailChange={(email_change) => changeEmail(email_change)} user_email={email} turnErrorOff={(value)=>setEmailError(value)} spinner={spinner}></Form>;
     default: 
       return "Unknown stepIndex";
   }
@@ -73,8 +73,10 @@ export default function Report(props) {
   const [whichButton, setButtonPress] = React.useState("Next");
   const [codeVerify, setCodeVerify] = React.useState(null);
   const [email, setEmail] = React.useState("");
+  const [emailError, setEmailError] = React.useState(false)
   const [accountVerified, setAccountVerified] = React.useState(false);
   const [isPostalValid, setPostalValid] = React.useState("");
+  const [spinner, setSpinner] = React.useState(false)
 
   const steps = getSteps(accountVerified);
 
@@ -93,7 +95,6 @@ useEffect(() => {
       setPostalValid(value);
     }else{
       let postalCode = await axios.post(getBackendURL() + `/api/verifyPostalCode`, {postal: value}, { withCredentials: true })
-      console.log("whats the postalCode", postalCode.data);
       setPostalValid(postalCode.data)
     }
   }
@@ -121,8 +122,15 @@ useEffect(() => {
 
 
   async function changeEmail(email_change) {
-    let response = await axios.post(getBackendURL() + `/api/codeCheck`, {changeEmail: email_change}, { withCredentials: true })
-    sendCode();
+    try{
+      let response = await axios.post(getBackendURL() + `/api/codeCheck`, {changeEmail: email_change}, { withCredentials: true })
+      setSpinner(true);
+      sendCode();
+    }catch(error){
+      console.log(error.response);
+      setEmailError(error.response.data);
+    }
+
   }
 
 
@@ -167,6 +175,7 @@ async function sendCode(){
   if(activeStep === steps.length - 1){
     let code = await axios.get(getBackendURL() + `/api/sendCode`, { withCredentials: true })
     setEmail(code.data.email);
+    setSpinner(false);
   }
 }
 
@@ -198,7 +207,7 @@ async function checkUser(){
         ) : (
             <div className={classes.flex}>
               <div className={classes.instructions}>
-                  {getStepContent(whichButton, setButtonPress, activeStep, getResponse, codeVerify, email, changeEmail, checkPostalCode, isPostalValid)}
+                  {getStepContent(whichButton, setButtonPress, activeStep, getResponse, codeVerify, email, changeEmail, checkPostalCode, isPostalValid, emailError, setEmailError, spinner)}
               </div>
               <div>
                 <Button

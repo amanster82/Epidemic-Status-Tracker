@@ -54,6 +54,8 @@ function Form(props) {
   const [changedEmail, setChangedEmail] = React.useState(false);
   const [postalCodeError, setPostalError] = React.useState(false);
   const [open, setOpen] = React.useState(false);
+  const [emailLabel, setEmailLabel] = React.useState("Email");
+  const [emailError, setEmailError] = React.useState(false);
   const classes = useStyles();
   
   useEffect(() => {
@@ -61,11 +63,23 @@ function Form(props) {
   });
 
   useEffect(()=>{
+    if(props.emailError){
+      setEmailError( (!props.emailError) ? false : true );
+      setEmailLabel((!props.emailError) ? "Email" : props.emailError);
+      props.turnErrorOff(false);
+    }
+  }, [props.emailError !== false])
+
+  useEffect(()=>{
     setSpinner(false);
-    codeCheckConditions();
-    setChangedEmail(false);
+    //codeCheckConditions();
+    setChangedEmail(props.user_email);
     setNewEmail(false);
   },[props.user_email]);
+
+  useEffect(()=>{
+    setSpinner(props.spinner);
+  },[props.spinner])
 
   useEffect(()=>{
     if(props.step===2){
@@ -210,20 +224,24 @@ function Form(props) {
         </Grid>
         </div>
       )
-    }else if(newEmail){
+    }else if(newEmail || newEmail === null){
       return <div className="animated zoomInUp">
       <Typography variant="h6" align="center">Please enter a new email</Typography>
       {/* <GoogleMaps response={props.response}></GoogleMaps> */}
       <Grid container alignItems='center' justify="center">
         <Grid item xs={12}>
-        <TextField variant="outlined" onChange={ (event) => { setNewEmail(event.target.value) } }>
+        <TextField 
+        variant="outlined" 
+        onChange={ (event) => { setNewEmail( (event.target.value) ? (event.target.value) : null); setEmailError(false); setEmailLabel("Email") } }
+        error={emailError}
+        label={emailLabel}
+        >
         </TextField>
       </Grid>
       </Grid>
-      <Button variant="contained" onClick={ ()=> {  props.emailChange(newEmail); setSpinner(true); setChangedEmail(true)}}> Submit</Button>
+      <Button disabled={(newEmail===null)} variant="contained" onClick={ ()=> props.emailChange(newEmail) }> Submit</Button>
       </div>
     }
-    
     else{
       return <div className="animated zoomInUp">
       <Typography variant="h6" align="center">{'A code has been sent to ' + props.user_email}</Typography>
@@ -245,7 +263,7 @@ function Form(props) {
       </Grid>
       </Grid>
       <div style={{cursor: 'pointer'}}><Link onClick={() => {props.emailChange(props.user_email); setOpen(true)}}>Send Again</Link></div>
-      <div style={{cursor: 'pointer'}}><Link onClick={() => setNewEmail(true)}>Email incorrect?</Link></div>
+      <div style={{cursor: 'pointer'}}><Link onClick={() => setNewEmail(null)}>Email incorrect?</Link></div>
       <Snackbar
         anchorOrigin={{  vertical: 'top', horizontal: 'center' }}
         autoHideDuration={6000}

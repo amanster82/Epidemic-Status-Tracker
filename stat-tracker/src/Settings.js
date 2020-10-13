@@ -64,6 +64,8 @@ function Settings(props) {
   const [pass, setPass] = React.useState("");
   const [passRepeat, setPassRepeat] = React.useState("");
   const [isPassError, setPassError] = React.useState(false);
+  const [isEmailError, setEmailError] = React.useState(false);
+  const [emailLabel, setEmailLabel] = React.useState("Email")
   const [alertVar, setAlert] = React.useState(true);
   const { MetaData, getMetaData, setMetaData } = useContext(MyContext);
 
@@ -74,12 +76,19 @@ function Settings(props) {
       gender: gender,
       pass: pass,
     };
-
-
-    let update = await axios.post(getBackendURL() + `/api/settings`, values, {
-      withCredentials: true,
-    });
+    try{
+      let update = await axios.post(getBackendURL() + `/api/settings`, values, {
+        withCredentials: true,
+      });
     setAlert(update);
+    alert("Updated!")
+    }catch(error){
+      console.log();
+      setEmailError(true);
+      setEmailLabel(error.response.data);
+    }
+
+
 
     let reloadMetaData = await getMetaData(setMetaData);
   }
@@ -186,9 +195,10 @@ function Settings(props) {
             </Grid>
             <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
               <TextField
-                label="Email"
+                label={emailLabel}
                 value={email}
-                onChange={(event) => setEmail(event.target.value)}
+                onChange={(event) => {setEmail(event.target.value); setEmailError(false); setEmailLabel("Email")} }
+                error={isEmailError}
               ></TextField>
             </Grid>
             <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
