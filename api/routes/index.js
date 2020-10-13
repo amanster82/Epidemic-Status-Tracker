@@ -100,7 +100,7 @@ router.get("/api/sendCode", async (req, res, next) => {
     // Only needed if you don't have a real mail account for testing
     let testAccount = await nodemailer.createTestAccount();
 
-    let r = Math.random().toString(36).substring(7,13);
+    let r = Math.random().toString(36).substring(2,8);
 
     const user_code = await knex("users")
     .where({ id: req.user })
@@ -456,7 +456,7 @@ router.post("/api/verifyPostalCode", async (req, res, next) => {
     let checkPostal = await knex("canada_fsa").where({cfsauid: postal})
     if(checkPostal.length){
       console.log("THE CODE IS THIS:", checkPostal[0].cfsauid);
-      res.send(true);
+      res.send(checkPostal[0].cfsauid);
     }else{
       console.log("NO POSTAL")
       res.send(false);
