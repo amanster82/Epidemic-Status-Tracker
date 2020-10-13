@@ -228,7 +228,7 @@ function Settings(props) {
                     className={classes.radioLabel}
                   />
                   <FormControlLabel
-                    value="female"
+                    value="Female"
                     control={<Radio color="primary" />}
                     label="Female"
                     labelPlacement="start"
