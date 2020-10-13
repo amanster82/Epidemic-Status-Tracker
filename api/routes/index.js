@@ -436,6 +436,26 @@ router.post("/api/metadata", async (req, res, next) => {
   }
 });
 
+router.post("/api/verifyPostalCode", async (req, res, next) => {
+  console.log("------------------/api/verifyPostal-----------------------");
+  let postal = req.body.postal.toUpperCase();
+  console.log("THE POSSSSSSSSSSSSSSSSTAL: ", postal)
+  try{
+    let checkPostal = await knex("canada_fsa").where({cfsauid: postal})
+    if(checkPostal.length){
+      console.log("THE CODE IS THIS:", checkPostal[0].cfsauid);
+      res.send(true);
+    }else{
+      console.log("NO POSTAL")
+      res.send(false);
+    }
+
+  }catch(error){
+    console.log(error);
+  }
+
+});
+
 router.post("/api/report", async (req, res, next) => {
   console.log("------------------/api/report-----------------------");
   

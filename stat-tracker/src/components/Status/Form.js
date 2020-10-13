@@ -52,6 +52,7 @@ function Form(props) {
   const [spinner, setSpinner] = React.useState(false);
   const [newEmail, setNewEmail] = React.useState(props.user_email);
   const [changedEmail, setChangedEmail] = React.useState(false);
+  const [postalCodeError, setPostalError] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
   
@@ -65,6 +66,27 @@ function Form(props) {
     setChangedEmail(false);
     setNewEmail(false);
   },[props.user_email]);
+
+  useEffect(()=>{
+    if(props.step===2){
+      if(props.isPostalValid){
+        const formResponses = [{
+          status: statusValue,
+          symptoms: Object.entries(sympValue).filter(([,v]) => v === true).reduce((prev, [k, v]) => ({...prev, [k]: v}), {}),
+          risk: (riskValue=='Yes' ? true: false),
+          postal: postalCodeValue,
+        }]
+        props.response(formResponses);
+        setPostalError(false);
+      }else {
+        if(postalCodeValue.length === 3){
+          setPostalError(true);
+        }
+        setpostalCodeValue(false);
+        props.response(false);
+      }
+  }
+  }, [props.isPostalValid]);
   
 
   function clearValuesWhenBack(){
@@ -155,18 +177,12 @@ function Form(props) {
 
 
   const handleLocationChange = (event) => {
-    let regEx = /^[a-zA-Z][0-9][a-zA-Z]$/;
-    if(regEx.test(event.target.value) ){
-      setpostalCodeValue(event.target.value);
-      const formResponses = [{
-        status: statusValue,
-        symptoms: Object.entries(sympValue).filter(([,v]) => v === true).reduce((prev, [k, v]) => ({...prev, [k]: v}), {}),
-        risk: (riskValue=='Yes' ? true: false),
-        postal: event.target.value
-      }]
-      props.response(formResponses);
+      if( (event.target.value).length === 3 ){
+        props.validPostal(event.target.value);
+        setpostalCodeValue(event.target.value);
     }else{
-      props.response(false);
+      setPostalError(false);
+      props.validPostal(null);
     }
   };
 
@@ -373,12 +389,14 @@ function Form(props) {
               <Grid container alignItems='center' justify="center">
                 <Grid item xs={3}>
                 <TextField 
-              variant="outlined"
-              onChange={handleLocationChange}
-              inputProps={{
-                maxLength: 3,
-                className: classes.input
-              }}
+                variant="outlined"
+                onChange={handleLocationChange}
+                inputProps={{
+                  maxLength: 3,
+                  className: classes.input
+                }}
+                error={postalCodeError}
+                label={postalCodeError ? "Invalid" : ""}
               >
             </TextField>
                 </Grid>

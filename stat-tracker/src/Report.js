@@ -48,14 +48,14 @@ function getSteps(accountVerified) {
   
 }
 
-function getStepContent(whichButton, setButtonPress, stepIndex, getResponse, codeVerify, email, changeEmail) {
+function getStepContent(whichButton, setButtonPress, stepIndex, getResponse, codeVerify, email, changeEmail, checkPostalCode, isPostalValid) {
   switch (stepIndex) {
     case 0:
       return <Form Ipressed={whichButton} setButton={(value) => setButtonPress(value)} step={stepIndex} response={(value)=> getResponse(value, stepIndex)}></Form>;
     case 1:
       return <Form Ipressed={whichButton} setButton={(value) => setButtonPress(value)} step={stepIndex} response={(value)=> getResponse(value, stepIndex)}></Form>;
     case 2:
-      return <Form Ipressed={whichButton} setButton={(value) => setButtonPress(value)} step={stepIndex} response={(value)=> getResponse(value, stepIndex)} ></Form>;
+      return <Form Ipressed={whichButton} setButton={(value) => setButtonPress(value)} step={stepIndex} response={(value)=> getResponse(value, stepIndex)} validPostal={(value) => checkPostalCode(value)} isPostalValid={isPostalValid}></Form>;
     case 3:
       return <Form Ipressed={whichButton} setButton={(value) => setButtonPress(value)} step={stepIndex} response={(value)=> getResponse(value, stepIndex)} 
                 codeCorrect={codeVerify} emailChange={(email_change) => changeEmail(email_change)} user_email={email}></Form>;
@@ -74,6 +74,7 @@ export default function Report(props) {
   const [codeVerify, setCodeVerify] = React.useState(null);
   const [email, setEmail] = React.useState("");
   const [accountVerified, setAccountVerified] = React.useState(false);
+  const [isPostalValid, setPostalValid] = React.useState("");
 
   const steps = getSteps(accountVerified);
 
@@ -87,7 +88,15 @@ useEffect(() => {
   checkUser();
 });
 
- 
+  async function checkPostalCode(value){
+    if(value===null || value === false){
+      setPostalValid(value);
+    }else{
+      let postalCode = await axios.post(getBackendURL() + `/api/verifyPostalCode`, {postal: value}, { withCredentials: true })
+      console.log("whats the postalCode", postalCode.data);
+      setPostalValid(postalCode.data)
+    }
+  }
 
   async function getResponse(value, stepIndex){
 
@@ -189,7 +198,7 @@ async function checkUser(){
         ) : (
             <div className={classes.flex}>
               <div className={classes.instructions}>
-                  {getStepContent(whichButton, setButtonPress, activeStep, getResponse, codeVerify, email, changeEmail)}
+                  {getStepContent(whichButton, setButtonPress, activeStep, getResponse, codeVerify, email, changeEmail, checkPostalCode, isPostalValid)}
               </div>
               <div>
                 <Button
