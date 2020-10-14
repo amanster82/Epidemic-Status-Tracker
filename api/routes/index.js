@@ -55,8 +55,8 @@ router.post("/api/codeCheck", async (req, res, next) => {
   console.log("----------------/api/codeCheck------------------")
   console.log(req.body)
 
-  let newEmail = req.body.changeEmail.toLowerCase();
   if(req.body.changeEmail !== undefined){
+    let newEmail = req.body.changeEmail.toLowerCase();
     const rows = await knex("users").where({email: newEmail}).whereNot('id', req.user);
       if (rows.length > 0) {
         console.log("sending it!");
@@ -129,7 +129,7 @@ router.get("/api/sendCode", async (req, res, next) => {
       to: user[0].email, // list of receivers
       subject: "UNLOCK CODE", // Subject line
       text:"Please enter the following code: "+ user[0].code +" to start viral tracking. We will never contact you for this code. Do not reveal it to anyone else.",
-      html:"<b>Please enter the following code: "+ user[0].code +" to start viral tracking. We will never contact you for this code. Do not reveal it to anyone else.</b>", // html body
+      html:"Please enter the following code: <b>"+ user[0].code +"</b> to start viral tracking. We will never contact you for this code. Do not reveal it to anyone else.", // html body
     });
 
     console.log("Message sent: %s", info.messageId);
