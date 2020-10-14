@@ -55,9 +55,9 @@ router.post("/api/codeCheck", async (req, res, next) => {
   console.log("----------------/api/codeCheck------------------")
   console.log(req.body)
 
-
+  let newEmail = req.body.changeEmail.toLowerCase();
   if(req.body.changeEmail !== undefined){
-    const rows = await knex("users").where({email: req.body.changeEmail}).whereNot('id', req.user);
+    const rows = await knex("users").where({email: newEmail}).whereNot('id', req.user);
       if (rows.length > 0) {
         console.log("sending it!");
         res.status(404).send("Email already in use");
@@ -205,7 +205,7 @@ console.log("-------------------/api/updateStatus/------------------")
 
 
 router.post("/api/settings", async (req, res, next) => {
-  let newEmail = req.body.email;
+  let newEmail = req.body.email.toLowerCase();
   let newBirth = req.body.birth;
   let newGender = req.body.gender;
   let newPass = req.body.pass;
