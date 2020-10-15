@@ -19,8 +19,14 @@ import InboxIcon from "@material-ui/icons/MoveToInbox";
 import MailIcon from "@material-ui/icons/Mail";
 import { Button, Grid } from "@material-ui/core";
 import FreeBreakfastOutlinedIcon from "@material-ui/icons/FreeBreakfastOutlined";
+import DOMPurify from "dompurify";
 
 const drawerWidth = 240;
+const myHTML = (
+  '<a href="https://www.buymeacoffee.com/wherescovid" target="_blank">\
+  <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 40px !important;"></a>'
+  );
+const mySafeHTML = DOMPurify.sanitize(myHTML);
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -105,14 +111,7 @@ export default function MenuBar(props) {
           <Toolbar>
             <Grid container justify="flex-start" align="left">
               <Grid item xs={12} sm={7} md={5} lg={4} xl={3}>
-                <Button
-                  size="small"
-                  variant="contained"
-                  color="secondary"
-                  endIcon={!open ? <FreeBreakfastOutlinedIcon /> : ""}
-                >
-                  {!open ? "Buy Me A Coffee" : <FreeBreakfastOutlinedIcon />}
-                </Button>
+                <div dangerouslySetInnerHTML={{ __html: mySafeHTML }} />
               </Grid>
             </Grid>
             <IconButton
@@ -174,15 +173,7 @@ export default function MenuBar(props) {
           <Toolbar>
             <Grid container justify="flex-start" align="center">
               <Grid item xs={12} sm={7} md={5} lg={4} xl={3}>
-                <Button
-                  size="small"
-                  variant="contained"
-                  color="secondary"
-                  endIcon={<FreeBreakfastOutlinedIcon />}
-                  href="https://www.buymeacoffee.com/wherescovid"
-                >
-                  Buy Me A Coffee
-                </Button>
+                <div dangerouslySetInnerHTML={{ __html: mySafeHTML }} />
               </Grid>
             </Grid>
             <Grid container justify="flex-end" align="center">

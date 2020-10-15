@@ -32,6 +32,13 @@ import Footer from "./components/Footer/Footer";
 import { getBackendURL } from "./util";
 import FreeBreakfastOutlinedIcon from "@material-ui/icons/FreeBreakfastOutlined";
 import ReportSound from './static/sounds/Drip_Echo.wav';
+import DOMPurify from "dompurify";
+
+const myHTML = (
+  '<a href="https://www.buymeacoffee.com/wherescovid" target="_blank">\
+  <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 40px !important;"></a>'
+  );
+const mySafeHTML = DOMPurify.sanitize(myHTML);
 
 const drawerWidth = 240;
 
@@ -317,7 +324,8 @@ export default function Dashboard() {
               </Grid>
               <Grid container justify="flex-end" align="right">
                 <Grid item xs={12} sm={7} md={5} lg={4} xl={3}>
-                  <Button
+                <div dangerouslySetInnerHTML={{ __html: mySafeHTML }} />
+                  {/* <Button
                     size="small"
                     variant="contained"
                     color="secondary"
@@ -325,7 +333,7 @@ export default function Dashboard() {
                     endIcon={<FreeBreakfastOutlinedIcon />}
                   >
                     Buy Me A Coffee
-                  </Button>
+                  </Button> */}
                 </Grid>
               </Grid>
             </Toolbar>
