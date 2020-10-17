@@ -332,7 +332,7 @@ function External() {
 
         <div style={{ height: 50 }}></div>
 
-        <Paper>
+        {/* <Paper>
           <Grid container justify="center" className={classes.textBox}>
             <Grid item xs={12} sm={3} md={3}>
               <img
@@ -356,7 +356,7 @@ function External() {
               </div>
             </Grid>
           </Grid>
-        </Paper>
+        </Paper> */}
 
         <div style={{ height: 300 }} id="covid"></div>
 

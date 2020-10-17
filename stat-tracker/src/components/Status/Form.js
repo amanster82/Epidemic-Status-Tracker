@@ -382,6 +382,7 @@ function Form(props) {
                 <li>I have familiarized myself with viral symptoms and I think I am showing possible signs.</li>
                 <li>I have been traveling, and I am currently self-isolating.</li>
                 <li>I have been exposed to a confirmed COVID-19 case and I am currently self-isolating.</li>
+                <li>I am awaiting the results of a COVID-19 test.</li>
                 </ul>
                 <br></br>
                 <br></br> 
