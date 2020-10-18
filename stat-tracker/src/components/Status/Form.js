@@ -359,8 +359,8 @@ function Form(props) {
         <>
             <Typography variant="h6" align="center">Please indicate if you have left the house today and/or are planning to expose yourself to a public area</Typography>
             <RadioGroup name="risk" value={riskValue} onChange={handleRiskChange}>
-              <FormControlLabel value="Yes" control={<Radio color="primary" />} label="Yes, I am planning to leave the house today" />
-              <FormControlLabel value="No" control={<Radio color="primary" />} label="No, I am planning to stay home" />
+              <FormControlLabel value="Yes" control={<Radio color="primary" />} label="Yes, I have left the house today / I am planning to leave the house today" />
+              <FormControlLabel value="No" control={<Radio color="primary" />} label="No, I have not left the house today / I am planning to stay home" />
             </RadioGroup>
         </>
         )
@@ -390,7 +390,7 @@ function Form(props) {
                 <div className={classes.description}>One or more of the below apply to me:</div>
                 <ul className={classes.description}>
                 <li>I have been tested and I am currently negative.</li>
-                <li>I have not been tested, but I am confident I am COVID-19 free.</li>
+                <li>I have no reason to think I have COVID-19.</li>
                 </ul>
                 <br></br>
                 <br></br>
