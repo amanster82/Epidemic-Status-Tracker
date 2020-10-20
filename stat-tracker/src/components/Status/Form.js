@@ -29,7 +29,8 @@ function Form(props) {
     },
 
     input2:{
-      textAlign: 'center'
+      textAlign: 'center',
+      textTransform: 'lowercase'
     },
 
     description: {
@@ -368,7 +369,7 @@ function Form(props) {
       else if (props.step === 0) {
         return(
             <>
-                <Typography variant="h6" align="center">Please select a status that best suites you</Typography>
+                <Typography variant="h6" align="center">Please select a status that best suits you</Typography>
                 <Typography style={{ fontStyle: 'italic'}} variant="subtitle1" align="center">*Note: read the description carefully before making a selection!</Typography>
                 <RadioGroup name="status" value={statusValue} onChange={handleStatusChange}>
                 <FormControlLabel value="+" control={<Radio color="primary" />} label="Positive" className={classes.status}/>
@@ -390,7 +391,7 @@ function Form(props) {
                 <div className={classes.description}>One or more of the below apply to me:</div>
                 <ul className={classes.description}>
                 <li>I have been tested and I am currently negative.</li>
-                <li>I have no reason to think I have COVID-19.</li>
+                <li>I have not been tested, but I have no reason to think I have COVID-19.</li>
                 </ul>
                 <br></br>
                 <br></br>
