@@ -14,11 +14,11 @@ let covid19 = "";
 const isProduction = process.env.NODE_ENV === 'production'
 
 
-scrapeCovid('https://www.ctvnews.ca/health/coronavirus/tracking-every-case-of-covid-19-in-canada-1.4852102')
-.then((result)=>{
-  console.log(result);
-  covid19=result;
-})
+// scrapeCovid('https://www.ctvnews.ca/health/coronavirus/tracking-every-case-of-covid-19-in-canada-1.4852102')
+// .then((result)=>{
+//   console.log(result);
+//   covid19=result;
+// })
 
 
 const connectionString = "postgressql://postgres:postgres@localhost:5433/TrackerData";
@@ -563,6 +563,14 @@ router.get("/api/dashboard", async (req, res, next) => {
 });
 
 router.get("/api/authentication", (req, res, next) => {
+
+
+  scrapeCovid('https://www.ctvnews.ca/health/coronavirus/tracking-every-case-of-covid-19-in-canada-1.4852102')
+  .then((result)=>{
+    console.log(result);
+    covid19=result;
+  })
+
   console.log("------------------/api/authentication-----------------------");
   console.log("Cookie assigned: ", req.cookies);
   console.log(req.user);

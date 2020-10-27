@@ -12,7 +12,7 @@ async function scrapeCovid(url){
     await page.goto(url);
 
     //BC
-    let [el] = await page.$x('//*[@id="british-columbia-collapse"]/div[1]/p[3]');
+    let [el] = await page.$x('//*[@id="british-columbia-collapse"]/div[1]/p[2]');
     let txt = await el.getProperty('textContent');
     let rawTxt = await txt.jsonValue();
     const BC = rawTxt;
