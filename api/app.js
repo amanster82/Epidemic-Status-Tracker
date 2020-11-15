@@ -13,6 +13,7 @@ var testAPIRouter = require("./routes/testAPI");
 var passport = require('passport');
 var flash = require('express-flash');
 var session = require('express-session');
+var enforce = require('express-sslify');
 
 var app = express();
 
@@ -52,7 +53,7 @@ var handleCors = function(options){
   }
 };
 
-
+app.use(enforce.HTTPS({ trustProtoHeader: true }))
 app.use(handleCors(corsOptions));
   //res.header("Access-Control-Allow-Origin", "http://amanster.ddns.net:3000");
   //res.header("Access-Control-Allow-Origin", "http://localhost:3000");
