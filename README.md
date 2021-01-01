@@ -1,68 +1,38 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# WheresCovid.ca
 
-## Available Scripts
+An web application built to track and report COVID-19 in Canada. 
 
-In the project directory, you can run:
+The application is built off of FSA (Forward Sortation Area) codes from stats Canada which can be found [here](https://www12.statcan.gc.ca/census-recensement/2011/geo/bound-limit/bound-limit-2016-eng.cfm ).
 
-### `npm start`
+### How it works
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+A user will create an account and login. For the first time, the user will be prompted with a short questionnaire, which they must complete. The questionnaire will pose a series of questions, such as their COVID-19 status, and the first three letters of their postal code. Once completed, the user will presented with a dashboard of their geographic region, and will be able to see data about COVID-19 cases around their area.
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+### Getting Started
 
-### `npm test`
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Prerequisites
 
-### `npm run build`
+As this is a Node.js application the following are required to get the project running.
+The NPM tool is also required to download web app dependencies.
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```javascript
+Node v11.6.0 or higher
+PostgreSQL 12.2 or higher
+```
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+### API Configurations
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```
+1. Clone the repository
+2. Navigate api/bin/www and on line 17 ensure that port has or display the || option to 9000.
+3. Navigate to api/apps.js, and on line 84 copy your database end point there.
+```
 
-### `npm run eject`
+### Database Configurations
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+This project depends on both `MySQL` and `express-sessions` during production. They will need to be installed independently following specific instructions for your production environment.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+#### 
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
