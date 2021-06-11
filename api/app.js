@@ -90,7 +90,7 @@ var conString =
   "postgres://postgres:postgres@localhost:5433/TrackerData";
 
 var conObject = {
-    connectionString: conString,
+    connectionString: conString+'?ssl=true',
     ssl: { rejectUnauthorized: false },
   };
 

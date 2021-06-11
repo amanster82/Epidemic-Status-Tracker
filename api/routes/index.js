@@ -25,7 +25,7 @@ const connectionString = "postgressql://postgres:postgres@localhost:5433/Tracker
 
 var knex = require("knex")({
   client: "pg",
-  connection: isProduction ? process.env.DATABASE_URL : connectionString,
+  connection: isProduction ? process.env.DATABASE_URL+'?ssl=true' : connectionString,
   debug: true,
 });
 
