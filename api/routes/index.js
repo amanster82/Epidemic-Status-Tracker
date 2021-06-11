@@ -26,7 +26,7 @@ var knex = require("knex")({
   client: "pg",
   connection: {
     connectionString: isProduction
-      ? process.env.DATABASE_URL + "?ssl=true"
+      ? process.env.DATABASE_URL
       : connectionString,
     ssl: { rejectUnauthorized: false },
   },
