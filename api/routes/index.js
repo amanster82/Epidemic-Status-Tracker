@@ -3,7 +3,7 @@ var router = express.Router();
 var bcrypt = require("bcrypt");
 var passport = require("passport");
 var initializePassport = require("./passport-config");
-const scrapeCovid = require("./scarpers.js")
+const scrapeCovid = require("./scarpers.js");
 const { KnexTimeoutError } = require("knex");
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
@@ -11,8 +11,7 @@ const { token } = require("morgan");
 let pCode = "";
 let province = "";
 let covid19 = "";
-const isProduction = process.env.NODE_ENV === 'production'
-
+const isProduction = process.env.NODE_ENV === "production";
 
 // scrapeCovid('https://www.ctvnews.ca/health/coronavirus/tracking-every-case-of-covid-19-in-canada-1.4852102')
 // .then((result)=>{
@@ -20,12 +19,17 @@ const isProduction = process.env.NODE_ENV === 'production'
 //   covid19=result;
 // })
 
-
-const connectionString = "postgressql://postgres:postgres@localhost:5433/TrackerData";
+const connectionString =
+  "postgressql://postgres:postgres@localhost:5433/TrackerData";
 
 var knex = require("knex")({
   client: "pg",
-  connection: isProduction ? process.env.DATABASE_URL+'?ssl=true' : connectionString,
+  connection: {
+    connectionString: isProduction
+      ? process.env.DATABASE_URL + "?ssl=true"
+      : connectionString,
+    ssl: { rejectUnauthorized: false },
+  },
   debug: true,
 });
 
@@ -39,55 +43,51 @@ router.get("/", function (req, res, next) {
 router.get("/api/verifiedUser", async (req, res, next) => {
   console.log(">>>>>>>>>>>>>>>>>>>>>>>>>hello?");
   let user = await knex("users")
-  .select('verified')
-  .where({ id: req.user })
-  .limit(1);
+    .select("verified")
+    .where({ id: req.user })
+    .limit(1);
 
-  console.log(user[0])
+  console.log(user[0]);
 
-  res.json({verification: user[0].verified})
-
-
+  res.json({ verification: user[0].verified });
 });
 
 router.post("/api/codeCheck", async (req, res, next) => {
+  console.log("----------------/api/codeCheck------------------");
+  console.log(req.body);
 
-  console.log("----------------/api/codeCheck------------------")
-  console.log(req.body)
-
-  if(req.body.changeEmail !== undefined){
+  if (req.body.changeEmail !== undefined) {
     let newEmail = req.body.changeEmail.toLowerCase();
-    const rows = await knex("users").where({email: newEmail}).whereNot('id', req.user);
-      if (rows.length > 0) {
-        console.log("sending it!");
-        res.status(404).send("Email already in use");
-      }else{
-        console.log("is the email changing?" )
-        await knex("users")
+    const rows = await knex("users")
+      .where({ email: newEmail })
+      .whereNot("id", req.user);
+    if (rows.length > 0) {
+      console.log("sending it!");
+      res.status(404).send("Email already in use");
+    } else {
+      console.log("is the email changing?");
+      await knex("users")
         .where({ id: req.user })
-        .update({ email:  req.body.changeEmail})
-        res.json({email: req.body.changeEmail});
-      }
-  }
-
-
-  try{
-    let user = await knex("users")
-    .select('code')
-    .where({ id: req.user })
-    .limit(1);
-  
-    console.log(user);
-    if(user[0].code === req.body.code){
-      res.json({verify: true})
-    }else{
-      res.json({verify: false})
+        .update({ email: req.body.changeEmail });
+      res.json({ email: req.body.changeEmail });
     }
-  
-  }catch(err){
-    console.log(err)
   }
 
+  try {
+    let user = await knex("users")
+      .select("code")
+      .where({ id: req.user })
+      .limit(1);
+
+    console.log(user);
+    if (user[0].code === req.body.code) {
+      res.json({ verify: true });
+    } else {
+      res.json({ verify: false });
+    }
+  } catch (err) {
+    console.log(err);
+  }
 });
 
 router.get("/api/sendCode", async (req, res, next) => {
@@ -100,20 +100,19 @@ router.get("/api/sendCode", async (req, res, next) => {
     // Only needed if you don't have a real mail account for testing
     let testAccount = await nodemailer.createTestAccount();
 
-    let r = Math.random().toString(36).substring(2,8);
+    let r = Math.random().toString(36).substring(2, 8);
 
     const user_code = await knex("users")
-    .where({ id: req.user })
-    .update({ code:  r})
-
+      .where({ id: req.user })
+      .update({ code: r });
 
     let user = await knex("users")
-    .select('email', 'code')
-    .where({ id: req.user })
-    .limit(1);
+      .select("email", "code")
+      .where({ id: req.user })
+      .limit(1);
 
     console.log(user[0].email);
-    
+
     // create reusable transporter object using the default SMTP transport
     let transporter = nodemailer.createTransport({
       service: "Gmail",
@@ -128,8 +127,14 @@ router.get("/api/sendCode", async (req, res, next) => {
       from: '"COVID-19 Tracker 😷" <foo@example.com>', // sender address
       to: user[0].email, // list of receivers
       subject: "UNLOCK CODE", // Subject line
-      text:"Please enter the following code: "+ user[0].code +" to start viral tracking. We will never contact you for this code. Do not reveal it to anyone else.",
-      html:"Please enter the following code: <b>"+ user[0].code +"</b> to start viral tracking. We will never contact you for this code. Do not reveal it to anyone else.", // html body
+      text:
+        "Please enter the following code: " +
+        user[0].code +
+        " to start viral tracking. We will never contact you for this code. Do not reveal it to anyone else.",
+      html:
+        "Please enter the following code: <b>" +
+        user[0].code +
+        "</b> to start viral tracking. We will never contact you for this code. Do not reveal it to anyone else.", // html body
     });
 
     console.log("Message sent: %s", info.messageId);
@@ -139,7 +144,7 @@ router.get("/api/sendCode", async (req, res, next) => {
     console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
     // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
 
-    res.json({email: user[0].email});
+    res.json({ email: user[0].email });
   }
 
   main().catch((error) => {
@@ -147,62 +152,49 @@ router.get("/api/sendCode", async (req, res, next) => {
     console.log(error);
     res.sendStatus(500);
   });
-
-
 });
 
 router.post("/api/verify", async (req, res, next) => {
   console.log(req.body);
-  console.log(process.env.TOKEN_SECRET)
+  console.log(process.env.TOKEN_SECRET);
   const verification = jwt.verify(req.body.token, process.env.TOKEN_SECRET);
   console.log("verified:");
   console.log(verification);
 
   const hash = await bcrypt.hash(req.body.pass, 10);
 
-  try{
-    let updateUser = await knex("users")
-    .where({ id: verification.id })
-    .update({
+  try {
+    let updateUser = await knex("users").where({ id: verification.id }).update({
       password: hash,
     });
     res.sendStatus(200);
-  }catch{
-
-  }
-
+  } catch {}
 });
 
-
-
 router.post("/api/updateStatus", async (req, res, next) => {
-console.log("-------------------/api/updateStatus/------------------")
+  console.log("-------------------/api/updateStatus/------------------");
   try {
-      let updateStatus = await knex("report")
-        .where({ user_id: req.user })
-        .andWhere({ active: true })
-        .update({
-          status: req.body.status,
-          symptoms: req.body.symptoms,
-          risk: req.body.risk,
-          postal: req.body.postal,
-          date_stamp: new Date(),
-          lat: req.body.lat,
-          long: req.body.long,
-          location: req.body.location,
-          province: req.body.province
-        })
+    let updateStatus = await knex("report")
+      .where({ user_id: req.user })
+      .andWhere({ active: true })
+      .update({
+        status: req.body.status,
+        symptoms: req.body.symptoms,
+        risk: req.body.risk,
+        postal: req.body.postal,
+        date_stamp: new Date(),
+        lat: req.body.lat,
+        long: req.body.long,
+        location: req.body.location,
+        province: req.body.province,
+      });
 
-        return res.send(200);
-    }
-    catch (err) {
+    return res.send(200);
+  } catch (err) {
     console.log(err);
     return res.send(500);
   }
-
 });
-
-
 
 router.post("/api/settings", async (req, res, next) => {
   let newEmail = req.body.email.toLowerCase();
@@ -214,29 +206,28 @@ router.post("/api/settings", async (req, res, next) => {
     if (newPass.length !== 0) {
       const hash = await bcrypt.hash(newPass, 10);
       console.log("the encrypted password", hash);
-      let updateUser = await knex("users")
-        .where({ id: req.user })
-        .update({
-          email: newEmail,
-          birthdate: newBirth,
-          gender: newGender,
-          password: hash,
-        });
-    }else{
-      const rows = await knex("users").where({
+      let updateUser = await knex("users").where({ id: req.user }).update({
         email: newEmail,
-      }).whereNot('id', req.user);
-        if (rows.length > 0) {
-          console.log("sending it!");
-          res.status(404).send("Email already in use");
-        }else{
-          let updateUser = await knex("users")
+        birthdate: newBirth,
+        gender: newGender,
+        password: hash,
+      });
+    } else {
+      const rows = await knex("users")
+        .where({
+          email: newEmail,
+        })
+        .whereNot("id", req.user);
+      if (rows.length > 0) {
+        console.log("sending it!");
+        res.status(404).send("Email already in use");
+      } else {
+        let updateUser = await knex("users")
           .where({ id: req.user })
           .update({ email: newEmail, birthdate: newBirth, gender: newGender });
-          return res.send(200);
-        }
+        return res.send(200);
+      }
     }
-
   } catch (err) {
     console.log(err);
     return res.send(500);
@@ -245,9 +236,10 @@ router.post("/api/settings", async (req, res, next) => {
 
 //PASSWORD RESET EMAIL
 router.post("/api/email", async (req, res, next) => {
-  
   try {
-    let user = await knex("users").where({ email: req.body.email.toLowerCase() }).limit(1);
+    let user = await knex("users")
+      .where({ email: req.body.email.toLowerCase() })
+      .limit(1);
     console.log("this is the user: ", user);
     if (user.length === 0) {
       console.log("No records found");
@@ -255,7 +247,9 @@ router.post("/api/email", async (req, res, next) => {
     } else {
       user = user[0];
       console.log("user:", user.id);
-      const token = jwt.sign({ id: user.id }, process.env.TOKEN_SECRET, { expiresIn: "1d" });
+      const token = jwt.sign({ id: user.id }, process.env.TOKEN_SECRET, {
+        expiresIn: "1d",
+      });
       console.log("created a token.", token);
       // const verification = jwt.verify(token, "SECRET");
       // console.log("this is the verification:", verification);
@@ -264,7 +258,7 @@ router.post("/api/email", async (req, res, next) => {
         // Generate test SMTP service account from ethereal.email
         // Only needed if you don't have a real mail account for testing
         let testAccount = await nodemailer.createTestAccount();
-        
+
         // create reusable transporter object using the default SMTP transport
         let transporter = nodemailer.createTransport({
           service: "Gmail",
@@ -419,7 +413,7 @@ router.post("/api/metadata", async (req, res, next) => {
     console.log("these are the coordinates:", coordinates);
 
     var userInfo = await knex("users").where({ id: req.user });
-    
+
     console.log("this is the user info:", userInfo);
 
     var reportInfo = await knex("report")
@@ -451,30 +445,28 @@ router.post("/api/metadata", async (req, res, next) => {
 router.post("/api/verifyPostalCode", async (req, res, next) => {
   console.log("------------------/api/verifyPostal-----------------------");
   let postal = req.body.postal.toUpperCase();
-  console.log("THE POSSSSSSSSSSSSSSSSTAL: ", postal)
-  try{
-    let checkPostal = await knex("canada_fsa").where({cfsauid: postal})
-    if(checkPostal.length){
+  console.log("THE POSSSSSSSSSSSSSSSSTAL: ", postal);
+  try {
+    let checkPostal = await knex("canada_fsa").where({ cfsauid: postal });
+    if (checkPostal.length) {
       console.log("THE CODE IS THIS:", checkPostal[0].cfsauid);
       res.send(checkPostal[0].cfsauid);
-    }else{
-      console.log("NO POSTAL")
+    } else {
+      console.log("NO POSTAL");
       res.send(false);
     }
-
-  }catch(error){
+  } catch (error) {
     console.log(error);
   }
-
 });
 
 router.post("/api/report", async (req, res, next) => {
   console.log("------------------/api/report-----------------------");
-  
+
   let user = await knex("users")
-  .where({ id: req.user })
-  .update({verified: true})
-  .limit(1);
+    .where({ id: req.user })
+    .update({ verified: true })
+    .limit(1);
 
   let obj = Object.assign(req.body, {
     user_id: req.user,
@@ -502,20 +494,20 @@ router.post("/api/report", async (req, res, next) => {
 router.get("/api/dashboard", async (req, res, next) => {
   console.log("------------------/api/dashboard-----------------------");
   console.log(req.user);
-  if(req.user === undefined){
-    res.send("Not Logged In.")
+  if (req.user === undefined) {
+    res.send("Not Logged In.");
   }
   console.log("this is the postal code:", pCode);
   //pCode = pCode.substring(0,3);
   console.log("this is the first three characters", pCode);
   let currentDate = new Date();
   var date = currentDate.getDate();
-  var month = currentDate.getMonth(); 
+  var month = currentDate.getMonth();
   var year = currentDate.getFullYear();
   const objectToSend = {};
   await knex("report")
     .where({ user_id: req.user, active: true })
-    .andWhere(knex.raw('DATE(date_stamp) = CURRENT_DATE'))
+    .andWhere(knex.raw("DATE(date_stamp) = CURRENT_DATE"))
     .then((rows) => {
       console.log("something went right have a look", rows[0]);
       Object.assign(objectToSend, { rows: rows[0] });
@@ -563,13 +555,12 @@ router.get("/api/dashboard", async (req, res, next) => {
 });
 
 router.get("/api/authentication", (req, res, next) => {
-
-
-  scrapeCovid('https://www.ctvnews.ca/health/coronavirus/tracking-every-case-of-covid-19-in-canada-1.4852102')
-  .then((result)=>{
+  scrapeCovid(
+    "https://www.ctvnews.ca/health/coronavirus/tracking-every-case-of-covid-19-in-canada-1.4852102"
+  ).then((result) => {
     console.log(result);
-    covid19=result;
-  })
+    covid19 = result;
+  });
 
   console.log("------------------/api/authentication-----------------------");
   console.log("Cookie assigned: ", req.cookies);
