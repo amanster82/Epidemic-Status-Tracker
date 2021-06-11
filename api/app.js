@@ -85,7 +85,7 @@ var PostgreSqlStore = require('connect-pg-simple')(session);
 var conString = process.env.DATABASE_URL || "postgres://postgres:postgres@localhost:5433/TrackerData";
 
 if(process.env.DATABASE_URL !== undefined){
-  conString += '?sslmode=require';
+  conString += '?ssl=true';
 }
 
 app.use(session({
