@@ -13,6 +13,8 @@ let province = "";
 let covid19 = "";
 const isProduction = process.env.NODE_ENV === "production";
 
+console.log("is is prod???", isProduction);
+
 // scrapeCovid('https://www.ctvnews.ca/health/coronavirus/tracking-every-case-of-covid-19-in-canada-1.4852102')
 // .then((result)=>{
 //   console.log(result);

@@ -92,7 +92,7 @@ async function scrapeCovid(url){
 
     const info = {"British Columbia": BC, "Alberta": AB, "Saskatchewan": SK, "Manitoba": MB, "Ontario": ON, "Quebec": QB, "New Brunswick": NB, "Nova Scotia": NS, "Prince Edward Island": PEI, "Newfoundland and Labrador": NL, "Yukon": YT, "Northwest Territories": NT, "Nunavut": NU}
 
-
+    await browser.close();
 
     return info;
 }

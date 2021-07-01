@@ -1,7 +1,7 @@
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
-
+const isProduction = process.env.NODE_ENV === "production";
 var createError = require("http-errors");
 var express = require("express");
 var path = require("path");
@@ -95,9 +95,11 @@ var conObject = {
   };
 
 
+var useThis = ( isProduction ) ? {conObject} : {conString};
+
 app.use(
   session({
-    store: new PostgreSqlStore({ conObject }),
+    store: new PostgreSqlStore(useThis),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
