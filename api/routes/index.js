@@ -30,7 +30,7 @@ var knex = require("knex")({
     connectionString: isProduction
       ? process.env.DATABASE_URL
       : connectionString,
-    // ssl: { rejectUnauthorized: false },
+    ssl: { rejectUnauthorized: false },
   },
   debug: true,
 });
