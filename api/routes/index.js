@@ -23,18 +23,22 @@ console.log("is is prod???", isProduction);
 
 
 // Should come with install of pg 
+
+const connectionString =
+  "postgressql://postgres:postgres@localhost:5433/TrackerData";
 const parse = require("pg-connection-string").parse;
+
 // Parse the environment variable into an object
-const pgconfig = parse(process.env.DATABASE_URL);
+const pgconfig = parse( (isProduction) ? process.env.DATABASE_URL : connectionString );
 // Add SSL setting to default environment variable
 pgconfig.ssl = { rejectUnauthorized: false };
-const knex = knex({  
+const knex = require("knex")({  
   client: "pg",  
   connection: pgconfig,
 });
 
-// const connectionString =
-//   "postgressql://postgres:postgres@localhost:5433/TrackerData";
+
+
 
 // var knex = require("knex")({
 //   client: "pg",
