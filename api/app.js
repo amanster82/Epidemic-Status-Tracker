@@ -56,7 +56,7 @@ var handleCors = function (options) {
   };
 };
 
-app.use(enforce.HTTPS({ trustProtoHeader: true }));
+//app.use(enforce.HTTPS({ trustProtoHeader: true }));
 app.use(handleCors(corsOptions));
 //res.header("Access-Control-Allow-Origin", "http://amanster.ddns.net:3000");
 //res.header("Access-Control-Allow-Origin", "http://localhost:3000");
@@ -97,6 +97,7 @@ var conObject = {
 
 var useThis = ( isProduction ) ? {conObject} : {conString};
 
+console.log(useThis);
 app.use(
   session({
     store: new PostgreSqlStore(useThis),
