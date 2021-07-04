@@ -21,19 +21,31 @@ console.log("is is prod???", isProduction);
 //   covid19=result;
 // })
 
-const connectionString =
-  "postgressql://postgres:postgres@localhost:5433/TrackerData";
 
-var knex = require("knex")({
-  client: "pg",
-  connection: {
-    connectionString: isProduction
-      ? process.env.DATABASE_URL
-      : connectionString,
-    ssl: { rejectUnauthorized: false },
-  },
-  debug: true,
+// Should come with install of pg 
+const parse = require("pg-connection-string").parse;
+// Parse the environment variable into an object
+const pgconfig = parse(process.env.DATABASE_URL);
+// Add SSL setting to default environment variable
+pgconfig.ssl = { rejectUnauthorized: false };
+const knex = knex({  
+  client: "pg",  
+  connection: pgconfig,
 });
+
+// const connectionString =
+//   "postgressql://postgres:postgres@localhost:5433/TrackerData";
+
+// var knex = require("knex")({
+//   client: "pg",
+//   connection: {
+//     connectionString: isProduction
+//       ? process.env.DATABASE_URL
+//       : connectionString,
+//     ssl: { rejectUnauthorized: false },
+//   },
+//   debug: true,
+// });
 
 initializePassport(passport, knex);
 
