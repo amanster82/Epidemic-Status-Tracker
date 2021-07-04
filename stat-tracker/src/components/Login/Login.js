@@ -57,18 +57,20 @@ function postData(
 
   setSpinner(true);
   axios
-    .post(getBackendURL() + `/api/login`, login, { withCredentials: true })
+    .post(getBackendURL() + `/api/login`, login, { withCredentials: true }) 
     .then(function (res) {
       setEmailError(false);
       setSpinner(false);
       setAccessGranted(true);
     })
     .catch(function (error) {
-      if (error.response.data.message.indexOf("Password") > -1) {
+      console.log("this is the error", error)
+      if ( error.response.data.message.indexOf("Password") !== undefined && error.response.data.message.indexOf("Password") > -1) {
         setPassLabel(error.response.data.message);
         setPassError(true);
       } else {
-        setEmailLabel(error.response.data.message);
+        console.log(error.response.data.message)
+        //setEmailLabel(error.response.data.message);
         setEmailError(true);
       }
 
