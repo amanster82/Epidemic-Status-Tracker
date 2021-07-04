@@ -90,7 +90,7 @@ var conString =
   "postgres://postgres:postgres@localhost:5433/TrackerData";
 
 var conObject = {
-    connectionString: conString+'?ssl=true',
+    connectionString: conString,
     ssl: { rejectUnauthorized: false },
   };
 
@@ -100,7 +100,7 @@ var useThis = ( isProduction ) ? {conObject} : {conString};
 console.log(useThis);
 app.use(
   session({
-    store: new PostgreSqlStore(useThis),
+    store: new PostgreSqlStore(conString),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
