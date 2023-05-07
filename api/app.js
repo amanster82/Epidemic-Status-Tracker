@@ -85,22 +85,23 @@ app.get("/Forgot/**", function (req, res) {
 //app.use(flash())
 var PostgreSqlStore = require("connect-pg-simple")(session);
 
-var conString =
-  process.env.DATABASE_URL ||
-  "postgres://postgres:postgres@localhost:5433/TrackerData";
+var conString = process.env.DATABASE_URL ||
+    "postgres://postgres:postgres@localhost:5433/TrackerData";
+
+
 
 var conObject = {
     connectionString: conString,
-    ssl: { rejectUnauthorized: false },
+
   };
 
 
 var useThis = ( isProduction ) ? {conObject} : {conString};
 
-console.log(useThis);
+console.log("what is this?", useThis);
 app.use(
   session({
-    store: new PostgreSqlStore(conString),
+    store: new PostgreSqlStore(useThis),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
@@ -109,6 +110,7 @@ app.use(
     },
   })
 );
+console.log("Whats about here?");
 app.use(passport.initialize());
 app.use(passport.session());
 

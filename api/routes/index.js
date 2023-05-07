@@ -31,7 +31,7 @@ const parse = require("pg-connection-string").parse;
 // Parse the environment variable into an object
 const pgconfig = parse( (isProduction) ? process.env.DATABASE_URL : connectionString );
 // Add SSL setting to default environment variable
-pgconfig.ssl = { rejectUnauthorized: false };
+// pgconfig.ssl = { rejectUnauthorized: false };
 const knex = require("knex")({  
   client: "pg",  
   connection: pgconfig,
