@@ -634,6 +634,7 @@ router.post("/api/login", (req, res, next) => {
           }
           //res.status(200);
           console.log("user created", passportUser.id);
+          return;
           //res.send(passportUser.id);
         });
         return res.json({ user: passportUser, hey: "WTF IS GOING ON?" });
@@ -687,7 +688,8 @@ router.post("/api/register", async (req, res, next) => {
     if (err) {
       return next(err);
     }
-    res.status(200);
+    // res.status(200);
+
     console.log("user created", req.user);
     //res.send(req.user);
     //res.redirect("/api/authentication");

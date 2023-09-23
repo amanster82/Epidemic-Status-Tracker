@@ -69,13 +69,13 @@ app.use(handleCors(corsOptions));
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
-
+app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.resolve(__dirname, "../stat-tracker/build")));
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
-app.use(express.static(path.resolve(__dirname, "../stat-tracker/build")));
+
 
 //PATH CONFIGURATION TO RESPOND TO A REQUEST TO STATIC ROUTE REQUEST BY SERVING index.html
 app.get("/Forgot/**", function (req, res) {
