@@ -581,6 +581,7 @@ router.get("/api/authentication", (req, res, next) => {
   // });
 
   console.log("------------------/api/authentication-----------------------");
+  console.log("what is my session", req.session);
   console.log("Cookie assigned: ", req.cookies);
   console.log(req.user);
   console.log(req.isAuthenticated());
