@@ -41,11 +41,12 @@ var corsOptions = {
 
 var handleCors = function (options) {
   return function (req, res, next) {
+    console.log("BEFORE THE IF", options.allowOrigin())
     if (options.allowOrigin()) {
       var origin = req.header("origin");
       res.set("Access-Control-Allow-Origin", origin);
       console.log("*****************************************************************************%^%^&*^&*%^&*%^&*%^&*> PICKACHU", options.allowOrigin());
-      res.set(
+      res.set( 
         "Access-Control-Allow-Headers",
         "Origin, X-Requested-With, Content-Type, Accept"
       );
@@ -58,7 +59,21 @@ var handleCors = function (options) {
 };
 
 //app.use(enforce.HTTPS({ trustProtoHeader: true }));
-app.use(handleCors(corsOptions));
+// app.use(handleCors(originWhiteList));
+
+let ALLOWED_ORIGINS = ["http://localhost:3000", process.env.REACT_APP_API_URL];
+
+app.use(function(req, res, next) {
+  let origin = req.headers.origin;
+  let allowed = (ALLOWED_ORIGINS.indexOf(origin) > -1) ? origin : ALLOWED_ORIGINS[0];
+  console.log("WHAT IS ALLOWED", allowed);
+
+  res.set("Access-Control-Allow-Origin", allowed);
+  res.set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.set("Access-Control-Allow-Credentials", true);
+  next();
+});
+
 //res.header("Access-Control-Allow-Origin", "http://amanster.ddns.net:3000");
 //res.header("Access-Control-Allow-Origin", "http://localhost:3000");
 //res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
