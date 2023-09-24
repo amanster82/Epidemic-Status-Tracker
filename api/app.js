@@ -65,6 +65,7 @@ let ALLOWED_ORIGINS = ["http://localhost:3000", process.env.REACT_APP_API_URL];
 
 app.use(function(req, res, next) {
   let origin = req.headers.origin;
+  console.log("WHAT IS THE ORIGINS REQUEST", origin);
   let allowed = (ALLOWED_ORIGINS.indexOf(origin) > -1) ? origin : ALLOWED_ORIGINS[0];
   console.log("WHAT IS ALLOWED", allowed);
 
