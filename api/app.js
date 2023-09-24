@@ -19,6 +19,7 @@ var app = express();
 
 var createWhitelistValidator = function (whitelist) {
   return function (val) {
+    console.log("What is val", val);
     for (var i = 0; i < whitelist.length; i++) {
       if (val === whitelist[i]) {
         return true;
@@ -40,10 +41,10 @@ var corsOptions = {
 
 var handleCors = function (options) {
   return function (req, res, next) {
-    if (options.allowOrigin) {
-      console.log("made it here");
+    if (options.allowOrigin()) {
       var origin = req.header("origin");
       res.set("Access-Control-Allow-Origin", origin);
+      console.log("*****************************************************************************%^%^&*^&*%^&*%^&*%^&*> PICKACHU", options.allowOrigin());
       res.set(
         "Access-Control-Allow-Headers",
         "Origin, X-Requested-With, Content-Type, Accept"
@@ -51,7 +52,7 @@ var handleCors = function (options) {
       res.set("Access-Control-Allow-Credentials", true);
       next();
     } else {
-      res.set("Access-Control-Allow-Origin", "*");
+      // res.set("Access-Control-Allow-Origin", "*");
     }
   };
 };
