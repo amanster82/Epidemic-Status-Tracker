@@ -635,6 +635,7 @@ router.post("/api/login", (req, res, next) => {
           }
           //res.status(200);
           console.log("user created", passportUser.id);
+          console.log("and ther request user is...", req.user);
           return;
           //res.send(passportUser.id);
         });
