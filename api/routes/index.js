@@ -639,9 +639,11 @@ router.post("/api/login", (req, res, next) => {
           //res.send(passportUser.id);
         });
         return res.json({ user: passportUser, hey: "WTF IS GOING ON?" });
+      }else{
+        return res.status(400).send(info);
       }
 
-      return res.status(400).send(info);
+      
     }
   )(req, res, next);
 });
